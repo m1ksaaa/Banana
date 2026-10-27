@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "GRDX",
+ "name": "GridAI Technologies Corp.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001604191",
+ "sector": "Electric & Other Services Combined",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001604191&type=10-K",
+  "retrieved": "2026-10-27T19:22:43.976Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 36251,
+   "costOfRevenue": 693683,
+   "grossProfit": -657432,
+   "operatingIncome": -7083438,
+   "netIncome": -6392654,
+   "operatingCashFlow": -5702824,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 925482,
+   "interestExpense": null,
+   "epsDiluted": -4.16,
+   "sharesDiluted": 1616705,
+   "totalAssets": 48551843,
+   "totalLiabilities": 19718321,
+   "currentAssets": 2595879,
+   "currentLiabilities": 15159321,
+   "cash": 899784,
+   "equity": null,
+   "retainedEarnings": -208780662,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "XBPEW",
+ "name": "XBP Global Holdings, Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001839530",
+ "sector": "Services-Business Services, NEC",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001839530&type=10-K",
+  "retrieved": "2026-10-27T19:44:25.712Z"
+ },
+ "annual": [
+  {
+   "year": 2024,
+   "periodEnd": "2024-12-31",
+   "revenue": 872690000,
+   "costOfRevenue": null,
+   "grossProfit": 188766000,
+   "operatingIncome": -105441000,
+   "netIncome": -215150000,
+   "operatingCashFlow": 23267000,
+   "capex": 6294000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 300000,
+   "interestExpense": null,
+   "epsDiluted": 0.41,
+   "sharesDiluted": 30166102,
+   "totalAssets": 390421000,
+   "totalLiabilities": 1847209000,
+   "currentAssets": 124397000,
+   "currentLiabilities": 1790206000,
+   "cash": 11635000,
+   "equity": -1456788000,
+   "retainedEarnings": 0,
+   "totalDebt": 1434952000,
+   "freeCashFlow": 16973000
+  }
+ ]
+}

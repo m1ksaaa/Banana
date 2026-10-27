@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "DSGN",
+ "name": "Design Therapeutics, Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001807120",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001807120&type=10-K",
+  "retrieved": "2026-10-27T19:18:15.636Z"
+ },
+ "annual": [
+  {
+   "year": 2020,
+   "periodEnd": "2020-12-31",
+   "revenue": 226000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -8330000,
+   "netIncome": -8280000,
+   "operatingCashFlow": -8669000,
+   "capex": 76000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 6060000,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 36516000,
+   "totalLiabilities": 2475000,
+   "currentAssets": 36233000,
+   "currentLiabilities": 2330000,
+   "cash": 2379000,
+   "equity": -11315000,
+   "retainedEarnings": -11923000,
+   "totalDebt": null,
+   "freeCashFlow": -8745000
+  }
+ ]
+}

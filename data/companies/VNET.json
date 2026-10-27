@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "VNET",
+ "name": "VNET Group, Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001508475",
+ "sector": "Services-Computer Programming, Data Processing, Etc.",
+ "fiscalYearEndMonth": null,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001508475&type=10-K",
+  "retrieved": "2026-10-27T19:43:15.062Z"
+ },
+ "annual": [
+  {
+   "year": 2019,
+   "periodEnd": "2019-12-31",
+   "revenue": 544251000,
+   "costOfRevenue": 409308000,
+   "grossProfit": 134943000,
+   "operatingIncome": 26176000,
+   "netIncome": -26183000,
+   "operatingCashFlow": 115332000,
+   "capex": 179384000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 12754000,
+   "interestExpense": 49693000,
+   "epsDiluted": -0.04,
+   "sharesDiluted": 668833756,
+   "totalAssets": 2050289000,
+   "totalLiabilities": 1298811000,
+   "currentAssets": 750982000,
+   "currentLiabilities": 641932000,
+   "cash": 259772000,
+   "equity": 711466000,
+   "retainedEarnings": -580078000,
+   "totalDebt": 72036000,
+   "freeCashFlow": -64052000
+  }
+ ]
+}

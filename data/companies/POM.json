@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "POM",
+ "name": "POMDOCTOR Ltd",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001877971",
+ "sector": "Retail-Miscellaneous Retail",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001877971&type=10-K",
+  "retrieved": "2026-10-27T19:35:02.452Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 57187079,
+   "costOfRevenue": 49710837,
+   "grossProfit": 7476242,
+   "operatingIncome": -16964554,
+   "netIncome": -18723015,
+   "operatingCashFlow": -21232309,
+   "capex": 144107,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 1839621,
+   "interestExpense": 563464,
+   "epsDiluted": -3.14,
+   "sharesDiluted": 9680622,
+   "totalAssets": 15380509,
+   "totalLiabilities": 84205017,
+   "currentAssets": 15010029,
+   "currentLiabilities": 31197632,
+   "cash": 1369974,
+   "equity": -64917028,
+   "retainedEarnings": -354063090,
+   "totalDebt": 19279586,
+   "freeCashFlow": -21376416
+  }
+ ]
+}

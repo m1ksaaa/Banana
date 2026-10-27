@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "OTLK",
+ "name": "OUTLOOK THERAPEUTICS, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001649989",
+ "sector": "Biological Products, (No Diagnostic Substances)",
+ "fiscalYearEndMonth": 9,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001649989&type=10-K",
+  "retrieved": "2026-10-27T19:33:38.531Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-09-30",
+   "revenue": 1413535,
+   "costOfRevenue": 1356330,
+   "grossProfit": 57205,
+   "operatingIncome": -67061666,
+   "netIncome": -62424863,
+   "operatingCashFlow": -51829437,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 27180640,
+   "interestExpense": null,
+   "epsDiluted": -1.79,
+   "sharesDiluted": 34796120,
+   "totalAssets": 18584183,
+   "totalLiabilities": 50771844,
+   "currentAssets": 17388969,
+   "currentLiabilities": 45814605,
+   "cash": 8083085,
+   "equity": -32187661,
+   "retainedEarnings": -605709763,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

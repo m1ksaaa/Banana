@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ARTV",
+ "name": "Artiva Biotherapeutics, Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001817241",
+ "sector": "Biological Products, (No Diagnostic Substances)",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001817241&type=10-K",
+  "retrieved": "2026-10-27T19:10:58.555Z"
+ },
+ "annual": [
+  {
+   "year": 2023,
+   "periodEnd": "2023-12-31",
+   "revenue": 32923000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -30671000,
+   "netIncome": -28720000,
+   "operatingCashFlow": -47430000,
+   "capex": 3258000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 50251000,
+   "interestExpense": null,
+   "epsDiluted": -35.78,
+   "sharesDiluted": 802747,
+   "totalAssets": 105114000,
+   "totalLiabilities": 50716000,
+   "currentAssets": 79821000,
+   "currentLiabilities": 12227000,
+   "cash": 53504000,
+   "equity": -162015000,
+   "retainedEarnings": -181311000,
+   "totalDebt": null,
+   "freeCashFlow": -50688000
+  }
+ ]
+}

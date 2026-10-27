@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ENGS",
+ "name": "Energys Group Ltd",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001971828",
+ "sector": "Electrical Work",
+ "fiscalYearEndMonth": 6,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001971828&type=10-K",
+  "retrieved": "2026-10-27T19:19:09.094Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-06-30",
+   "revenue": 9457387,
+   "costOfRevenue": 7523581,
+   "grossProfit": 1933806,
+   "operatingIncome": -2385744,
+   "netIncome": -2847879,
+   "operatingCashFlow": -685763,
+   "capex": 11136,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 177127,
+   "interestExpense": null,
+   "epsDiluted": -0.23,
+   "sharesDiluted": 12554795,
+   "totalAssets": 14382025,
+   "totalLiabilities": 12338270,
+   "currentAssets": 10232088,
+   "currentLiabilities": 12147727,
+   "cash": 265122,
+   "equity": 2043755,
+   "retainedEarnings": -12812179,
+   "totalDebt": 8397806,
+   "freeCashFlow": -696899
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "REFI",
+ "name": "CHICAGO ATLANTIC REAL ESTATE FINANCE, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001867949",
+ "sector": "Real Estate Investment Trusts",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001867949&type=10-K",
+  "retrieved": "2026-10-27T19:36:33.101Z"
+ },
+ "annual": [
+  {
+   "year": 2022,
+   "periodEnd": "2022-12-31",
+   "revenue": 48857628,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": null,
+   "netIncome": 32292477,
+   "operatingCashFlow": 17005155,
+   "capex": null,
+   "dividendsPaid": 28173934,
+   "researchAndDevelopment": null,
+   "interestExpense": 2614138,
+   "epsDiluted": 1.82,
+   "sharesDiluted": 17746214,
+   "totalAssets": 343271050,
+   "totalLiabilities": 79238027,
+   "currentAssets": null,
+   "currentLiabilities": null,
+   "cash": 5715827,
+   "equity": 264033023,
+   "retainedEarnings": -5139684,
+   "totalDebt": 336323706,
+   "freeCashFlow": null
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "schemaVersion": 1,
+ "ticker": "KARO",
+ "name": "KAROOOOO LTD.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001828102",
+ "sector": "Services-Prepackaged Software",
+ "fiscalYearEndMonth": 2,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001828102&type=10-K",
+  "retrieved": "2026-10-27T19:26:35.469Z"
+ },
+ "annual": []
+}

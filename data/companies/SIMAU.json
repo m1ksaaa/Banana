@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "SIMAU",
+ "name": "SIM Acquisition Corp. I",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002014982",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002014982&type=10-K",
+  "retrieved": "2026-10-27T19:38:48.344Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -1005841,
+   "netIncome": 8789649,
+   "operatingCashFlow": -631658,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 245388730,
+   "totalLiabilities": 11254592,
+   "currentAssets": 270427,
+   "currentLiabilities": 304592,
+   "cash": null,
+   "equity": -10884165,
+   "retainedEarnings": -10884932,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

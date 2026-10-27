@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "GLE",
+ "name": "GLOBAL ENGINE GROUP HOLDING LIMITED",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001908705",
+ "sector": "Services-Computer Processing & Data Preparation",
+ "fiscalYearEndMonth": 6,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001908705&type=10-K",
+  "retrieved": "2026-10-27T19:22:18.375Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-06-30",
+   "revenue": 2940304,
+   "costOfRevenue": 2476434,
+   "grossProfit": 463870,
+   "operatingIncome": -905548,
+   "netIncome": -743736,
+   "operatingCashFlow": -1172504,
+   "capex": 168810,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": 235,
+   "epsDiluted": -0.04,
+   "sharesDiluted": 17750137,
+   "totalAssets": 9392676,
+   "totalLiabilities": 1328379,
+   "currentAssets": 4558671,
+   "currentLiabilities": 1326966,
+   "cash": null,
+   "equity": 8064297,
+   "retainedEarnings": 1059343,
+   "totalDebt": null,
+   "freeCashFlow": -1341314
+  }
+ ]
+}

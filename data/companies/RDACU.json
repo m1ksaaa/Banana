@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "RDACU",
+ "name": "RISING DRAGON ACQUISITION CORP.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002018145",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002018145&type=10-K",
+  "retrieved": "2026-10-27T19:36:22.565Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": null,
+   "netIncome": 1573962,
+   "operatingCashFlow": -660474,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 44425757,
+   "totalLiabilities": 2288029,
+   "currentAssets": 37174,
+   "currentLiabilities": 419279,
+   "cash": 37174,
+   "equity": -2250855,
+   "retainedEarnings": -2251030,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

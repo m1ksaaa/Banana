@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "LKSP",
+ "name": "Lake Superior Acquisition Corp.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002043508",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002043508&type=10-K",
+  "retrieved": "2026-10-27T19:28:07.357Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -360173,
+   "netIncome": 666033,
+   "operatingCashFlow": -444357,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 116586383,
+   "totalLiabilities": 4728295,
+   "currentAssets": 560177,
+   "currentLiabilities": 128295,
+   "cash": 485927,
+   "equity": -4168118,
+   "retainedEarnings": -4168118,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "LWACW",
+ "name": "LIGHTWAVE ACQUISITION CORP.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002061379",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002061379&type=10-K",
+  "retrieved": "2026-10-27T19:28:46.339Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -466055,
+   "netIncome": 3633569,
+   "operatingCashFlow": -476927,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 221031393,
+   "totalLiabilities": 7700220,
+   "currentAssets": 916782,
+   "currentLiabilities": 153345,
+   "cash": 808775,
+   "equity": -6748678,
+   "retainedEarnings": -6749530,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

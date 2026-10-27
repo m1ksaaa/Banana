@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "WETO",
+ "name": "Wetour Robotics Ltd",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001941158",
+ "sector": "Local & Suburban Transit & Interurban Hwy Passenger Trans",
+ "fiscalYearEndMonth": 6,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001941158&type=10-K",
+  "retrieved": "2026-10-27T19:43:47.343Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-06-30",
+   "revenue": 4968599,
+   "costOfRevenue": 4144942,
+   "grossProfit": 823657,
+   "operatingIncome": -1866833,
+   "netIncome": -1742567,
+   "operatingCashFlow": -8198584,
+   "capex": 20861,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 147459,
+   "interestExpense": null,
+   "epsDiluted": -0.08,
+   "sharesDiluted": 20668493,
+   "totalAssets": 13065490,
+   "totalLiabilities": 5133363,
+   "currentAssets": 7946755,
+   "currentLiabilities": 4787168,
+   "cash": 1584671,
+   "equity": 7932127,
+   "retainedEarnings": -6946479,
+   "totalDebt": 4494947,
+   "freeCashFlow": -8219445
+  }
+ ]
+}

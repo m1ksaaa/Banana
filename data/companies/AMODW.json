@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "AMODW",
+ "name": "ALPHA MODUS HOLDINGS, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001862463",
+ "sector": "Patent Owners & Lessors",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001862463&type=10-K",
+  "retrieved": "2026-10-27T19:10:12.773Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 7138,
+   "costOfRevenue": null,
+   "grossProfit": 7138,
+   "operatingIncome": -5244188,
+   "netIncome": -8021235,
+   "operatingCashFlow": -3210182,
+   "capex": 8050,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": -0.29,
+   "sharesDiluted": 27306097,
+   "totalAssets": 815827,
+   "totalLiabilities": 8595481,
+   "currentAssets": 807777,
+   "currentLiabilities": 8595481,
+   "cash": null,
+   "equity": -48950162,
+   "retainedEarnings": -99501325,
+   "totalDebt": null,
+   "freeCashFlow": -3218232
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "BPACU",
+ "name": "Blueport Acquisition Ltd",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002064177",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002064177&type=10-K",
+  "retrieved": "2026-10-27T19:13:17.524Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -304193,
+   "netIncome": -19738,
+   "operatingCashFlow": -231448,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 58327817,
+   "totalLiabilities": 1285257,
+   "currentAssets": 543363,
+   "currentLiabilities": 135257,
+   "cash": 480852,
+   "equity": 3702071,
+   "retainedEarnings": -19738,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ASTL",
+ "name": "ALGOMA STEEL GROUP INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001860805",
+ "sector": "Steel Works, Blast Furnaces & Rolling Mills (Coke Ovens)",
+ "fiscalYearEndMonth": 3,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001860805&type=10-K",
+  "retrieved": "2026-10-27T19:11:10.455Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": null,
+   "netIncome": -984900000,
+   "operatingCashFlow": null,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": null,
+   "totalLiabilities": null,
+   "currentAssets": null,
+   "currentLiabilities": null,
+   "cash": null,
+   "equity": null,
+   "retainedEarnings": null,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

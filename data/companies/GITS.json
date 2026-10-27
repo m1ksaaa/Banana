@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "GITS",
+ "name": "Global Interactive Technologies, Inc",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001911545",
+ "sector": "Services-Computer Programming, Data Processing, Etc.",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001911545&type=10-K",
+  "retrieved": "2026-10-27T19:22:12.764Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 1932,
+   "costOfRevenue": null,
+   "grossProfit": 1932,
+   "operatingIncome": -2438820,
+   "netIncome": -4632893,
+   "operatingCashFlow": -751197,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": 349,
+   "epsDiluted": -1.44,
+   "sharesDiluted": 3220583,
+   "totalAssets": 4376094,
+   "totalLiabilities": 933389,
+   "currentAssets": 42276,
+   "currentLiabilities": 933389,
+   "cash": 6990,
+   "equity": 3442705,
+   "retainedEarnings": -42534194,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

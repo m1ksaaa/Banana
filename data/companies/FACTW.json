@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "FACTW",
+ "name": "FACT II ACQUISITION CORP.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002028935",
+ "sector": "Aircraft Parts & Auxiliary Equipment, NEC",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002028935&type=10-K",
+  "retrieved": "2026-10-27T19:19:54.281Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -2225030,
+   "netIncome": 5017538,
+   "operatingCashFlow": -903130,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 184422847,
+   "totalLiabilities": 9161472,
+   "currentAssets": 637391,
+   "currentLiabilities": 23507,
+   "cash": null,
+   "equity": -8524081,
+   "retainedEarnings": -8524763,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

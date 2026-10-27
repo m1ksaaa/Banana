@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "NA",
+ "name": "Nano Labs Ltd",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001872302",
+ "sector": "Semiconductors & Related Devices",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001872302&type=10-K",
+  "retrieved": "2026-10-27T19:30:55.132Z"
+ },
+ "annual": [
+  {
+   "year": 2022,
+   "periodEnd": "2022-12-31",
+   "revenue": 141166599,
+   "costOfRevenue": 108118798,
+   "grossProfit": 33047801,
+   "operatingIncome": 2969907,
+   "netIncome": 4468151,
+   "operatingCashFlow": -39476896,
+   "capex": 2517181,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 18931683,
+   "interestExpense": null,
+   "epsDiluted": 0.04,
+   "sharesDiluted": 5330761,
+   "totalAssets": 52729898,
+   "totalLiabilities": 29122741,
+   "currentAssets": 41445394,
+   "currentLiabilities": 26367747,
+   "cash": 12608229,
+   "equity": 23607157,
+   "retainedEarnings": -28602923,
+   "totalDebt": 40203,
+   "freeCashFlow": -41994077
+  }
+ ]
+}

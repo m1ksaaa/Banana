@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "JF",
+ "name": "J & Friends Holdings Ltd",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001716338",
+ "sector": "Services-Computer Programming, Data Processing, Etc.",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001716338&type=10-K",
+  "retrieved": "2026-10-27T19:26:18.483Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 1598000,
+   "costOfRevenue": null,
+   "grossProfit": 1143000,
+   "operatingIncome": -1340000,
+   "netIncome": -1324000,
+   "operatingCashFlow": 146000,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": -0.002,
+   "sharesDiluted": 581991927,
+   "totalAssets": 9347000,
+   "totalLiabilities": 3268000,
+   "currentAssets": 1808000,
+   "currentLiabilities": 1444000,
+   "cash": null,
+   "equity": 1490000,
+   "retainedEarnings": -370181000,
+   "totalDebt": 1800000,
+   "freeCashFlow": null
+  }
+ ]
+}

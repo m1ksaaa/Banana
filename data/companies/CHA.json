@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "CHA",
+ "name": "Chagee Holdings Ltd.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002013649",
+ "sector": "Retail-Eating & Drinking Places",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002013649&type=10-K",
+  "retrieved": "2026-10-27T19:15:00.504Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 1845734000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": 192652000,
+   "netIncome": 167472000,
+   "operatingCashFlow": 235103000,
+   "capex": 59644000,
+   "dividendsPaid": 176327000,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": 0.88,
+   "sharesDiluted": 164714666,
+   "totalAssets": 1639185000,
+   "totalLiabilities": 555675000,
+   "currentAssets": 1265595000,
+   "currentLiabilities": 407539000,
+   "cash": 1087825000,
+   "equity": 1049863000,
+   "retainedEarnings": 555725000,
+   "totalDebt": null,
+   "freeCashFlow": 175459000
+  }
+ ]
+}

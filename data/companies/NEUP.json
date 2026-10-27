@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "NEUP",
+ "name": "Neuphoria Therapeutics Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001191070",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 6,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001191070&type=10-K",
+  "retrieved": "2026-10-27T19:31:24.664Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-06-30",
+   "revenue": 15649448,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -1129091,
+   "netIncome": -369632,
+   "operatingCashFlow": 77229,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 9005097,
+   "interestExpense": null,
+   "epsDiluted": -0.23,
+   "sharesDiluted": 1622924,
+   "totalAssets": 28589614,
+   "totalLiabilities": 9587040,
+   "currentAssets": 15040831,
+   "currentLiabilities": 4220760,
+   "cash": 14210745,
+   "equity": 19002574,
+   "retainedEarnings": -178346703,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

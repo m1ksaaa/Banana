@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "MRLN",
+ "name": "MERLIN, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002028707",
+ "sector": "Services-Computer Integrated Systems Design",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002028707&type=10-K",
+  "retrieved": "2026-10-27T19:30:28.570Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -3857197,
+   "netIncome": 6008347,
+   "operatingCashFlow": -1328713,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 263149350,
+   "totalLiabilities": 12079932,
+   "currentAssets": 913610,
+   "currentLiabilities": 3329932,
+   "cash": null,
+   "equity": -11166322,
+   "retainedEarnings": -11167198,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ADRX",
+ "name": "ADARx Pharmaceuticals, Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001802369",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001802369&type=10-K",
+  "retrieved": "2026-10-27T19:08:58.088Z"
+ },
+ "annual": []
+}

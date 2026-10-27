@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "FRMM",
+ "name": "Forum Markets, Incorporated",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001690080",
+ "sector": "Finance Services",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001690080&type=10-K",
+  "retrieved": "2026-10-27T19:21:07.132Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 6547000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -233450000,
+   "netIncome": -450521000,
+   "operatingCashFlow": -26052000,
+   "capex": 244275000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": -54.32,
+   "sharesDiluted": 8164638,
+   "totalAssets": 306297000,
+   "totalLiabilities": 66879000,
+   "currentAssets": 13570000,
+   "currentLiabilities": 40929000,
+   "cash": 8018000,
+   "equity": 239418000,
+   "retainedEarnings": -592044000,
+   "totalDebt": null,
+   "freeCashFlow": -270327000
+  }
+ ]
+}

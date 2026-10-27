@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "JUNS",
+ "name": "JUPITER NEUROSCIENCES, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001679628",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001679628&type=10-K",
+  "retrieved": "2026-10-27T19:26:29.528Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 21796,
+   "costOfRevenue": 4231,
+   "grossProfit": 17565,
+   "operatingIncome": -8908721,
+   "netIncome": -8644897,
+   "operatingCashFlow": -5413736,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 2086574,
+   "interestExpense": 66020,
+   "epsDiluted": -0.25,
+   "sharesDiluted": 34628588,
+   "totalAssets": 5564030,
+   "totalLiabilities": 7395882,
+   "currentAssets": 4824978,
+   "currentLiabilities": 7395882,
+   "cash": 3789342,
+   "equity": -1831852,
+   "retainedEarnings": -34667026,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

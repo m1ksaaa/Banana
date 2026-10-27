@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "CAPNU",
+ "name": "Cayson Acquisition Corp",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002024203",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002024203&type=10-K",
+  "retrieved": "2026-10-27T19:14:08.130Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -908002,
+   "netIncome": 1637488,
+   "operatingCashFlow": -401584,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 64639912,
+   "totalLiabilities": 3409330,
+   "currentAssets": 151987,
+   "currentLiabilities": 1309330,
+   "cash": 63670,
+   "equity": -3257343,
+   "retainedEarnings": -3257526,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

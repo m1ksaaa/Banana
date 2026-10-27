@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ARAI",
+ "name": "Arrive AI Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001818274",
+ "sector": "Services-To Dwellings & Other Buildings",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001818274&type=10-K",
+  "retrieved": "2026-10-27T19:10:44.449Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 113250,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": null,
+   "netIncome": -12826384,
+   "operatingCashFlow": -8253348,
+   "capex": 495185,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 600510,
+   "interestExpense": null,
+   "epsDiluted": -0.4,
+   "sharesDiluted": 32195123,
+   "totalAssets": 10931065,
+   "totalLiabilities": 8455465,
+   "currentAssets": 2311182,
+   "currentLiabilities": 6728974,
+   "cash": null,
+   "equity": 2475600,
+   "retainedEarnings": -28746939,
+   "totalDebt": 1418,
+   "freeCashFlow": -8748533
+  }
+ ]
+}

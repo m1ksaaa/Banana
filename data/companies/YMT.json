@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "YMT",
+ "name": "Yimutian Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001991605",
+ "sector": "Services-Computer Processing & Data Preparation",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001991605&type=10-K",
+  "retrieved": "2026-10-27T19:44:58.525Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 20113000,
+   "costOfRevenue": 3089000,
+   "grossProfit": 17024000,
+   "operatingIncome": -5974000,
+   "netIncome": -6670000,
+   "operatingCashFlow": -7032000,
+   "capex": 122000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 4232000,
+   "interestExpense": 802000,
+   "epsDiluted": null,
+   "sharesDiluted": 1340668787,
+   "totalAssets": 23038000,
+   "totalLiabilities": 46233000,
+   "currentAssets": 22038000,
+   "currentLiabilities": 44307000,
+   "cash": 15656000,
+   "equity": -27372000,
+   "retainedEarnings": -251988000,
+   "totalDebt": null,
+   "freeCashFlow": -7154000
+  }
+ ]
+}

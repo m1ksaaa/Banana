@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ADVB",
+ "name": "Advanced Biomed Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001941029",
+ "sector": "Services-Medical Laboratories",
+ "fiscalYearEndMonth": 6,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001941029&type=10-K",
+  "retrieved": "2026-10-27T19:09:02.143Z"
+ },
+ "annual": [
+  {
+   "year": 2026,
+   "periodEnd": "2026-06-30",
+   "revenue": 127637,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -6233542,
+   "netIncome": 6677077,
+   "operatingCashFlow": -1946943,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": 5.33,
+   "sharesDiluted": 1252727,
+   "totalAssets": 13750716,
+   "totalLiabilities": 1473989,
+   "currentAssets": 13749512,
+   "currentLiabilities": 1473989,
+   "cash": 385535,
+   "equity": 12276727,
+   "retainedEarnings": -12555967,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "schemaVersion": 1,
+ "ticker": "TURB",
+ "name": "TURBO ENERGY, S.A.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001963439",
+ "sector": "Miscellaneous Electrical Machinery, Equipment & Supplies",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001963439&type=10-K",
+  "retrieved": "2026-10-27T19:42:02.205Z"
+ },
+ "annual": []
+}

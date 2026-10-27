@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "GBFH",
+ "name": "GBANK FINANCIAL HOLDINGS INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001791145",
+ "sector": "State Commercial Banks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001791145&type=10-K",
+  "retrieved": "2026-10-27T19:21:44.943Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 1235000000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": null,
+   "netIncome": 20929000,
+   "operatingCashFlow": 9639000,
+   "capex": 496000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": 1.44,
+   "sharesDiluted": 14484059,
+   "totalAssets": 1359491000,
+   "totalLiabilities": 1193736000,
+   "currentAssets": null,
+   "currentLiabilities": null,
+   "cash": 197864000,
+   "equity": 165755000,
+   "retainedEarnings": 85366000,
+   "totalDebt": 371000,
+   "freeCashFlow": 9143000
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ONCHW",
+ "name": "1RT ACQUISITION CORP.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002054272",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002054272&type=10-K",
+  "retrieved": "2026-10-27T19:33:10.898Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -474525,
+   "netIncome": 2889101,
+   "operatingCashFlow": -497444,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 176383931,
+   "totalLiabilities": 8357001,
+   "currentAssets": 475844,
+   "currentLiabilities": 144501,
+   "cash": 383075,
+   "equity": -7836696,
+   "retainedEarnings": -7837127,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

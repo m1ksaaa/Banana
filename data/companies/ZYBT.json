@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ZYBT",
+ "name": "Zhengye Biotechnology Holding Limited",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001975641",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": null,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001975641&type=10-K",
+  "retrieved": "2026-10-27T19:45:17.053Z"
+ },
+ "annual": [
+  {
+   "year": 2024,
+   "periodEnd": "2024-12-31",
+   "revenue": 25531000,
+   "costOfRevenue": 13023000,
+   "grossProfit": 12508000,
+   "operatingIncome": 2252000,
+   "netIncome": 1550000,
+   "operatingCashFlow": 5624000,
+   "capex": 1862000,
+   "dividendsPaid": 2195000,
+   "researchAndDevelopment": 1753000,
+   "interestExpense": 554000,
+   "epsDiluted": 0.03,
+   "sharesDiluted": 45666376,
+   "totalAssets": 67577000,
+   "totalLiabilities": 19276000,
+   "currentAssets": 24328000,
+   "currentLiabilities": 18618000,
+   "cash": 2549000,
+   "equity": 38903000,
+   "retainedEarnings": 6597000,
+   "totalDebt": 11842000,
+   "freeCashFlow": 3762000
+  }
+ ]
+}

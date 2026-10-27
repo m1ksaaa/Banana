@@ -1,0 +1,17 @@
+{
+ "schemaVersion": 1,
+ "ticker": "KARD",
+ "name": "Kardigan, Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002123613",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002123613&type=10-K",
+  "retrieved": "2026-10-27T19:26:34.815Z"
+ },
+ "annual": []
+}

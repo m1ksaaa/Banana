@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ONEN",
+ "name": "HENNESSY CAPITAL INVESTMENT CORP. VII",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001846416",
+ "sector": "Electric Services",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001846416&type=10-K",
+  "retrieved": "2026-10-27T19:33:13.274Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -3656556,
+   "netIncome": 3687416,
+   "operatingCashFlow": -1883274,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 198284635,
+   "totalLiabilities": 10376953,
+   "currentAssets": 1326329,
+   "currentLiabilities": 326953,
+   "cash": 984245,
+   "equity": -9050624,
+   "retainedEarnings": -9051326,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

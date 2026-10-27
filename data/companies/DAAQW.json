@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "DAAQW",
+ "name": "DIGITAL ASSET ACQUISITION CORP.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002052162",
+ "sector": "State Commercial Banks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002052162&type=10-K",
+  "retrieved": "2026-10-27T19:17:25.330Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -379159,
+   "netIncome": 4244525,
+   "operatingCashFlow": -2183,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 178292737,
+   "totalLiabilities": 7009536,
+   "currentAssets": 1146546,
+   "currentLiabilities": 109536,
+   "cash": 1060921,
+   "equity": -5841256,
+   "retainedEarnings": -5841831,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

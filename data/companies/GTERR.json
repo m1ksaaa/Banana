@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "GTERR",
+ "name": "GLOBA TERRA ACQUISITION CORPORATION",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002043766",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002043766&type=10-K",
+  "retrieved": "2026-10-27T19:23:01.622Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": null,
+   "netIncome": 2882536,
+   "operatingCashFlow": -437150,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 179071521,
+   "totalLiabilities": 1210014,
+   "currentAssets": 690568,
+   "currentLiabilities": 95271,
+   "cash": 0,
+   "equity": -519446,
+   "retainedEarnings": -520068,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

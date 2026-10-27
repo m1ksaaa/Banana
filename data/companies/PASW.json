@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "PASW",
+ "name": "PING AN BIOMEDICAL CO., LTD.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001897532",
+ "sector": "Apparel & Other Finishd Prods of  Fabrics & Similar Matl",
+ "fiscalYearEndMonth": null,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001897532&type=10-K",
+  "retrieved": "2026-10-27T19:33:58.590Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-09-30",
+   "revenue": 4796732,
+   "costOfRevenue": 4663356,
+   "grossProfit": 133376,
+   "operatingIncome": -2065103,
+   "netIncome": -1802108,
+   "operatingCashFlow": -902902,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": 43132,
+   "epsDiluted": -0.1,
+   "sharesDiluted": 18479452,
+   "totalAssets": 9610131,
+   "totalLiabilities": 3255025,
+   "currentAssets": 8947527,
+   "currentLiabilities": 3241582,
+   "cash": 164697,
+   "equity": 6355106,
+   "retainedEarnings": -2956513,
+   "totalDebt": 1404692,
+   "freeCashFlow": null
+  }
+ ]
+}

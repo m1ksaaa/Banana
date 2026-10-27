@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "BZUN",
+ "name": "Baozun Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001625414",
+ "sector": "Retail-Catalog & Mail-Order Houses",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001625414&type=10-K",
+  "retrieved": "2026-10-27T19:13:57.927Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 1422186000,
+   "costOfRevenue": 368365000,
+   "grossProfit": 1053821000,
+   "operatingIncome": 8087000,
+   "netIncome": -34621000,
+   "operatingCashFlow": 60121000,
+   "capex": 15236000,
+   "dividendsPaid": 3173000,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": -0.2,
+   "sharesDiluted": 173480754,
+   "totalAssets": 1385812000,
+   "totalLiabilities": 600528000,
+   "currentAssets": 972837000,
+   "currentLiabilities": 521255000,
+   "cash": 129747000,
+   "equity": 520885000,
+   "retainedEarnings": -133546000,
+   "totalDebt": 172709000,
+   "freeCashFlow": 44885000
+  }
+ ]
+}

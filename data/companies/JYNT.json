@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "JYNT",
+ "name": "Joint Corp",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001612630",
+ "sector": "Patent Owners & Lessors",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001612630&type=10-K",
+  "retrieved": "2026-10-27T19:26:31.854Z"
+ },
+ "annual": [
+  {
+   "year": 2018,
+   "periodEnd": "2018-12-31",
+   "revenue": 36661660,
+   "costOfRevenue": 4310249,
+   "grossProfit": 32351411,
+   "operatingIncome": 142561,
+   "netIncome": 146696,
+   "operatingCashFlow": 5452268,
+   "capex": 1111117,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": 0.01,
+   "sharesDiluted": 14031717,
+   "totalAssets": 23427713,
+   "totalLiabilities": 22700112,
+   "currentAssets": 11303988,
+   "currentLiabilities": 10273127,
+   "cash": 8716874,
+   "equity": 727501,
+   "retainedEarnings": -37384651,
+   "totalDebt": null,
+   "freeCashFlow": 4341151
+  }
+ ]
+}

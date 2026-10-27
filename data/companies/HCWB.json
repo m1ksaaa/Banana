@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "HCWB",
+ "name": "HCW Biologics Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001828673",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001828673&type=10-K",
+  "retrieved": "2026-10-27T19:23:30.837Z"
+ },
+ "annual": [
+  {
+   "year": 2020,
+   "periodEnd": "2020-12-31",
+   "revenue": 4099750,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -5824525,
+   "netIncome": -5802201,
+   "operatingCashFlow": -10431326,
+   "capex": 186682,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 7255227,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 15398086,
+   "totalLiabilities": null,
+   "currentAssets": 12148668,
+   "currentLiabilities": 1001084,
+   "cash": 8455834,
+   "equity": -16718397,
+   "retainedEarnings": -16718877,
+   "totalDebt": null,
+   "freeCashFlow": -10618008
+  }
+ ]
+}

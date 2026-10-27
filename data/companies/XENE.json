@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "XENE",
+ "name": "XENON PHARMACEUTICALS INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001582313",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001582313&type=10-K",
+  "retrieved": "2026-10-27T19:44:30.571Z"
+ },
+ "annual": [
+  {
+   "year": 2017,
+   "periodEnd": "2017-12-31",
+   "revenue": 311000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -32575000,
+   "netIncome": -30704000,
+   "operatingCashFlow": -28726000,
+   "capex": 315000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 25573000,
+   "interestExpense": null,
+   "epsDiluted": -1.72,
+   "sharesDiluted": 18001759,
+   "totalAssets": 46121000,
+   "totalLiabilities": 10187000,
+   "currentAssets": 44821000,
+   "currentLiabilities": 4083000,
+   "cash": 20486000,
+   "equity": 35934000,
+   "retainedEarnings": -173388000,
+   "totalDebt": 6804000,
+   "freeCashFlow": -29041000
+  }
+ ]
+}

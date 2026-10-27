@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ASBP",
+ "name": "ASPIRE     BIOPHARMA HOLDINGS, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001847345",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001847345&type=10-K",
+  "retrieved": "2026-10-27T19:11:00.640Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 6202,
+   "costOfRevenue": 6318,
+   "grossProfit": -116,
+   "operatingIncome": -19351291,
+   "netIncome": -24480848,
+   "operatingCashFlow": -4923488,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 923914,
+   "interestExpense": 8531275,
+   "epsDiluted": -16.38,
+   "sharesDiluted": 1494956,
+   "totalAssets": 1312166,
+   "totalLiabilities": 7688495,
+   "currentAssets": 1312166,
+   "currentLiabilities": 7592833,
+   "cash": 1003904,
+   "equity": -6376329,
+   "retainedEarnings": -27258081,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "LFS",
+ "name": "LEIFRAS Co., Ltd.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002030277",
+ "sector": "Services-Educational Services",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002030277&type=10-K",
+  "retrieved": "2026-10-27T19:27:43.800Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 74798483,
+   "costOfRevenue": 52696323,
+   "grossProfit": 22102160,
+   "operatingIncome": 4001313,
+   "netIncome": 2796299,
+   "operatingCashFlow": 2986582,
+   "capex": 271672,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": 105107,
+   "epsDiluted": 0.11,
+   "sharesDiluted": 25194441,
+   "totalAssets": 29816331,
+   "totalLiabilities": 18038813,
+   "currentAssets": 22149261,
+   "currentLiabilities": 14349109,
+   "cash": 16097463,
+   "equity": 11777518,
+   "retainedEarnings": 4783082,
+   "totalDebt": 1756709,
+   "freeCashFlow": 2714910
+  }
+ ]
+}

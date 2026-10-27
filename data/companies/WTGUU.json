@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "WTGUU",
+ "name": "WINTERGREEN ACQUISITION CORP.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002053927",
+ "sector": "Services-Computer Programming, Data Processing, Etc.",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002053927&type=10-K",
+  "retrieved": "2026-10-27T19:44:15.456Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -403821,
+   "netIncome": 988403,
+   "operatingCashFlow": -274011,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 58753226,
+   "totalLiabilities": 115845,
+   "currentAssets": 1327590,
+   "currentLiabilities": 115845,
+   "cash": 1324992,
+   "equity": 5314332,
+   "retainedEarnings": null,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

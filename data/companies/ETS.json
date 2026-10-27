@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ETS",
+ "name": "Elite Express Holding Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002053641",
+ "sector": "Trucking & Courier Services (No Air)",
+ "fiscalYearEndMonth": 11,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002053641&type=10-K",
+  "retrieved": "2026-10-27T19:19:32.103Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-11-30",
+   "revenue": 2665948,
+   "costOfRevenue": 2647737,
+   "grossProfit": 18211,
+   "operatingIncome": -2503845,
+   "netIncome": -2185987,
+   "operatingCashFlow": -2819786,
+   "capex": 86325,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 922772,
+   "interestExpense": null,
+   "epsDiluted": -0.16,
+   "sharesDiluted": 13968179,
+   "totalAssets": 13705022,
+   "totalLiabilities": 513155,
+   "currentAssets": 12381556,
+   "currentLiabilities": 513155,
+   "cash": 1308529,
+   "equity": 13191867,
+   "retainedEarnings": -2494996,
+   "totalDebt": null,
+   "freeCashFlow": -2906111
+  }
+ ]
+}
