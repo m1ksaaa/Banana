@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "BBCI",
- "name": "Bradbury Capital Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001986694",
- "sector": "Services-Business Services, NEC",
- "fiscalYearEndMonth": null,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001986694&type=10-K",
-  "retrieved": "2026-10-27T19:11:59.576Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"BBCI","name":"Bradbury Capital Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001986694","sicCode":7389,"sicDescription":"Services-Business Services, NEC","sector":"industrials","industry":"Business Services","profile":"general","fiscalYearEndMonth":null,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001986694","retrieved":"2026-10-27T20:10:27.896Z"},"market":{"price":1.6,"priceDate":"2026-10-27","marketCap":64413274,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

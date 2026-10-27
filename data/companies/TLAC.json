@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "TLAC",
- "name": "Three Lions Acquisition Corp.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002128462",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002128462&type=10-K",
-  "retrieved": "2026-10-27T19:41:14.965Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"TLAC","name":"Three Lions Acquisition Corp.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002128462","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002128462","retrieved":"2026-10-27T20:30:39.355Z"},"market":{"price":9.8401,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[{"date":"2026-09-04","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2128462/000119312526383643/d111915d8k.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

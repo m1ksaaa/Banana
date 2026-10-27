@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "SNY",
- "name": "Sanofi",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001121404",
- "sector": "Pharmaceutical Preparations",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001121404&type=10-K",
-  "retrieved": "2026-10-27T19:39:25.219Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"SNY","name":"Sanofi","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001121404","sicCode":2834,"sicDescription":"Pharmaceutical Preparations","sector":"healthcare","industry":"Biotechnology: Pharmaceutical Preparations","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001121404","retrieved":"2026-10-27T20:29:16.235Z"},"market":{"price":41.79,"priceDate":"2026-10-27","marketCap":101919716684,"sharesOutstanding":1219427096,"sharesOutstandingDate":"2025-12-31","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

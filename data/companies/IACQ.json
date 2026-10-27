@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "IACQ",
- "name": "IRENIC ACQUISITION CORP.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002122505",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002122505&type=10-K",
-  "retrieved": "2026-10-27T19:24:29.892Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"IACQ","name":"Irenic Acquisition Corp.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002122505","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002122505","retrieved":"2026-10-27T20:19:17.509Z"},"market":{"price":9.92,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[{"date":"2026-09-04","items":["4.01"],"severity":3,"url":"https://www.sec.gov/Archives/edgar/data/2122505/000110465926105500/tm2624780d1_8k.htm"},{"date":"2026-04-29","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2122505/000110465926051495/tm269391d12_8k.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

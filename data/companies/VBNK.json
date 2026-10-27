@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "VBNK",
- "name": "VersaBank",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001690639",
- "sector": "Commercial Banks, NEC",
- "fiscalYearEndMonth": 10,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001690639&type=10-K",
-  "retrieved": "2026-10-27T19:42:49.657Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"VBNK","name":"VersaBank","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001690639","sicCode":6029,"sicDescription":"Commercial Banks, NEC","sector":"financials","industry":"Commercial Banks","profile":"financial","fiscalYearEndMonth":10,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001690639","retrieved":"2026-10-27T20:31:57.298Z"},"market":{"price":23.32,"priceDate":"2026-10-27","marketCap":756012922,"sharesOutstanding":52005154,"sharesOutstandingDate":"2024-10-31","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

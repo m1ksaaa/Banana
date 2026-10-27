@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "MBVI",
- "name": "M3-BRIGADE ACQUISITION VI CORP.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002073928",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002073928&type=10-K",
-  "retrieved": "2026-10-27T19:29:13.125Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"MBVI","name":"M3-Brigade Acquisition VI Corp.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002073928","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002073928","retrieved":"2026-10-27T20:22:27.044Z"},"market":{"price":10.25,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

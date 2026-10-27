@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "XNDU",
- "name": "XANADU QUANTUM TECHNOLOGIES LIMITED",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002097163",
- "sector": "Electronic Computers",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002097163&type=10-K",
-  "retrieved": "2026-10-27T19:44:38.442Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"XNDU","name":"Xanadu Quantum Technologies Ltd","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002097163","sicCode":3571,"sicDescription":"Electronic Computers","sector":"technology","industry":"Computer Manufacturing","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002097163","retrieved":"2026-10-27T20:33:17.521Z"},"market":{"price":2.56,"priceDate":"2026-10-27","marketCap":778813501,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

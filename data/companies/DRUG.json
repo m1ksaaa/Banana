@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "DRUG",
- "name": "BRIGHT MINDS BIOSCIENCES INC.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001827401",
- "sector": "Pharmaceutical Preparations",
- "fiscalYearEndMonth": 9,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001827401&type=10-K",
-  "retrieved": "2026-10-27T19:18:12.713Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"DRUG","name":"BRIGHT MINDS BIOSCIENCES INC.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001827401","sicCode":2834,"sicDescription":"Pharmaceutical Preparations","sector":"healthcare","industry":"Biotechnology: Pharmaceutical Preparations","profile":"general","fiscalYearEndMonth":9,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001827401","retrieved":"2026-10-27T20:14:44.885Z"},"market":{"price":51.09,"priceDate":"2026-10-27","marketCap":501681371,"sharesOutstanding":4524087,"sharesOutstandingDate":"2024-09-30","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

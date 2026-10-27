@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "VMAR",
- "name": "VISION MARINE TECHNOLOGIES INC.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001813783",
- "sector": "Ship & Boat Building & Repairing",
- "fiscalYearEndMonth": null,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001813783&type=10-K",
-  "retrieved": "2026-10-27T19:43:12.333Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"VMAR","name":"Vision Marine Technologies Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001813783","sicCode":3730,"sicDescription":"Ship & Boat Building & Repairing","sector":"industrials","industry":"Marine Transportation","profile":"general","fiscalYearEndMonth":null,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001813783","retrieved":"2026-10-27T20:32:13.702Z"},"market":{"price":7.42,"priceDate":"2026-10-27","marketCap":4845601,"sharesOutstanding":4907137,"sharesOutstandingDate":"2025-08-31","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[{"year":2023,"periodEnd":"2023-08-31","revenue":null,"costOfRevenue":null,"grossProfit":1138105,"researchAndDevelopment":4237638,"operatingIncome":null,"interestExpense":null,"pretaxIncome":null,"incomeTaxExpense":null,"netIncome":-15504780,"depreciationAndAmortization":null,"shareBasedCompensation":null,"operatingCashFlow":null,"capex":null,"dividendsPaid":null,"buybacks":null,"epsDiluted":null,"sharesDiluted":null,"totalAssets":17843450,"totalLiabilities":9237309,"currentAssets":null,"currentLiabilities":null,"cash":null,"inventory":null,"accountsReceivable":null,"goodwill":7152524,"intangibleAssets":null,"equity":null,"retainedEarnings":null,"totalDebt":null,"sharesOutstanding":null,"freeCashFlow":null},{"year":2024,"periodEnd":"2024-08-31","revenue":null,"costOfRevenue":null,"grossProfit":1101543,"researchAndDevelopment":2013775,"operatingIncome":null,"interestExpense":null,"pretaxIncome":null,"incomeTaxExpense":null,"netIncome":-10383171,"depreciationAndAmortization":null,"shareBasedCompensation":null,"operatingCashFlow":null,"capex":null,"dividendsPaid":null,"buybacks":null,"epsDiluted":null,"sharesDiluted":null,"totalAssets":8456101,"totalLiabilities":6226709,"currentAssets":null,"currentLiabilities":null,"cash":null,"inventory":null,"accountsReceivable":null,"goodwill":null,"intangibleAssets":null,"equity":null,"retainedEarnings":null,"totalDebt":null,"sharesOutstanding":null,"freeCashFlow":null},{"year":2025,"periodEnd":"2025-08-31","revenue":null,"costOfRevenue":null,"grossProfit":4766494,"researchAndDevelopment":1183963,"operatingIncome":null,"interestExpense":null,"pretaxIncome":null,"incomeTaxExpense":null,"netIncome":-21651993,"depreciationAndAmortization":null,"shareBasedCompensation":null,"operatingCashFlow":null,"capex":null,"dividendsPaid":null,"buybacks":null,"epsDiluted":null,"sharesDiluted":null,"totalAssets":69913257,"totalLiabilities":61462255,"currentAssets":null,"currentLiabilities":null,"cash":7418779,"inventory":null,"accountsReceivable":null,"goodwill":null,"intangibleAssets":null,"equity":null,"retainedEarnings":null,"totalDebt":null,"sharesOutstanding":null,"freeCashFlow":null}]}

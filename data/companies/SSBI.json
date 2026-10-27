@@ -1,13 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "SSBI",
- "name": "Summit State Bank",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": null,
- "sector": null,
- "source": null,
- "annual": [],
- "note": "Nincs SEC-azonosító (valószínűleg alap, warrant, unit vagy külföldi papír)."
-}
+{"schemaVersion":2,"ticker":"SSBI","name":"Summit State Bank","exchange":"NASDAQ","currency":"USD","demo":false,"cik":null,"sector":"financials","industry":"Major Banks","profile":"general","source":null,"annual":[],"note":"noSecFiling"}

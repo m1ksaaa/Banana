@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "NICM",
- "name": "Nicola Mining Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001526475",
- "sector": "Metal Mining",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001526475&type=10-K",
-  "retrieved": "2026-10-27T19:31:35.675Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"NICM","name":"NICOLA MINING INC.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001526475","sicCode":1000,"sicDescription":"Metal Mining","sector":"materials","industry":"Metal Mining","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001526475","retrieved":"2026-10-27T20:24:03.601Z"},"market":{"price":4.945,"priceDate":"2026-10-27","marketCap":98017748,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"annual":[]}

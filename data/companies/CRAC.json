@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "CRAC",
- "name": "CROWN RESERVE ACQUISITION CORP. I",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002070887",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002070887&type=10-K",
-  "retrieved": "2026-10-27T19:16:19.910Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"CRAC","name":"Crown Reserve Acquisition Corp. I","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002070887","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002070887","retrieved":"2026-10-27T20:13:32.578Z"},"market":{"price":10.27,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[{"date":"2026-09-28","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2070887/000121390026103656/ea0306690-8k425_crown1.htm"},{"date":"2026-08-26","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2070887/000121390026094001/ea0303505-8k425_crown1.htm"},{"date":"2026-04-03","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2070887/000121390026040025/ea0285115-8k425_crown1.htm"},{"date":"2025-11-12","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2070887/000121390025108750/ea0264850-8k_crown1.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

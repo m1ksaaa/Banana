@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "SLMT",
- "name": "Brera Holdings PLC",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001939965",
- "sector": "Finance Services",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001939965&type=10-K",
-  "retrieved": "2026-10-27T19:39:02.678Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"SLMT","name":"Brera Holdings PLC","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001939965","sicCode":6199,"sicDescription":"Finance Services","sector":"financials","industry":"Services-Misc. Amusement & Recreation","profile":"financial","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001939965","retrieved":"2026-10-27T20:29:00.900Z"},"market":{"price":3.2,"priceDate":"2026-10-27","marketCap":35229741,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

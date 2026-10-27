@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "NUR",
- "name": "Nuran Wireless Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001680637",
- "sector": "Computer Communications Equipment",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001680637&type=10-K",
-  "retrieved": "2026-10-27T19:32:16.977Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"NUR","name":"Nuran Wireless Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001680637","sicCode":3576,"sicDescription":"Computer Communications Equipment","sector":"technology","industry":"Computer Communications Equipment","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001680637","retrieved":"2026-10-27T20:24:29.803Z"},"market":{"price":0.7357,"priceDate":"2026-10-27","marketCap":9707341,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "OPTH",
- "name": "Optimi Health Corp.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002027329",
- "sector": "Pharmaceutical Preparations",
- "fiscalYearEndMonth": 9,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002027329&type=10-K",
-  "retrieved": "2026-10-27T19:33:23.433Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"OPTH","name":"Optimi Health Corp.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002027329","sicCode":2834,"sicDescription":"Pharmaceutical Preparations","sector":"healthcare","industry":"Biotechnology: Pharmaceutical Preparations","profile":"general","fiscalYearEndMonth":9,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002027329","retrieved":"2026-10-27T20:25:15.401Z"},"market":{"price":3.12,"priceDate":"2026-10-27","marketCap":17864705,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

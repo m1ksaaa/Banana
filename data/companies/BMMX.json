@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "BMMX",
- "name": "Black Mammoth Metals Corporation - Common Shares",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001929908",
- "sector": "Metal Mining",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001929908&type=10-K",
-  "retrieved": "2026-10-27T19:12:59.913Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"BMMX","name":"Black Mammoth Metals Corp","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001929908","sicCode":1000,"sicDescription":"Metal Mining","sector":"materials","industry":"Metal Mining","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001929908","retrieved":"2026-10-27T20:11:06.348Z"},"market":{"price":2.92,"priceDate":"2026-10-27","marketCap":157719043,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"annual":[]}

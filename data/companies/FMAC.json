@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "FMAC",
- "name": "Future Money Acquisition Corporation",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002099232",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 10,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002099232&type=10-K",
-  "retrieved": "2026-10-27T19:20:45.773Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"FMAC","name":"Future Money Acquisition Corp","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002099232","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":10,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002099232","retrieved":"2026-10-27T20:16:36.521Z"},"market":{"price":10.12,"priceDate":"2026-10-27","marketCap":159696393.11999997,"sharesOutstanding":15780276,"sharesOutstandingDate":"2026-06-08","source":"Nasdaq"},"events":[{"date":"2026-09-25","items":["3.01"],"severity":4,"url":"https://www.sec.gov/Archives/edgar/data/2099232/000149315226044364/form8-k.htm"},{"date":"2026-04-01","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2099232/000149315226014664/form8-k.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "FRVO",
- "name": "Fervo Energy Co",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001853868",
- "sector": "Electric Services",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001853868&type=10-K",
-  "retrieved": "2026-10-27T19:21:12.339Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"FRVO","name":"Fervo Energy Co","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001853868","sicCode":4911,"sicDescription":"Electric Services","sector":"utilities","industry":"Electric Utilities: Central","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001853868","retrieved":"2026-10-27T20:16:54.721Z"},"market":{"price":7.97,"priceDate":"2026-10-27","marketCap":2349262696,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

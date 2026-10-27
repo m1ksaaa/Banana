@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "SNDL",
- "name": "SNDL Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001766600",
- "sector": "Medicinal Chemicals & Botanical Products",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001766600&type=10-K",
-  "retrieved": "2026-10-27T19:39:16.982Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"SNDL","name":"SNDL Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001766600","sicCode":2833,"sicDescription":"Medicinal Chemicals & Botanical Products","sector":"healthcare","industry":" Medicinal Chemicals and Botanical Products ","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001766600","retrieved":"2026-10-27T20:29:10.841Z"},"market":{"price":1.27,"priceDate":"2026-10-27","marketCap":309577161,"sharesOutstanding":263359123,"sharesOutstandingDate":"2025-12-31","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

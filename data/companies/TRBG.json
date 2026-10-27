@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "TRBG",
- "name": "TurboGen Ltd.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002088375",
- "sector": "Electric & Other Services Combined",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002088375&type=10-K",
-  "retrieved": "2026-10-27T19:41:38.955Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"TRBG","name":"Turbogen Ltd.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002088375","sicCode":4931,"sicDescription":"Electric & Other Services Combined","sector":"utilities","industry":"Power Generation","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002088375","retrieved":"2026-10-27T20:30:55.837Z"},"market":{"price":3.43,"priceDate":"2026-10-27","marketCap":87314046,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"annual":[]}

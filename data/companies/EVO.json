@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "EVO",
- "name": "Evotec SE",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001412558",
- "sector": "Pharmaceutical Preparations",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001412558&type=10-K",
-  "retrieved": "2026-10-27T19:19:38.039Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"EVO","name":"Evotec SE","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001412558","sicCode":2834,"sicDescription":"Pharmaceutical Preparations","sector":"healthcare","industry":"Biotechnology: Pharmaceutical Preparations","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001412558","retrieved":"2026-10-27T20:15:47.390Z"},"market":{"price":1.52,"priceDate":"2026-10-27","marketCap":540748457,"sharesOutstanding":177778907,"sharesOutstandingDate":"2025-12-31","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

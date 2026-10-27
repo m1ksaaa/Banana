@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "BOT",
- "name": "RoboStrategy, Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002081119",
- "sector": null,
- "fiscalYearEndMonth": 8,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002081119&type=10-K",
-  "retrieved": "2026-10-27T19:13:15.008Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"BOT","name":"RoboStrategy, Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002081119","sicCode":null,"sicDescription":null,"sector":"other","industry":null,"profile":"general","fiscalYearEndMonth":8,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002081119","retrieved":"2026-10-27T20:11:16.718Z"},"market":{"price":23.94,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

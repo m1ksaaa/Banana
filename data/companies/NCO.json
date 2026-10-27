@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "NCO",
- "name": "Southern Cross Acquisition I Corp.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002116230",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002116230&type=10-K",
-  "retrieved": "2026-10-27T19:31:12.889Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"NCO","name":"Southern Cross Acquisition I Corp.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002116230","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002116230","retrieved":"2026-10-27T20:23:49.986Z"},"market":{"price":9.94,"priceDate":"2026-10-27","marketCap":146409242,"sharesOutstanding":14729300,"sharesOutstandingDate":"2026-09-02","source":"Nasdaq"},"events":[{"date":"2026-07-23","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2116230/000192998026000375/sxgc_8k.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

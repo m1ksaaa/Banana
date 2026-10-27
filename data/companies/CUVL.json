@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "CUVL",
- "name": "Clinuvel Pharmaceuticals Limited",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001290877",
- "sector": "American Depositary Receipts",
- "fiscalYearEndMonth": 6,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001290877&type=10-K",
-  "retrieved": "2026-10-27T19:17:04.563Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"CUVL","name":"Clinuvel Pharmaceuticals Ltd","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001290877","sicCode":8880,"sicDescription":"American Depositary Receipts","sector":"industrials","industry":"Miscellaneous","profile":"general","fiscalYearEndMonth":6,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001290877","retrieved":"2026-10-27T20:14:01.734Z"},"market":{"price":4.96,"priceDate":"2026-10-27","marketCap":248301072,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"annual":[]}

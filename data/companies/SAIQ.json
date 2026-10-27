@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "SAIQ",
- "name": "WISeSat.Space Holdings Corp.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002101411",
- "sector": "Communications Services, NEC",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002101411&type=10-K",
-  "retrieved": "2026-10-27T19:37:50.202Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"SAIQ","name":"WISeSat.Space Holdings Corp.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002101411","sicCode":4899,"sicDescription":"Communications Services, NEC","sector":"communication","industry":"Telecommunications Equipment","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002101411","retrieved":"2026-10-27T20:28:12.915Z"},"market":{"price":6.73,"priceDate":"2026-10-27","marketCap":200662838,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

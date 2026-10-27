@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "BANX",
- "name": "ArrowMark Financial Corp.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001578987",
- "sector": null,
- "fiscalYearEndMonth": null,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001578987&type=10-K",
-  "retrieved": "2026-10-27T19:11:57.408Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"BANX","name":"ArrowMark Financial Corp.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001578987","sicCode":null,"sicDescription":null,"sector":"other","industry":"Trusts Except Educational Religious and Charitable","profile":"general","fiscalYearEndMonth":null,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001578987","retrieved":"2026-10-27T20:10:26.533Z"},"market":{"price":19.675,"priceDate":"2026-10-27","marketCap":139744167,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[{"date":"2026-01-28","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/1578987/000199937126001905/banx-8k_012826.htm"},{"date":"2025-12-19","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/1578987/000110465925122683/tm2533929d1_8k.htm"},{"date":"2025-12-16","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/1578987/000110465925121660/tm2533424d2_8k.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "MOLN",
- "name": "MOLECULAR PARTNERS AG",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001745114",
- "sector": "Biological Products, (No Diagnostic Substances)",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001745114&type=10-K",
-  "retrieved": "2026-10-27T19:30:19.388Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"MOLN","name":"MOLECULAR PARTNERS AG","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001745114","sicCode":2836,"sicDescription":"Biological Products, (No Diagnostic Substances)","sector":"healthcare","industry":"Biotechnology: Biological Products (No Diagnostic Substances)","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001745114","retrieved":"2026-10-27T20:23:11.017Z"},"market":{"price":3.59,"priceDate":"2026-10-27","marketCap":134665075,"sharesOutstanding":40374641,"sharesOutstandingDate":"2025-12-31","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

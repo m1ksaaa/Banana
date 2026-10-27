@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "FNUC",
- "name": "Frontier Nuclear and Minerals Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001769697",
- "sector": "Miscellaneous Metal Ores",
- "fiscalYearEndMonth": 6,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001769697&type=10-K",
-  "retrieved": "2026-10-27T19:20:54.192Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"FNUC","name":"Frontier Nuclear & Minerals Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001769697","sicCode":1090,"sicDescription":"Miscellaneous Metal Ores","sector":"materials","industry":"Other Metals and Minerals","profile":"general","fiscalYearEndMonth":6,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001769697","retrieved":"2026-10-27T20:16:41.139Z"},"market":{"price":0.637,"priceDate":"2026-10-27","marketCap":22867692,"sharesOutstanding":17496334,"sharesOutstandingDate":"2025-06-30","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

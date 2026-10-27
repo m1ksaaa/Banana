@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "SKHY",
- "name": "SK hynix Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002120882",
- "sector": "Semiconductors & Related Devices",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002120882&type=10-K",
-  "retrieved": "2026-10-27T19:38:52.667Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"SKHY","name":"SK hynix Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002120882","sicCode":3674,"sicDescription":"Semiconductors & Related Devices","sector":"technology","industry":"Semiconductors","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002120882","retrieved":"2026-10-27T20:28:53.347Z"},"market":{"price":142.62,"priceDate":"2026-10-27","marketCap":1039507976100,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

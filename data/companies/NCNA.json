@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "NCNA",
- "name": "NUCANA PLC",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001709626",
- "sector": "Pharmaceutical Preparations",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001709626&type=10-K",
-  "retrieved": "2026-10-27T19:31:11.846Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"NCNA","name":"NuCana plc","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001709626","sicCode":2834,"sicDescription":"Pharmaceutical Preparations","sector":"healthcare","industry":"Biotechnology: Pharmaceutical Preparations","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001709626","retrieved":"2026-10-27T20:23:49.198Z"},"market":{"price":1.04,"priceDate":"2026-10-27","marketCap":4328450,"sharesOutstanding":20809854947,"sharesOutstandingDate":"2025-12-31","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

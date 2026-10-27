@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "HITI",
- "name": "HIGH TIDE INC.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001847409",
- "sector": "Retail-Retail Stores, NEC",
- "fiscalYearEndMonth": 10,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001847409&type=10-K",
-  "retrieved": "2026-10-27T19:23:42.143Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"HITI","name":"High Tide Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001847409","sicCode":5990,"sicDescription":"Retail-Retail Stores, NEC","sector":"consumerDiscretionary","industry":"Other Specialty Stores","profile":"general","fiscalYearEndMonth":10,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001847409","retrieved":"2026-10-27T20:18:42.593Z"},"market":{"price":2.59,"priceDate":"2026-10-27","marketCap":230879370,"sharesOutstanding":174471972,"sharesOutstandingDate":"2025-10-31","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

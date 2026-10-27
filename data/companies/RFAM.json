@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "RFAM",
- "name": "RF ACQUISITION CORP III",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002091712",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 9,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002091712&type=10-K",
-  "retrieved": "2026-10-27T19:36:42.193Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"RFAM","name":"RF Acquisition Corp III","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002091712","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":9,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002091712","retrieved":"2026-10-27T20:27:31.411Z"},"market":{"price":9.99,"priceDate":"2026-10-27","marketCap":139193996.67000002,"sharesOutstanding":13933333,"sharesOutstandingDate":"2026-07-21","source":"Nasdaq"},"events":[{"date":"2026-07-10","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2091712/000182912626007475/rfacquisition3_8k.htm"},{"date":"2026-02-18","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2091712/000182912626001440/rfacq3_8k.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

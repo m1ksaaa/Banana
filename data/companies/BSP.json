@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "BSP",
- "name": "Bending Spoons S.p.A.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002004711",
- "sector": "Services-Computer Programming, Data Processing, Etc.",
- "fiscalYearEndMonth": null,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002004711&type=10-K",
-  "retrieved": "2026-10-27T19:13:35.961Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"BSP","name":"Bending Spoons S.p.A.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002004711","sicCode":7370,"sicDescription":"Services-Computer Programming, Data Processing, Etc.","sector":"technology","industry":"Computer Software: Programming Data Processing","profile":"general","fiscalYearEndMonth":null,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002004711","retrieved":"2026-10-27T20:11:30.027Z"},"market":{"price":46.63,"priceDate":"2026-10-27","marketCap":32094463759,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

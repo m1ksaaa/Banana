@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "MRM",
- "name": "Medirom Healthcare Technologies Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001819704",
- "sector": "Services-Personal Services",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001819704&type=10-K",
-  "retrieved": "2026-10-27T19:30:29.052Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"MRM","name":"Medirom Healthcare Technologies Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001819704","sicCode":7200,"sicDescription":"Services-Personal Services","sector":"industrials","industry":"Other Consumer Services","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001819704","retrieved":"2026-10-27T20:23:18.554Z"},"market":{"price":0.3602,"priceDate":"2026-10-27","marketCap":2846282,"sharesOutstanding":7901950,"sharesOutstandingDate":"2024-12-31","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

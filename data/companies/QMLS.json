@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "QMLS",
- "name": "QumulusAI, Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002084026",
- "sector": "Services-Computer Processing & Data Preparation",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002084026&type=10-K",
-  "retrieved": "2026-10-27T19:35:53.870Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"QMLS","name":"QumulusAI, Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002084026","sicCode":7374,"sicDescription":"Services-Computer Processing & Data Preparation","sector":"technology","industry":"EDP Services","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002084026","retrieved":"2026-10-27T20:26:58.085Z"},"market":{"price":3.14,"priceDate":"2026-10-27","marketCap":105059737,"sharesOutstanding":33458515,"sharesOutstandingDate":"2026-08-20","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "APMC",
- "name": "AmperCap Acquisition Company",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002101393",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 11,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002101393&type=10-K",
-  "retrieved": "2026-10-27T19:10:33.645Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"APMC","name":"AmperCap Acquisition Co","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002101393","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":11,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002101393","retrieved":"2026-10-27T20:09:23.967Z"},"market":{"price":9.95,"priceDate":"2026-10-27","marketCap":198587821.25,"sharesOutstanding":19958575,"sharesOutstandingDate":"2026-08-13","source":"Nasdaq"},"events":[{"date":"2026-08-05","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2101393/000118518526003284/acac8k080426.htm"},{"date":"2026-06-05","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2101393/000118518526002358/acac8k060326.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

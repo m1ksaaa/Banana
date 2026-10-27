@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "RML",
- "name": "Resolution Minerals Ltd",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002102907",
- "sector": "Gold and Silver Ores",
- "fiscalYearEndMonth": 6,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002102907&type=10-K",
-  "retrieved": "2026-10-27T19:37:05.659Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"RML","name":"Resolution Minerals Ltd","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002102907","sicCode":1040,"sicDescription":"Gold and Silver Ores","sector":"materials","industry":"Gold and Silver Ores","profile":"general","fiscalYearEndMonth":6,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002102907","retrieved":"2026-10-27T20:27:45.156Z"},"market":{"price":3.82,"priceDate":"2026-10-27","marketCap":42777330,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"annual":[]}

@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "RNA",
- "name": "Atrium Therapeutics, Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002093101",
- "sector": "Pharmaceutical Preparations",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002093101&type=10-K",
-  "retrieved": "2026-10-27T19:37:09.370Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"RNA","name":"Atrium Therapeutics, Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002093101","sicCode":2834,"sicDescription":"Pharmaceutical Preparations","sector":"healthcare","industry":"Biotechnology: Pharmaceutical Preparations","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002093101","retrieved":"2026-10-27T20:27:46.831Z"},"market":{"price":8.05,"priceDate":"2026-10-27","marketCap":137700426,"sharesOutstanding":17105643,"sharesOutstandingDate":"2026-08-03","source":"Nasdaq"},"events":[{"date":"2026-10-08","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2093101/000119312526417402/d25901d8k.htm"},{"date":"2026-02-27","items":["1.01","5.01"],"severity":4,"url":"https://www.sec.gov/Archives/edgar/data/2093101/000119312526083227/d87849d8k.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

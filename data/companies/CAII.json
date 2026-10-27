@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "CAII",
- "name": "COLLECTIVE ACQUISITION CORP. II",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002115404",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002115404&type=10-K",
-  "retrieved": "2026-10-27T19:14:03.731Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"CAII","name":"Collective Acquisition Corp. II","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002115404","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002115404","retrieved":"2026-10-27T20:11:52.849Z"},"market":{"price":10.01,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[{"date":"2026-05-04","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2115404/000121390026051060/ea0288564-8k_collective2.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

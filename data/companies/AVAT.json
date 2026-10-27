@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "AVAT",
- "name": "Avalanche Treasury Corp",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002092446",
- "sector": "Finance Services",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002092446&type=10-K",
-  "retrieved": "2026-10-27T19:11:34.795Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"AVAT","name":"Avalanche Treasury Corp","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002092446","sicCode":6199,"sicDescription":"Finance Services","sector":"financials","industry":"Finance: Consumer Services","profile":"financial","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002092446","retrieved":"2026-10-27T20:10:12.757Z"},"market":{"price":1.15,"priceDate":"2026-10-27","marketCap":50278511,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[{"date":"2026-08-26","items":["3.01"],"severity":4,"url":"https://www.sec.gov/Archives/edgar/data/2092446/000110465926101037/tm2623995d2_8k.htm"},{"date":"2026-08-07","items":["3.01"],"severity":4,"url":"https://www.sec.gov/Archives/edgar/data/2092446/000110465926092723/tm2622466d1_8k.htm"},{"date":"2026-07-16","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2092446/000110465926084256/tm2620435d2_8k.htm"},{"date":"2026-06-17","items":["1.01","2.01","5.01"],"severity":4,"url":"https://www.sec.gov/Archives/edgar/data/2092446/000110465926075150/tm2615904d7_8k.htm"},{"date":"2026-05-29","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2092446/000110465926068289/tm2615904d1_8k.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

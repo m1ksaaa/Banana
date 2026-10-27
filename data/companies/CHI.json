@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "CHI",
- "name": "Calamos Convertible Opportunities and Income Fund",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001171471",
- "sector": null,
- "fiscalYearEndMonth": 10,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001171471&type=10-K",
-  "retrieved": "2026-10-27T19:15:06.537Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"CHI","name":"CALAMOS CONVERTIBLE OPPORTUNITIES & INCOME FUND","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001171471","sicCode":null,"sicDescription":null,"sector":"other","industry":"Investment Managers","profile":"general","fiscalYearEndMonth":10,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001171471","retrieved":"2026-10-27T20:12:44.182Z"},"market":{"price":11.1,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

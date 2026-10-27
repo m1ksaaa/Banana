@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "ETRA",
- "name": "Electra Therapeutics, Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002088082",
- "sector": "Biological Products, (No Diagnostic Substances)",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002088082&type=10-K",
-  "retrieved": "2026-10-27T19:19:31.562Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"ETRA","name":"Electra Therapeutics, Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002088082","sicCode":2836,"sicDescription":"Biological Products, (No Diagnostic Substances)","sector":"healthcare","industry":"Biotechnology: Biological Products (No Diagnostic Substances)","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002088082","retrieved":"2026-10-27T20:15:42.294Z"},"market":{"price":8.37,"priceDate":"2026-10-27","marketCap":525359413,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

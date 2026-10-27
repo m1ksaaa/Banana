@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "LCFY",
- "name": "Locafy Ltd",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001875547",
- "sector": "Services-Computer Programming, Data Processing, Etc.",
- "fiscalYearEndMonth": null,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001875547&type=10-K",
-  "retrieved": "2026-10-27T19:27:31.838Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"LCFY","name":"Locafy Ltd","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001875547","sicCode":7370,"sicDescription":"Services-Computer Programming, Data Processing, Etc.","sector":"technology","industry":"Computer Software: Programming Data Processing","profile":"general","fiscalYearEndMonth":null,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001875547","retrieved":"2026-10-27T20:21:23.118Z"},"market":{"price":1.2199,"priceDate":"2026-10-27","marketCap":2232052,"sharesOutstanding":1799055,"sharesOutstandingDate":"2025-06-30","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "SHOT",
- "name": "RMG ML SPORTS HOLDINGS",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002104879",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002104879&type=10-K",
-  "retrieved": "2026-10-27T19:38:39.924Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"SHOT","name":"RMG ML Sports Holdings","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002104879","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002104879","retrieved":"2026-10-27T20:28:45.427Z"},"market":{"price":9.88,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[{"date":"2026-06-11","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2104879/000121390026067856/ea0294444-8k_rmgml.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "PONO",
- "name": "PONO CAPITAL FOUR, INC.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002108164",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002108164&type=10-K",
-  "retrieved": "2026-10-27T19:35:02.975Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"PONO","name":"Pono Capital Four, Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002108164","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002108164","retrieved":"2026-10-27T20:26:23.288Z"},"market":{"price":10.03,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[{"date":"2026-08-07","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2108164/000121390026086293/ea0300842-8k_pono.htm"},{"date":"2026-05-12","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2108164/000121390026055079/ea0290388-8k_ponocapital.htm"},{"date":"2026-03-17","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2108164/000121390026028780/ea0281918-8k_pono.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "LTGO",
- "name": "Latigo Biotherapeutics, Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002056611",
- "sector": "Pharmaceutical Preparations",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002056611&type=10-K",
-  "retrieved": "2026-10-27T19:28:36.696Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"LTGO","name":"Latigo Biotherapeutics, Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002056611","sicCode":2834,"sicDescription":"Pharmaceutical Preparations","sector":"healthcare","industry":"Biotechnology: Pharmaceutical Preparations","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002056611","retrieved":"2026-10-27T20:22:04.854Z"},"market":{"price":15.26,"priceDate":"2026-10-27","marketCap":1011728035,"sharesOutstanding":66299347,"sharesOutstandingDate":"2026-09-01","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

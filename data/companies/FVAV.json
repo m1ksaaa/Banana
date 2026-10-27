@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "FVAV",
- "name": "FORTRESS VALUE ACQUISITION CORP. V",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001850733",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001850733&type=10-K",
-  "retrieved": "2026-10-27T19:21:29.753Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"FVAV","name":"Fortress Value Acquisition Corp. V","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001850733","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001850733","retrieved":"2026-10-27T20:17:08.813Z"},"market":{"price":10.09,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[{"date":"2026-03-02","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/1850733/000121390026022435/ea0279074-8k_fortress5.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

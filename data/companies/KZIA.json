@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "KZIA",
- "name": "Kazia Therapeutics Limited.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001075880",
- "sector": "Pharmaceutical Preparations",
- "fiscalYearEndMonth": 6,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001075880&type=10-K",
-  "retrieved": "2026-10-27T19:27:17.182Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"KZIA","name":"KAZIA THERAPEUTICS LTD","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001075880","sicCode":2834,"sicDescription":"Pharmaceutical Preparations","sector":"healthcare","industry":"Biotechnology: Pharmaceutical Preparations","profile":"general","fiscalYearEndMonth":6,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001075880","retrieved":"2026-10-27T20:21:12.882Z"},"market":{"price":7.87,"priceDate":"2026-10-27","marketCap":122369670,"sharesOutstanding":809418734,"sharesOutstandingDate":"2025-06-30","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

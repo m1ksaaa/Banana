@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "SVAQ",
- "name": "SILICON VALLEY ACQUISITION CORP.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002085659",
- "sector": "Services-Prepackaged Software",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002085659&type=10-K",
-  "retrieved": "2026-10-27T19:40:17.917Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"SVAQ","name":"Silicon Valley Acquisition Corp.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002085659","sicCode":7372,"sicDescription":"Services-Prepackaged Software","sector":"technology","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002085659","retrieved":"2026-10-27T20:29:56.352Z"},"market":{"price":10.16,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[{"date":"2026-10-21","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2085659/000121390026111153/ea0309112-8k425_silicon.htm"},{"date":"2026-09-28","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2085659/000121390026103766/ea0306724-8k425_silicon.htm"},{"date":"2026-09-18","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2085659/000121390026101156/ea0305876-8k425_silicon.htm"},{"date":"2026-08-07","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2085659/000121390026086426/ea0300811-8k425_silicon.htm"},{"date":"2026-06-23","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2085659/000121390026071185/ea0295617-8k425_silicon.htm"},{"date":"2026-01-09","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2085659/000121390026002599/ea0272249-8k_silicon.htm"},{"date":"2025-12-31","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2085659/000121390025126830/ea0270983-8k_silicon.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

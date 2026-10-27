@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "PAAC",
- "name": "Proem Acquisition Corp I",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002087446",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002087446&type=10-K",
-  "retrieved": "2026-10-27T19:33:48.883Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"PAAC","name":"Proem Acquisition Corp. I","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002087446","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Investment Managers","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002087446","retrieved":"2026-10-27T20:25:30.501Z"},"market":{"price":10.005,"priceDate":"2026-10-27","marketCap":177321947,"sharesOutstanding":17723333,"sharesOutstandingDate":"2026-08-11","source":"Nasdaq"},"events":[{"date":"2026-09-28","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2087446/000121390026103789/ea0306731-8k425_proem1.htm"},{"date":"2026-02-20","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2087446/000121390026018851/ea0277445-8k_proem1.htm"},{"date":"2026-02-17","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2087446/000121390026016812/ea0277151-8k_proem1.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[{"year":2025,"periodEnd":"2025-12-31","revenue":null,"costOfRevenue":null,"grossProfit":null,"researchAndDevelopment":null,"operatingIncome":null,"interestExpense":null,"pretaxIncome":null,"incomeTaxExpense":null,"netIncome":-55482,"depreciationAndAmortization":null,"shareBasedCompensation":null,"operatingCashFlow":null,"capex":null,"dividendsPaid":null,"buybacks":null,"epsDiluted":null,"sharesDiluted":null,"totalAssets":134302,"totalLiabilities":164784,"currentAssets":13888,"currentLiabilities":164784,"cash":null,"inventory":null,"accountsReceivable":null,"goodwill":null,"intangibleAssets":null,"equity":-30482,"retainedEarnings":-55482,"totalDebt":null,"sharesOutstanding":4983333,"freeCashFlow":null}]}

@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "HVMC",
- "name": "HIGHVIEW MERGER CORP.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002070602",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002070602&type=10-K",
-  "retrieved": "2026-10-27T19:24:20.438Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"HVMC","name":"Highview Merger Corp.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002070602","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002070602","retrieved":"2026-10-27T20:19:11.954Z"},"market":{"price":10.29,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "GLND",
- "name": "GREENLAND ENERGY COMPANY",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002093507",
- "sector": "Drilling Oil & Gas Wells",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002093507&type=10-K",
-  "retrieved": "2026-10-27T19:22:19.614Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"GLND","name":"Greenland Energy Co","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002093507","sicCode":1381,"sicDescription":"Drilling Oil & Gas Wells","sector":"energy","industry":"Oil & Gas Production","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002093507","retrieved":"2026-10-27T20:17:44.785Z"},"market":{"price":3.13,"priceDate":"2026-10-27","marketCap":136875507,"sharesOutstanding":43730194,"sharesOutstandingDate":"2026-08-13","source":"Nasdaq"},"events":[{"date":"2026-09-24","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2093507/000182912626010363/greenlandenergy_8k.htm"},{"date":"2026-04-30","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2093507/000182912626004284/greenlandenergy_8k.htm"},{"date":"2026-03-27","items":["1.01","1.02","2.01","3.01","4.01","5.01"],"severity":4,"url":"https://www.sec.gov/Archives/edgar/data/2093507/000182912626002797/greenlandenergy_8k.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

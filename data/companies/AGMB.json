@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "AGMB",
- "name": "AgomAb Therapeutics NV",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002020932",
- "sector": "Biological Products, (No Diagnostic Substances)",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002020932&type=10-K",
-  "retrieved": "2026-10-27T19:09:17.515Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"AGMB","name":"AgomAb Therapeutics NV","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002020932","sicCode":2836,"sicDescription":"Biological Products, (No Diagnostic Substances)","sector":"healthcare","industry":"Biotechnology: Biological Products (No Diagnostic Substances)","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002020932","retrieved":"2026-10-27T20:08:27.024Z"},"market":{"price":8.57,"priceDate":"2026-10-27","marketCap":422055146,"sharesOutstanding":34167168,"sharesOutstandingDate":"2025-12-31","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

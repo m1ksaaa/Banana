@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "BMM",
- "name": "Blue Moon Metals Inc. - Common Shares",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001732379",
- "sector": "Metal Mining",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001732379&type=10-K",
-  "retrieved": "2026-10-27T19:12:59.475Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"BMM","name":"Blue Moon Metals Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001732379","sicCode":1000,"sicDescription":"Metal Mining","sector":"materials","industry":"Metal Mining","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001732379","retrieved":"2026-10-27T20:11:05.957Z"},"market":{"price":3.97,"priceDate":"2026-10-27","marketCap":430201114,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"annual":[]}

@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "XTER",
- "name": "KARMAN LINE ACQUISITION CORP.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002134856",
- "sector": "Blank Checks",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002134856&type=10-K",
-  "retrieved": "2026-10-27T19:44:46.422Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"XTER","name":"Xterax Corp II","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002134856","sicCode":6770,"sicDescription":"Blank Checks","sector":"shell","industry":"Blank Checks","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002134856","retrieved":"2026-10-27T20:33:21.963Z"},"market":{"price":9.78,"priceDate":"2026-10-27","marketCap":null,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[{"date":"2026-08-19","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2134856/000182912626009070/karmanlineacq_8k.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

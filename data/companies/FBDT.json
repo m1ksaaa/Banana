@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "FBDT",
- "name": "First Breach, Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001892704",
- "sector": "Ordnance & Accessories, (No Vehicles/Guided Missiles)",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001892704&type=10-K",
-  "retrieved": "2026-10-27T19:19:57.825Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"FBDT","name":"First Breach, Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001892704","sicCode":3480,"sicDescription":"Ordnance & Accessories, (No Vehicles/Guided Missiles)","sector":"industrials","industry":"Ordnance And Accessories","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001892704","retrieved":"2026-10-27T20:16:03.849Z"},"market":{"price":0.8304,"priceDate":"2026-10-27","marketCap":46316557,"sharesOutstanding":55776201,"sharesOutstandingDate":"2026-08-28","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

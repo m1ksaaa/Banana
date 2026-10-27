@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "LRE",
- "name": "LEAD REAL ESTATE CO., LTD",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001888980",
- "sector": "Operative Builders",
- "fiscalYearEndMonth": 6,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001888980&type=10-K",
-  "retrieved": "2026-10-27T19:28:31.182Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"LRE","name":"LEAD REAL ESTATE CO., LTD","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001888980","sicCode":1531,"sicDescription":"Operative Builders","sector":"industrials","industry":"Homebuilding","profile":"general","fiscalYearEndMonth":6,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001888980","retrieved":"2026-10-27T20:22:01.204Z"},"market":{"price":1.08,"priceDate":"2026-10-27","marketCap":14733252,"sharesOutstanding":13641900,"sharesOutstandingDate":"2025-06-30","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

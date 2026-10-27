@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "BSEM",
- "name": "BioStem Technologies, Inc.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001658678",
- "sector": "Biological Products, (No Diagnostic Substances)",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001658678&type=10-K",
-  "retrieved": "2026-10-27T19:13:34.398Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"BSEM","name":"BioStem Technologies, Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001658678","sicCode":2836,"sicDescription":"Biological Products, (No Diagnostic Substances)","sector":"healthcare","industry":"Biotechnology: Biological Products (No Diagnostic Substances)","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001658678","retrieved":"2026-10-27T20:11:28.186Z"},"market":{"price":1.54,"priceDate":"2026-10-27","marketCap":28755073,"sharesOutstanding":17849471,"sharesOutstandingDate":"2026-08-12","source":"Nasdaq"},"events":[{"date":"2026-09-30","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/1658678/000119312526409169/bsem-20260929.htm"},{"date":"2026-09-18","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/1658678/000119312526395556/bsem-20260918.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

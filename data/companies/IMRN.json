@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "IMRN",
- "name": "IMMURON LIMITED",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0001660046",
- "sector": "Pharmaceutical Preparations",
- "fiscalYearEndMonth": 6,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001660046&type=10-K",
-  "retrieved": "2026-10-27T19:25:08.756Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"IMRN","name":"Immuron Ltd","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0001660046","sicCode":2834,"sicDescription":"Pharmaceutical Preparations","sector":"healthcare","industry":"Biotechnology: Pharmaceutical Preparations","profile":"general","fiscalYearEndMonth":6,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001660046","retrieved":"2026-10-27T20:19:37.037Z"},"market":{"price":0.92,"priceDate":"2026-10-27","marketCap":7425506,"sharesOutstanding":322848081,"sharesOutstandingDate":"2026-06-30","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

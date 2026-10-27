@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "AIOK",
- "name": "AI OKTO CORP.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002095591",
- "sector": "Deep Sea Foreign Transportation of  Freight",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002095591&type=10-K",
-  "retrieved": "2026-10-27T19:09:32.502Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"AIOK","name":"AI OKTO Corp.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002095591","sicCode":4412,"sicDescription":"Deep Sea Foreign Transportation of  Freight","sector":"industrials","industry":"Marine Transportation","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002095591","retrieved":"2026-10-27T20:08:36.446Z"},"market":{"price":9.16,"priceDate":"2026-10-27","marketCap":39570431,"sharesOutstanding":null,"sharesOutstandingDate":null,"source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

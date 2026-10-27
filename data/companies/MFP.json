@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "MFP",
- "name": "MIDERA FOOD PROCESSING, INC.",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0002088281",
- "sector": "Refrigeration & Service Industry Machinery",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002088281&type=10-K",
-  "retrieved": "2026-10-27T19:29:40.872Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"MFP","name":"Midera Food Processing, Inc.","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0002088281","sicCode":3580,"sicDescription":"Refrigeration & Service Industry Machinery","sector":"industrials","industry":"Industrial Machinery/Components","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002088281","retrieved":"2026-10-27T20:22:45.883Z"},"market":{"price":43.37,"priceDate":"2026-10-27","marketCap":1961644833,"sharesOutstanding":45230455,"sharesOutstandingDate":"2026-08-14","source":"Nasdaq"},"events":[{"date":"2026-07-06","items":["1.01","5.01"],"severity":4,"url":"https://www.sec.gov/Archives/edgar/data/2088281/000119312526295649/d25601d8k.htm"},{"date":"2026-06-29","items":["1.01"],"severity":2,"url":"https://www.sec.gov/Archives/edgar/data/2088281/000119312526288554/d70874d8k.htm"}],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}

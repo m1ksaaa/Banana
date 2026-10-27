@@ -1,17 +1,1 @@
-{
- "schemaVersion": 1,
- "ticker": "ASML",
- "name": "ASML HOLDING NV",
- "exchange": "NASDAQ",
- "currency": "USD",
- "demo": false,
- "cik": "0000937966",
- "sector": "Special Industry Machinery, NEC",
- "fiscalYearEndMonth": 12,
- "source": {
-  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
-  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000937966&type=10-K",
-  "retrieved": "2026-10-27T19:11:02.366Z"
- },
- "annual": []
-}
+{"schemaVersion":2,"ticker":"ASML","name":"ASML HOLDING NV","exchange":"NASDAQ","currency":"USD","demo":false,"cik":"0000937966","sicCode":3559,"sicDescription":"Special Industry Machinery, NEC","sector":"industrials","industry":"Industrial Machinery/Components","profile":"general","fiscalYearEndMonth":12,"source":{"name":"SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)","url":"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000937966","retrieved":"2026-10-27T20:09:47.603Z"},"market":{"price":1590.9,"priceDate":"2026-10-27","marketCap":613160963249,"sharesOutstanding":385417665,"sharesOutstandingDate":"2025-12-31","source":"Nasdaq"},"events":[],"prices":null,"ttm":null,"latestBalance":null,"annual":[]}
