@@ -283,7 +283,7 @@ Mennyire drága a részvény a fundamentumokhoz képest?
 
 ## 3. Összesítés
 
-**TeraScore** – a kilenc fundamentális szempont súlyozott átlaga:
+**TeraScore** – a kilenc fundamentális szempont súlyozott átlaga. Csak akkor számolódik (a kockázattal együtt), ha legalább 5 szempontra van adat; különben a vállalat „nincs minősítve”.
 
 | Szempont | Súly |
 |---|---|

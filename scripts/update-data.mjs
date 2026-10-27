@@ -14,7 +14,7 @@
 //   node scripts/update-data.mjs --skip-prices                                # no price history
 //   node scripts/update-data.mjs --index-only                                 # rebuild data/index.json only
 
-import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, unlinkSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseCompanyFacts } from "./sec-parse.mjs";
@@ -61,9 +61,12 @@ async function nasdaqListed() {
   return lines.slice(1)
     .filter((l) => !l.startsWith("File Creation Time"))
     .map((l) => l.split("|"))
-    .filter((c) => c[col("Test Issue")] === "N" && c[col("ETF")] === "N")
+    .filter((c) => c[col("Test Issue")] === "N" && c[col("ETF")] === "N" && !DERIVATIVE.test(c[col("Security Name")]))
     .map((c) => ({ ticker: c[col("Symbol")], name: cleanName(c[col("Security Name")]) }));
 }
+
+// Warrants, units, rights and notes share the issuer's SEC filings; only the shares themselves are analyzed.
+const DERIVATIVE = /\b(warrants?|units?|rights?|notes? due|debentures?|subordinated|preferred|depositary shares, each representing a fractional)\b/i;
 
 function cleanName(n) {
   return n.replace(/\s+-\s+(Class [A-Z] )?(Common Stock|Ordinary Shares|American Depositary Shares).*$/i, "").trim();
@@ -144,6 +147,13 @@ async function updateCompanies() {
       console.warn(`  ERROR ${item.ticker}: ${e.message}`);
     }
     if ((i + 1) % 100 === 0) console.log(`  ${i + 1}/${list.length} processed`);
+  }
+  // A full run removes files of securities that are no longer listed (or are warrants/units).
+  if (!onlyTickers && limit === Infinity) {
+    const keep = new Set(list.map((x) => `${x.ticker}.json`));
+    let removed = 0;
+    for (const f of readdirSync(COMPANIES)) if (!keep.has(f)) { unlinkSync(join(COMPANIES, f)); removed++; }
+    console.log(`  removed ${removed} delisted or non-share securities`);
   }
   console.log(`Done: ${ok} with financials, ${noData} without data, ${failed} errors, ${withPrices} with price history.`);
 }

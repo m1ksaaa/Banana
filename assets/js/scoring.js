@@ -309,6 +309,7 @@ export const OVERALL_WEIGHTS = {
 
 export const RISK_WEIGHTS = { balanceSheet: 0.30, liquidity: 0.10, consistency: 0.25, profitability: 0.15, cashFlow: 0.20 };
 export const FLAG_PENALTY = { critical: 10, warning: 4 };
+export const MIN_DIMENSIONS = 5;
 
 // ---------- Main analysis ----------
 
@@ -418,7 +419,10 @@ export function analyze(company, { now = new Date() } = {}) {
   const penalty = flags.reduce((s, f) => s + (FLAG_PENALTY[f.level] || 0), 0);
   scores.risk = isNum(safety) ? Math.round(Math.max(0, Math.min(100, 100 - safety + penalty))) : null;
 
-  scores.overall = weighted(Object.entries(OVERALL_WEIGHTS).map(([k, w]) => ({ score: scores[k], weight: w })));
+  // An overall score needs a broad basis: at least MIN_DIMENSIONS fundamental dimensions with data.
+  const scoredDims = Object.keys(OVERALL_WEIGHTS).filter((k) => isNum(scores[k])).length;
+  scores.overall = scoredDims >= MIN_DIMENSIONS ? weighted(Object.entries(OVERALL_WEIGHTS).map(([k, w]) => ({ score: scores[k], weight: w }))) : null;
+  if (scoredDims < MIN_DIMENSIONS) scores.risk = null;
 
   const allParts = Object.values(parts).flat();
   const coverage = allParts.length ? Math.round((allParts.filter((p) => isNum(p.score)).length / allParts.length) * 100) : 0;

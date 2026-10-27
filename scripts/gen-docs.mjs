@@ -2,7 +2,7 @@
 // Generates docs/SABLON.md from the engine definitions, so the documentation always
 // matches the code exactly. Run: npm run docs
 import { writeFileSync } from "node:fs";
-import { PROFILES, OVERALL_WEIGHTS, RISK_WEIGHTS, FLAG_PENALTY, METRIC_FORMAT, ENGINE_VERSION, FLAG_IDS } from "../assets/js/scoring.js";
+import { MIN_DIMENSIONS, PROFILES, OVERALL_WEIGHTS, RISK_WEIGHTS, FLAG_PENALTY, METRIC_FORMAT, ENGINE_VERSION, FLAG_IDS } from "../assets/js/scoring.js";
 import { FLOW, INSTANT } from "./sec-parse.mjs";
 import hu from "../assets/js/i18n/hu.js";
 
@@ -108,7 +108,7 @@ ${dims}
 
 ## 3. Összesítés
 
-**TeraScore** – a kilenc fundamentális szempont súlyozott átlaga:
+**TeraScore** – a kilenc fundamentális szempont súlyozott átlaga. Csak akkor számolódik (a kockázattal együtt), ha legalább ${MIN_DIMENSIONS} szempontra van adat; különben a vállalat „nincs minősítve”.
 
 | Szempont | Súly |
 |---|---|
