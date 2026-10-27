@@ -29,7 +29,7 @@ export default {
     compareTitle: "Comparer des sociétés", compareHint: "Sélectionnez jusqu'à trois sociétés à comparer.", addCompany: "Ajouter une société…", remove: "Retirer",
     dimension: "Dimension", metric: "Indicateur",
     chartRevenue: "Chiffre d'affaires", chartNetIncome: "Résultat net", chartFcf: "Flux de trésorerie disponible", chartMargin: "Marge opérationnelle", chartPrice: "Cours de l'action (mensuel, ajusté)",
-    chartRevenueSub: "annuel", chartNetIncomeSub: "annuel (rouge = perte)", chartFcfSub: "flux opérationnel − investissements", chartMarginSub: "résultat opérationnel / chiffre d'affaires", chartPriceSub: "10 dernières années",
+    chartRevenueSub: "annuel", chartNetIncomeSub: "annuel (rouge = perte)", chartFcfSub: "flux opérationnel − investissements", chartMarginSub: "résultat opérationnel / chiffre d'affaires", chartPriceSub: "clôtures mensuelles, 6 dernières années",
     notEnough: "Données insuffisantes.", errorLoad: "Une erreur est survenue : {e}", serveHint: "Si vous avez ouvert le fichier directement, lancez un serveur web local (voir README).",
     profileFinancial: "Profil institution financière : les ratios de liquidité, d'EBITDA et de flux de trésorerie disponible ne sont pas pertinents pour les banques et assureurs et sont exclus.",
     profileRealEstate: "Profil immobilier : les seuils d'endettement et de valorisation sont adaptés à l'endettement structurellement plus élevé des REIT.",

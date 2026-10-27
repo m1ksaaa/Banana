@@ -29,7 +29,7 @@ export default {
     compareTitle: "Unternehmen vergleichen", compareHint: "Wählen Sie bis zu drei Unternehmen für einen direkten Vergleich.", addCompany: "Unternehmen hinzufügen…", remove: "Entfernen",
     dimension: "Dimension", metric: "Kennzahl",
     chartRevenue: "Umsatz", chartNetIncome: "Nettogewinn", chartFcf: "Free Cashflow", chartMargin: "Operative Marge", chartPrice: "Aktienkurs (monatlich, bereinigt)",
-    chartRevenueSub: "jährlich", chartNetIncomeSub: "jährlich (rot = Verlust)", chartFcfSub: "operativer Cashflow − Investitionen", chartMarginSub: "operatives Ergebnis / Umsatz", chartPriceSub: "letzte 10 Jahre",
+    chartRevenueSub: "jährlich", chartNetIncomeSub: "jährlich (rot = Verlust)", chartFcfSub: "operativer Cashflow − Investitionen", chartMarginSub: "operatives Ergebnis / Umsatz", chartPriceSub: "Monatsschlusskurse, letzte 6 Jahre",
     notEnough: "Nicht genügend Daten.", errorLoad: "Ein Fehler ist aufgetreten: {e}", serveHint: "Wenn Sie die Datei direkt geöffnet haben, starten Sie einen lokalen Webserver (siehe README).",
     profileFinancial: "Profil Finanzinstitut: Liquiditäts-, EBITDA- und Free-Cashflow-Kennzahlen sind für Banken und Versicherer nicht aussagekräftig und werden ausgeschlossen.",
     profileRealEstate: "Immobilienprofil: Verschuldungs- und Bewertungsschwellen sind an die strukturell höhere Verschuldung von REITs angepasst.",

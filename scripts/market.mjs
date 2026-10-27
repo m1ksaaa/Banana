@@ -1,5 +1,5 @@
 // Market data: current price / market cap for all Nasdaq stocks (one request to the Nasdaq
-// screener) and monthly price history per ticker (Yahoo Finance chart API, Stooq as fallback).
+// screener) and monthly price history per ticker (Nasdaq.com history; Yahoo Finance and Stooq as fallbacks).
 // Everything here is optional: if a source is unavailable, valuation and market-risk metrics are skipped.
 
 const BROWSER_HEADERS = {
@@ -30,6 +30,30 @@ export async function nasdaqScreener() {
     console.warn(`  Nasdaq screener unavailable: ${e.message}`);
     return new Map();
   }
+}
+
+// Nasdaq.com daily history (split-adjusted closes), reduced to the last close of each month.
+async function nasdaqMonthly(ticker) {
+  const to = new Date();
+  const from = new Date(to.getTime() - 6 * 365.25 * 86400000);
+  const d = (x) => x.toISOString().slice(0, 10);
+  const sym = encodeURIComponent(ticker.replace(".", "^"));
+  const r = await fetch(`https://api.nasdaq.com/api/quote/${sym}/historical?assetclass=stocks&fromdate=${d(from)}&todate=${d(to)}&limit=9999`, { headers: BROWSER_HEADERS });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const j = await r.json();
+  const rows = j?.data?.tradesTable?.rows || [];
+  const months = new Map();
+  for (const row of rows) {
+    const [mm, dd, yyyy] = String(row.date).split("/");
+    const close = num(row.close);
+    if (!yyyy || !Number.isFinite(close)) continue;
+    const key = `${yyyy}-${mm}`;
+    const day = Number(dd);
+    const prev = months.get(key);
+    if (!prev || day > prev.day) months.set(key, { day, close });
+  }
+  const data = [...months].map(([k, v]) => [k, v.close]).sort((a, b) => (a[0] < b[0] ? -1 : 1));
+  return { data, price: data.length ? data[data.length - 1][1] : null, source: "Nasdaq" };
 }
 
 async function yahooMonthly(ticker) {
@@ -63,9 +87,9 @@ function dedupeMonths(data) {
 }
 
 // Tries each source in order; a source that fails 25 times in a row is switched off for the run.
-const failures = { yahoo: 0, stooq: 0 };
+const failures = { nasdaq: 0, yahoo: 0, stooq: 0 };
 export async function priceHistory(ticker) {
-  for (const [name, fn] of [["yahoo", yahooMonthly], ["stooq", stooqMonthly]]) {
+  for (const [name, fn] of [["nasdaq", nasdaqMonthly], ["yahoo", yahooMonthly], ["stooq", stooqMonthly]]) {
     if (failures[name] >= 25) continue;
     try {
       const h = await fn(ticker);

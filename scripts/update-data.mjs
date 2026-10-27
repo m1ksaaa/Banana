@@ -138,6 +138,7 @@ async function updateCompanies() {
         },
         events: majorEvents(sub),
         prices: hist ? { interval: "1mo", adjusted: true, source: hist.source, data: hist.data } : null,
+        splits: parsed.splits?.length ? parsed.splits : undefined,
         ttm: parsed.ttm,
         latestBalance: parsed.latestBalance,
         annual: parsed.annual,

@@ -29,7 +29,7 @@ export default {
     compareTitle: "Compare companies", compareHint: "Select up to three companies to compare side by side.", addCompany: "Add company…", remove: "Remove",
     dimension: "Dimension", metric: "Metric",
     chartRevenue: "Revenue", chartNetIncome: "Net income", chartFcf: "Free cash flow", chartMargin: "Operating margin", chartPrice: "Share price (monthly, adjusted)",
-    chartRevenueSub: "annual", chartNetIncomeSub: "annual (red = loss)", chartFcfSub: "operating cash flow − capex", chartMarginSub: "operating income / revenue", chartPriceSub: "last 10 years",
+    chartRevenueSub: "annual", chartNetIncomeSub: "annual (red = loss)", chartFcfSub: "operating cash flow − capex", chartMarginSub: "operating income / revenue", chartPriceSub: "monthly closes, last 6 years",
     notEnough: "Not enough data.", errorLoad: "Something went wrong: {e}", serveHint: "If you opened the file directly, start a local web server (see README).",
     profileFinancial: "Financial-institution profile: liquidity, EBITDA and free-cash-flow metrics are not applicable to banks and insurers and are excluded.",
     profileRealEstate: "Real-estate profile: leverage and valuation thresholds are adjusted for the higher structural debt of REITs.",

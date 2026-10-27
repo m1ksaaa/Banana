@@ -29,7 +29,7 @@ export default {
     compareTitle: "Vállalatok összehasonlítása", compareHint: "Válassz legfeljebb három vállalatot az összehasonlításhoz.", addCompany: "Vállalat hozzáadása…", remove: "Eltávolítás",
     dimension: "Szempont", metric: "Mutató",
     chartRevenue: "Árbevétel", chartNetIncome: "Nettó eredmény", chartFcf: "Szabad cash flow", chartMargin: "Üzemi árrés", chartPrice: "Árfolyam (havi, korrigált)",
-    chartRevenueSub: "éves", chartNetIncomeSub: "éves (piros = veszteség)", chartFcfSub: "működési cash flow − beruházások", chartMarginSub: "üzemi eredmény / árbevétel", chartPriceSub: "utolsó 10 év",
+    chartRevenueSub: "éves", chartNetIncomeSub: "éves (piros = veszteség)", chartFcfSub: "működési cash flow − beruházások", chartMarginSub: "üzemi eredmény / árbevétel", chartPriceSub: "havi záróárak, utolsó 6 év",
     notEnough: "Nincs elég adat.", errorLoad: "Hiba történt: {e}", serveHint: "Ha a fájlt közvetlenül nyitottad meg, indíts helyi webszervert (lásd README).",
     profileFinancial: "Pénzügyi intézményi profil: a likviditási, EBITDA- és szabad cash flow-mutatók bankoknál és biztosítóknál nem értelmezhetők, ezért kimaradnak.",
     profileRealEstate: "Ingatlanprofil: az eladósodottsági és értékeltségi küszöbök a REIT-ek strukturálisan magasabb adósságához igazodnak.",

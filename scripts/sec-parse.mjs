@@ -88,16 +88,60 @@ function dedupe(list, keyFn) {
 
 const ALL_FORMS = new Set([...ANNUAL_FORMS, ...QUARTER_FORMS]);
 
-function flowSeries(facts, tags, unit) {
-  const all = entries(facts, tags, unit, ALL_FORMS).filter((v) => v.start && v.end);
+// Stock splits. A later filing re-reports earlier periods split-adjusted, so the same period appears
+// with an (almost exactly) integer multiple of the share count. Each split is recorded with the
+// last filing date that still showed pre-split figures; values filed up to that date are adjusted.
+export function detectSplits(facts) {
+  const groups = new Map();
+  for (const v of entries(facts, FLOW_SHARES.sharesDiluted, "shares", ALL_FORMS)) {
+    if (!v.start || !v.end || !v.filed || !(v.val > 0)) continue;
+    const k = `${v.start}|${v.end}`;
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(v);
+  }
+  const found = new Map(); // factor -> { factor, preUntil }
+  for (const list of groups.values()) {
+    list.sort((a, b) => (a.filed < b.filed ? -1 : 1));
+    for (let i = 1; i < list.length; i++) {
+      const r = list[i].val / list[i - 1].val;
+      const n = r >= 1 ? Math.round(r) : Math.round(1 / r);
+      const exact = r >= 1 ? r / n : (1 / r) / n;
+      if (n < 2 || Math.abs(exact - 1) > 0.03) continue;
+      const factor = r >= 1 ? n : 1 / n;
+      const key = `${factor}|${list[i].filed.slice(0, 7)}`;
+      const prev = [...found.values()].find((s) => s.factor === factor && Math.abs(days(s.postFrom, list[i].filed)) < 200);
+      if (prev) { if (list[i - 1].filed > prev.preUntil) prev.preUntil = list[i - 1].filed; if (list[i].filed < prev.postFrom) prev.postFrom = list[i].filed; }
+      else found.set(key, { factor, preUntil: list[i - 1].filed, postFrom: list[i].filed });
+    }
+  }
+  return [...found.values()].sort((a, b) => (a.preUntil < b.preUntil ? -1 : 1));
+}
+
+// Cumulative split factor for a value filed on a given date.
+function splitFactor(splits, filed) {
+  let f = 1;
+  for (const s of splits) if (filed && filed <= s.preUntil) f *= s.factor;
+  return f;
+}
+
+function adjustForSplits(list, unit, splits) {
+  if (!splits.length || (unit !== "shares" && unit !== "USD/shares")) return list;
+  return list.map((v) => {
+    const f = splitFactor(splits, v.filed);
+    return f === 1 ? v : { ...v, val: unit === "shares" ? v.val * f : v.val / f };
+  });
+}
+
+function flowSeries(facts, tags, unit, splits = []) {
+  const all = adjustForSplits(entries(facts, tags, unit, ALL_FORMS).filter((v) => v.start && v.end), unit, splits);
   const annual = new Map();
   for (const [, v] of dedupe(all.filter((v) => { const d = days(v.start, v.end); return d >= 340 && d <= 390; }), (v) => v.end)) annual.set(v.end, v.val);
   const durations = [...dedupe(all, (v) => `${v.start}|${v.end}`).values()];
   return { annual, durations };
 }
 
-function instantSeries(facts, tags, unit = "USD") {
-  const all = entries(facts, tags, unit, ALL_FORMS).filter((v) => !v.start && v.end);
+function instantSeries(facts, tags, unit = "USD", splits = []) {
+  const all = adjustForSplits(entries(facts, tags, unit, ALL_FORMS).filter((v) => !v.start && v.end), unit, splits);
   return new Map([...dedupe(all, (v) => v.end)].map(([k, v]) => [k, v.val]));
 }
 
@@ -148,15 +192,16 @@ function finishPeriod(y) {
 
 export function parseCompanyFacts(cf, { maxYears = 10 } = {}) {
   const facts = cf.facts || {};
+  const splits = detectSplits(facts);
   const flows = {};
   for (const [k, tags] of Object.entries(FLOW)) flows[k] = flowSeries(facts, tags, "USD");
-  for (const [k, tags] of Object.entries(FLOW_PER_SHARE)) flows[k] = flowSeries(facts, tags, "USD/shares");
-  for (const [k, tags] of Object.entries(FLOW_SHARES)) flows[k] = flowSeries(facts, tags, "shares");
+  for (const [k, tags] of Object.entries(FLOW_PER_SHARE)) flows[k] = flowSeries(facts, tags, "USD/shares", splits);
+  for (const [k, tags] of Object.entries(FLOW_SHARES)) flows[k] = flowSeries(facts, tags, "shares", splits);
   const inst = {};
   for (const [k, tags] of Object.entries(INSTANT)) inst[k] = instantSeries(facts, tags);
   const debtParts = DEBT_PARTS.map((tags) => instantSeries(facts, tags));
   const debtTotal = instantSeries(facts, DEBT_TOTAL);
-  const sharesInst = instantSeries(facts, SHARES_INSTANT, "shares");
+  const sharesInst = instantSeries(facts, SHARES_INSTANT, "shares", splits);
 
   // Fiscal year ends come from the annual revenue (or net income) periods.
   const anchor = flows.revenue.annual.size ? flows.revenue : flows.netIncome;
@@ -196,15 +241,19 @@ export function parseCompanyFacts(cf, { maxYears = 10 } = {}) {
   }
 
   // Latest cover-page share count (any filing type).
-  const dei = node(facts, "EntityCommonStockSharesOutstanding")?.units?.shares || [];
+  const dei = adjustForSplits(node(facts, "EntityCommonStockSharesOutstanding")?.units?.shares || [], "shares", splits);
   const latestShares = dei.filter((v) => v.end).sort((a, b) => (a.end < b.end ? -1 : a.end > b.end ? 1 : (a.filed || "") < (b.filed || "") ? -1 : 1));
   // Multi-class companies report one value per class on the same date: sum them.
   let sharesOutstanding = null, sharesDate = null;
   if (latestShares.length) {
     sharesDate = latestShares[latestShares.length - 1].end;
     const sameDate = dedupe(latestShares.filter((v) => v.end === sharesDate), (v) => `${v.frame || ""}|${v.val}`);
-    sharesOutstanding = [...sameDate.values()].reduce((a, v) => a + v.val, 0);
+    sharesOutstanding = [...sameDate.values()].reduce((a, v) => a + v.val, 0) || null;
+  }
+  if (!sharesOutstanding && sharesInst.size) {
+    sharesDate = [...sharesInst.keys()].sort().pop();
+    sharesOutstanding = sharesInst.get(sharesDate) || null;
   }
 
-  return { annual, ttm, latestBalance, sharesOutstanding, sharesOutstandingDate: sharesDate };
+  return { annual, ttm, latestBalance, sharesOutstanding, sharesOutstandingDate: sharesDate, splits: splits.map(({ factor, postFrom }) => ({ factor, firstReported: postFrom })) };
 }
