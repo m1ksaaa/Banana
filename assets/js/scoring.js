@@ -1,15 +1,16 @@
-// TeraStockX elemzőmotor.
-// Bemenet: egy cég sablon szerinti adatai (lásd docs/SABLON.md).
-// Kimenet: 0–100 közötti pontszámok, figyelmeztetések és közérthető szöveges összefoglaló.
-// Ugyanezt a fájlt használja a böngésző és a Node-os adatfrissítő script is.
+// TeraStockX analysis engine (language-agnostic).
+// Input: one company in the TeraStockX data template (docs/SABLON.md).
+// Output: 0–100 scores per dimension, the metrics behind them, flags and classifications.
+// All human-readable text lives in assets/js/i18n/*; this module only returns keys and numbers.
+// The same file runs in the browser and in the Node data updater.
 
-export const ENGINE_VERSION = "1.0.0";
+export const ENGINE_VERSION = "2.0.0";
 
-// ---------- Segédfüggvények ----------
+// ---------- Helpers ----------
 
 const isNum = (x) => typeof x === "number" && Number.isFinite(x);
 
-// Lineáris skálázás 0–100 közé. Ha bad > good, a skála fordított (kisebb érték a jobb).
+// Linear scale to 0–100. If bad > good the scale is inverted (lower is better).
 export function scale(x, bad, good) {
   if (!isNum(x)) return null;
   const t = (x - bad) / (good - bad);
@@ -17,8 +18,9 @@ export function scale(x, bad, good) {
 }
 
 const div = (a, b) => (isNum(a) && isNum(b) && b !== 0 ? a / b : null);
+const avg2 = (a, b) => (isNum(a) && isNum(b) ? (a + b) / 2 : isNum(a) ? a : null);
 
-// Növekedés előző évhez képest. Negatív vagy nulla bázisnál nem értelmezhető.
+// Year-over-year growth; undefined for a non-positive base.
 function growth(cur, prev) {
   if (!isNum(cur) || !isNum(prev) || prev <= 0) return null;
   return cur / prev - 1;
@@ -29,92 +31,103 @@ function cagr(first, last, years) {
   return Math.pow(last / first, 1 / years) - 1;
 }
 
-function mean(xs) {
-  const v = xs.filter(isNum);
-  return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null;
-}
-
 function stdev(xs) {
   const v = xs.filter(isNum);
   if (v.length < 2) return null;
-  const m = mean(v);
+  const m = v.reduce((a, b) => a + b, 0) / v.length;
   return Math.sqrt(v.reduce((a, b) => a + (b - m) ** 2, 0) / (v.length - 1));
 }
 
-// Súlyozott átlag; a hiányzó (null) tételeket kihagyja, a súlyokat újranormálja.
+const ratio = (xs, pred) => {
+  const v = xs.filter(isNum);
+  return v.length ? v.filter(pred).length / v.length : null;
+};
+
+// Weighted mean of part scores; missing parts are skipped and weights renormalised.
 function weighted(parts) {
   let sum = 0, w = 0;
-  for (const p of parts) {
-    if (isNum(p.score)) { sum += p.score * p.weight; w += p.weight; }
-  }
+  for (const p of parts) if (isNum(p.score)) { sum += p.score * p.weight; w += p.weight; }
   return w > 0 ? Math.round(sum / w) : null;
 }
 
-// ---------- Származtatott mutatók egy évre ----------
+// ---------- Per-period derived figures ----------
 
-function totalDebt(y) {
-  if (isNum(y.totalDebt)) return y.totalDebt;
-  return null;
-}
-
-function freeCashFlow(y) {
+export function freeCashFlow(y) {
   if (isNum(y.freeCashFlow)) return y.freeCashFlow;
   if (isNum(y.operatingCashFlow) && isNum(y.capex)) return y.operatingCashFlow - Math.abs(y.capex);
   return null;
 }
 
-function grossProfit(y) {
-  if (isNum(y.grossProfit)) return y.grossProfit;
-  if (isNum(y.revenue) && isNum(y.costOfRevenue)) return y.revenue - y.costOfRevenue;
-  return null;
-}
+const grossProfit = (y) => (isNum(y.grossProfit) ? y.grossProfit : isNum(y.revenue) && isNum(y.costOfRevenue) ? y.revenue - y.costOfRevenue : null);
+const totalLiabilities = (y) => (isNum(y.totalLiabilities) ? y.totalLiabilities : isNum(y.totalAssets) && isNum(y.equity) ? y.totalAssets - y.equity : null);
+const eps = (y) => (isNum(y.epsDiluted) ? y.epsDiluted : div(y.netIncome, y.sharesDiluted));
+const ebitda = (y) => (isNum(y.operatingIncome) && isNum(y.depreciationAndAmortization) ? y.operatingIncome + y.depreciationAndAmortization : null);
 
-function totalLiabilities(y) {
-  if (isNum(y.totalLiabilities)) return y.totalLiabilities;
-  if (isNum(y.totalAssets) && isNum(y.equity)) return y.totalAssets - y.equity;
-  return null;
+function taxRate(y) {
+  const r = div(y.incomeTaxExpense, y.pretaxIncome);
+  if (isNum(y.pretaxIncome) && y.pretaxIncome > 0 && isNum(r)) return Math.max(0, Math.min(0.5, r));
+  return 0.21; // US statutory rate as a fallback
 }
 
 export function yearMetrics(y, prev) {
   const fcf = freeCashFlow(y);
-  const debt = totalDebt(y);
-  const liab = totalLiabilities(y);
+  const debt = isNum(y.totalDebt) ? y.totalDebt : null;
   const gp = grossProfit(y);
-  const avgEquity = prev && isNum(prev.equity) && isNum(y.equity) ? (prev.equity + y.equity) / 2 : y.equity;
-  const avgAssets = prev && isNum(prev.totalAssets) && isNum(y.totalAssets) ? (prev.totalAssets + y.totalAssets) / 2 : y.totalAssets;
+  const e = ebitda(y);
+  const avgEquity = avg2(y.equity, prev?.equity);
+  const avgAssets = avg2(y.totalAssets, prev?.totalAssets);
+  const netDebt = isNum(debt) && isNum(y.cash) ? debt - y.cash : null;
+  const ic = (yy) => (isNum(yy?.equity) && isNum(yy?.cash) ? yy.equity + (isNum(yy.totalDebt) ? yy.totalDebt : 0) - yy.cash : null);
+  const investedCapital = avg2(ic(y), ic(prev));
+  const nopat = isNum(y.operatingIncome) ? y.operatingIncome * (1 - taxRate(y)) : null;
+  const shares = isNum(y.sharesOutstanding) ? y.sharesOutstanding : y.sharesDiluted;
   return {
     year: y.year,
     revenue: y.revenue ?? null,
+    operatingIncome: y.operatingIncome ?? null,
     netIncome: y.netIncome ?? null,
+    eps: eps(y),
     freeCashFlow: fcf,
+    ebitda: e,
     grossMargin: div(gp, y.revenue),
     operatingMargin: div(y.operatingIncome, y.revenue),
     netMargin: div(y.netIncome, y.revenue),
     fcfMargin: div(fcf, y.revenue),
     roe: isNum(avgEquity) && avgEquity > 0 ? div(y.netIncome, avgEquity) : null,
     roa: div(y.netIncome, avgAssets),
+    roic: isNum(investedCapital) && investedCapital > 0 ? div(nopat, investedCapital) : null,
+    fcfConversion: isNum(y.netIncome) && y.netIncome > 0 ? div(fcf, y.netIncome) : null,
+    accrualRatio: isNum(y.netIncome) && isNum(y.operatingCashFlow) ? div(y.netIncome - y.operatingCashFlow, avgAssets) : null,
+    sbcToRevenue: div(y.shareBasedCompensation, y.revenue),
+    capexToRevenue: isNum(y.capex) ? div(Math.abs(y.capex), y.revenue) : null,
     currentRatio: div(y.currentAssets, y.currentLiabilities),
+    quickRatio: isNum(y.currentAssets) ? div(y.currentAssets - (isNum(y.inventory) ? y.inventory : 0), y.currentLiabilities) : null,
+    cashRatio: div(y.cash, y.currentLiabilities),
     debtToEquity: isNum(y.equity) && y.equity > 0 ? div(debt, y.equity) : null,
-    liabilitiesToAssets: div(liab, y.totalAssets),
+    equityRatio: div(y.equity, y.totalAssets),
+    liabilitiesToAssets: div(totalLiabilities(y), y.totalAssets),
+    netDebt,
+    netDebtToEbitda: isNum(netDebt) ? (netDebt <= 0 ? 0 : isNum(e) && e > 0 ? netDebt / e : isNum(e) ? Infinity : null) : null,
     interestCoverage: isNum(y.interestExpense) && y.interestExpense > 0 ? div(y.operatingIncome, y.interestExpense) : null,
-    netDebt: isNum(debt) && isNum(y.cash) ? debt - y.cash : null,
+    goodwillToAssets: isNum(y.goodwill) || isNum(y.intangibleAssets) ? div((y.goodwill ?? 0) + (y.intangibleAssets ?? 0), y.totalAssets) : null,
     assetTurnover: div(y.revenue, avgAssets),
-    longTermDebtToAssets: div(debt, y.totalAssets),
-    shares: y.sharesDiluted ?? null,
+    debtToAssets: div(debt, y.totalAssets),
+    payoutRatio: isNum(y.dividendsPaid) && y.dividendsPaid !== 0 ? (isNum(fcf) && fcf > 0 ? Math.abs(y.dividendsPaid) / fcf : Infinity) : isNum(y.dividendsPaid) ? 0 : null,
+    bookValuePerShare: isNum(y.equity) && isNum(shares) && shares > 0 ? y.equity / shares : null,
+    shares: y.sharesDiluted ?? y.sharesOutstanding ?? null,
   };
 }
 
-// Altman Z'' (nem gyártó / általános változat, piaci ár nélkül is számolható).
-// Zónák: > 2.6 biztonságos, 1.1–2.6 szürke zóna, < 1.1 csődveszélyes.
+// Altman Z'' (non-manufacturer / emerging-market variant; needs no market price).
+// Zones: > 2.6 safe, 1.1–2.6 grey, < 1.1 distress.
 export function altmanZ(y) {
   const liab = totalLiabilities(y);
   const ta = y.totalAssets;
   if (![y.currentAssets, y.currentLiabilities, y.retainedEarnings, y.operatingIncome, y.equity, liab, ta].every(isNum) || ta <= 0 || liab <= 0) return null;
-  const wc = y.currentAssets - y.currentLiabilities;
-  return 6.56 * (wc / ta) + 3.26 * (y.retainedEarnings / ta) + 6.72 * (y.operatingIncome / ta) + 1.05 * (y.equity / liab);
+  return 6.56 * ((y.currentAssets - y.currentLiabilities) / ta) + 3.26 * (y.retainedEarnings / ta) + 6.72 * (y.operatingIncome / ta) + 1.05 * (y.equity / liab);
 }
 
-// Piotroski F-score (0–9): 9 egyszerű igen/nem teszt a pénzügyi erőre.
+// Piotroski F-score (0–9).
 export function piotroski(cur, prev) {
   if (!cur || !prev) return null;
   const c = yearMetrics(cur, prev), p = yearMetrics(prev, null);
@@ -124,312 +137,454 @@ export function piotroski(cur, prev) {
     isNum(ocf) ? ocf > 0 : null,
     isNum(c.roa) && isNum(p.roa) ? c.roa > p.roa : null,
     isNum(ocf) && isNum(cur.netIncome) ? ocf > cur.netIncome : null,
-    isNum(c.longTermDebtToAssets) && isNum(p.longTermDebtToAssets) ? c.longTermDebtToAssets <= p.longTermDebtToAssets : null,
+    isNum(c.debtToAssets) && isNum(p.debtToAssets) ? c.debtToAssets <= p.debtToAssets : null,
     isNum(c.currentRatio) && isNum(p.currentRatio) ? c.currentRatio > p.currentRatio : null,
-    isNum(c.shares) && isNum(p.shares) ? c.shares <= p.shares : null,
+    isNum(c.shares) && isNum(p.shares) ? c.shares <= p.shares * 1.005 : null,
     isNum(c.grossMargin) && isNum(p.grossMargin) ? c.grossMargin > p.grossMargin : null,
     isNum(c.assetTurnover) && isNum(p.assetTurnover) ? c.assetTurnover > p.assetTurnover : null,
   ];
   const known = tests.filter((t) => t !== null);
   if (known.length < 6) return null;
-  // Hiányzó teszteket arányosan becsüljük, hogy 0–9 skálán maradjon.
   return Math.round((known.filter(Boolean).length / known.length) * 9);
 }
 
-// ---------- Fő elemzés ----------
+// ---------- Market data (monthly closes) ----------
 
+export function marketStats(prices) {
+  const data = prices?.data;
+  if (!Array.isArray(data) || data.length < 13) return {};
+  const closes = data.map((d) => d[1]).filter(isNum);
+  const n = closes.length;
+  const last = closes[n - 1];
+  const rets = [];
+  for (let i = Math.max(1, n - 36); i < n; i++) if (closes[i - 1] > 0 && closes[i] > 0) rets.push(Math.log(closes[i] / closes[i - 1]));
+  let peak = -Infinity, mdd = 0;
+  for (const c of closes.slice(-61)) { peak = Math.max(peak, c); if (peak > 0) mdd = Math.min(mdd, c / peak - 1); }
+  return {
+    priceReturn1y: closes[n - 13] > 0 ? last / closes[n - 13] - 1 : null,
+    priceCagr5y: n >= 61 ? cagr(closes[n - 61], last, 5) : null,
+    volatility: rets.length >= 12 ? stdev(rets) * Math.sqrt(12) : null,
+    maxDrawdown: mdd,
+  };
+}
+
+// ---------- Dimension definitions (single source of truth for scoring and the methodology page) ----------
+
+// Each part: metric key, weight, value scoring 0 points (bad) and 100 points (good).
+const GENERAL = {
+  profitability: [
+    { key: "grossMargin", weight: 0.15, bad: 0.10, good: 0.60 },
+    { key: "operatingMargin", weight: 0.25, bad: 0, good: 0.30 },
+    { key: "netMargin", weight: 0.15, bad: -0.05, good: 0.20 },
+    { key: "roic", weight: 0.20, bad: 0, good: 0.20 },
+    { key: "roe", weight: 0.15, bad: 0, good: 0.25 },
+    { key: "roa", weight: 0.10, bad: 0, good: 0.15 },
+  ],
+  cashFlow: [
+    { key: "fcfMargin", weight: 0.35, bad: -0.05, good: 0.20 },
+    { key: "fcfConversion", weight: 0.25, bad: 0.3, good: 1.1 },
+    { key: "accrualRatio", weight: 0.20, bad: 0.10, good: -0.05 },
+    { key: "sbcToRevenue", weight: 0.20, bad: 0.15, good: 0.01 },
+  ],
+  balanceSheet: [
+    { key: "debtToEquity", weight: 0.20, bad: 2.5, good: 0.3 },
+    { key: "netDebtToEbitda", weight: 0.25, bad: 4, good: 0 },
+    { key: "interestCoverage", weight: 0.20, bad: 1.5, good: 15 },
+    { key: "altmanZ", weight: 0.20, bad: 1.1, good: 4.0 },
+    { key: "equityRatio", weight: 0.15, bad: 0.10, good: 0.60 },
+  ],
+  liquidity: [
+    { key: "currentRatio", weight: 0.40, bad: 0.6, good: 2.0 },
+    { key: "quickRatio", weight: 0.35, bad: 0.4, good: 1.5 },
+    { key: "cashRatio", weight: 0.25, bad: 0.05, good: 0.8 },
+  ],
+  growth1y: [
+    { key: "revenueYoY", weight: 0.35, bad: -0.10, good: 0.20 },
+    { key: "operatingIncomeYoY", weight: 0.20, bad: -0.25, good: 0.30 },
+    { key: "epsYoY", weight: 0.25, bad: -0.25, good: 0.30 },
+    { key: "fcfYoY", weight: 0.20, bad: -0.25, good: 0.30 },
+  ],
+  growthLong: [
+    { key: "revenueCagr", weight: 0.30, bad: -0.05, good: 0.15 },
+    { key: "epsCagr", weight: 0.25, bad: -0.10, good: 0.20 },
+    { key: "fcfCagr", weight: 0.15, bad: -0.10, good: 0.20 },
+    { key: "bookValuePerShareCagr", weight: 0.15, bad: -0.05, good: 0.15 },
+    { key: "revenueGrowthYearsRatio", weight: 0.15, bad: 0, good: 1 },
+  ],
+  consistency: [
+    { key: "profitableYearsRatio", weight: 0.25, bad: 0, good: 1 },
+    { key: "fcfPositiveRatio", weight: 0.20, bad: 0, good: 1 },
+    { key: "revenueVolatility", weight: 0.20, bad: 0.30, good: 0.03 },
+    { key: "marginVolatility", weight: 0.15, bad: 0.10, good: 0.01 },
+    { key: "piotroski", weight: 0.20, bad: 2, good: 8 },
+  ],
+  capitalAllocation: [
+    { key: "shareChangeYearly", weight: 0.35, bad: 0.05, good: -0.03 },
+    { key: "payoutRatio", weight: 0.20, bad: 1.2, good: 0.6 },
+    { key: "shareholderYield", weight: 0.20, bad: 0, good: 0.06 },
+    { key: "roicChange", weight: 0.25, bad: -0.10, good: 0.10 },
+  ],
+  valuation: [
+    { key: "peRatio", weight: 0.25, bad: 45, good: 10 },
+    { key: "evToEbit", weight: 0.20, bad: 40, good: 8 },
+    { key: "fcfYield", weight: 0.25, bad: 0, good: 0.08 },
+    { key: "psRatio", weight: 0.10, bad: 15, good: 1 },
+    { key: "pegRatio", weight: 0.20, bad: 3, good: 0.8 },
+  ],
+  marketRisk: [
+    { key: "volatility", weight: 0.6, bad: 0.70, good: 0.15 },
+    { key: "maxDrawdown", weight: 0.4, bad: -0.80, good: -0.20 },
+  ],
+};
+
+// Banks, insurers, brokers: liquidity ratios, EBITDA and free cash flow are not meaningful.
+const FINANCIAL = {
+  ...GENERAL,
+  profitability: [
+    { key: "netMargin", weight: 0.25, bad: 0, good: 0.30 },
+    { key: "roe", weight: 0.45, bad: 0.02, good: 0.16 },
+    { key: "roa", weight: 0.30, bad: 0.002, good: 0.015 },
+  ],
+  cashFlow: [],
+  balanceSheet: [
+    { key: "equityRatio", weight: 0.6, bad: 0.04, good: 0.14 },
+    { key: "debtToEquity", weight: 0.4, bad: 4, good: 0.5 },
+  ],
+  liquidity: [],
+  growth1y: [
+    { key: "revenueYoY", weight: 0.45, bad: -0.10, good: 0.15 },
+    { key: "epsYoY", weight: 0.55, bad: -0.25, good: 0.25 },
+  ],
+  growthLong: [
+    { key: "revenueCagr", weight: 0.30, bad: -0.05, good: 0.12 },
+    { key: "epsCagr", weight: 0.30, bad: -0.10, good: 0.15 },
+    { key: "bookValuePerShareCagr", weight: 0.25, bad: -0.05, good: 0.12 },
+    { key: "revenueGrowthYearsRatio", weight: 0.15, bad: 0, good: 1 },
+  ],
+  consistency: [
+    { key: "profitableYearsRatio", weight: 0.45, bad: 0, good: 1 },
+    { key: "revenueVolatility", weight: 0.30, bad: 0.30, good: 0.03 },
+    { key: "marginVolatility", weight: 0.25, bad: 0.15, good: 0.02 },
+  ],
+  capitalAllocation: [
+    { key: "shareChangeYearly", weight: 0.5, bad: 0.05, good: -0.03 },
+    { key: "shareholderYield", weight: 0.5, bad: 0, good: 0.07 },
+  ],
+  valuation: [
+    { key: "peRatio", weight: 0.5, bad: 25, good: 8 },
+    { key: "pbRatio", weight: 0.3, bad: 3, good: 0.8 },
+    { key: "pegRatio", weight: 0.2, bad: 3, good: 0.8 },
+  ],
+};
+
+// REITs and real-estate operators run structurally higher leverage.
+const REAL_ESTATE = {
+  ...GENERAL,
+  balanceSheet: [
+    { key: "debtToEquity", weight: 0.25, bad: 4, good: 0.8 },
+    { key: "netDebtToEbitda", weight: 0.35, bad: 10, good: 4 },
+    { key: "interestCoverage", weight: 0.25, bad: 1.2, good: 6 },
+    { key: "equityRatio", weight: 0.15, bad: 0.15, good: 0.55 },
+  ],
+  liquidity: [],
+  valuation: [
+    { key: "pfcfRatio", weight: 0.4, bad: 35, good: 10 },
+    { key: "pbRatio", weight: 0.3, bad: 3, good: 0.8 },
+    { key: "evToEbitda", weight: 0.3, bad: 30, good: 10 },
+  ],
+};
+
+export const PROFILES = { general: GENERAL, financial: FINANCIAL, realEstate: REAL_ESTATE };
+
+// Display order. "inverse": lower is better.
 export const DIMENSIONS = [
-  { key: "operations", label: "Működés", short: "Mennyire nyereséges most a cég?" },
-  { key: "stability", label: "Pénzügyi stabilitás", short: "Mennyire bírja az adósságot és a nehéz időket?" },
-  { key: "growth1y", label: "Fejlődés (utóbbi 1 év)", short: "Mennyit nőtt az elmúlt évben?" },
-  { key: "longTerm", label: "Hosszú távú fejlődés", short: "Hogyan fejlődött az elmúlt 3–5 évben?" },
-  { key: "reliability", label: "Megbízhatóság", short: "Mennyire kiszámítható és következetes?" },
-  { key: "risk", label: "Kockázat", short: "Mennyire veszélyes most befektetni? (alacsonyabb = jobb)", inverse: true },
+  "profitability", "cashFlow", "balanceSheet", "liquidity", "growth1y",
+  "growthLong", "consistency", "capitalAllocation", "valuation", "risk",
 ];
 
-export function analyze(company) {
-  const years = [...(company.annual || [])]
-    .filter((y) => isNum(y.year))
-    .sort((a, b) => a.year - b.year);
+export const OVERALL_WEIGHTS = {
+  profitability: 0.15, cashFlow: 0.12, balanceSheet: 0.13, liquidity: 0.05, growth1y: 0.08,
+  growthLong: 0.14, consistency: 0.13, capitalAllocation: 0.07, valuation: 0.13,
+};
 
-  if (years.length === 0) {
-    return { ok: false, reason: "Nincs elérhető éves pénzügyi adat." };
-  }
+export const RISK_WEIGHTS = { balanceSheet: 0.30, liquidity: 0.10, consistency: 0.25, profitability: 0.15, cashFlow: 0.20 };
+export const FLAG_PENALTY = { critical: 10, warning: 4 };
 
+// ---------- Main analysis ----------
+
+export function analyze(company, { now = new Date() } = {}) {
+  const years = [...(company.annual || [])].filter((y) => isNum(y.year)).sort((a, b) => a.year - b.year);
+  if (!years.length) return { ok: false, reason: "noData" };
+
+  const profile = PROFILES[company.profile] ? company.profile : "general";
+  const defs = PROFILES[profile];
   const L = years[years.length - 1];
   const P = years.length > 1 ? years[years.length - 2] : null;
-  const metricsByYear = years.map((y, i) => yearMetrics(y, years[i - 1] || null));
-  const m = metricsByYear[metricsByYear.length - 1];
-  const mp = metricsByYear.length > 1 ? metricsByYear[metricsByYear.length - 2] : null;
+  const series = years.map((y, i) => yearMetrics(y, years[i - 1] || null));
+  const m = series[series.length - 1];
+  const mp = series.length > 1 ? series[series.length - 2] : null;
 
-  // --- Hosszú távú ablak: legfeljebb az utolsó 6 év (5 évnyi változás) ---
+  // Long-term window: up to the last 6 fiscal years (5 years of change).
   const win = years.slice(-6);
-  const winM = metricsByYear.slice(-6);
+  const winM = series.slice(-6);
   const span = win.length - 1;
+  const first = winM[0];
 
-  const revenueYoY = P ? growth(L.revenue, P.revenue) : null;
-  const netIncomeYoY = P ? growth(L.netIncome, P.netIncome) : null;
-  const fcfYoY = mp ? growth(m.freeCashFlow, mp.freeCashFlow) : null;
-  const epsYoY = P ? growth(L.epsDiluted, P.epsDiluted) : null;
-
-  const revenueCagr = span >= 2 ? cagr(win[0].revenue, L.revenue, span) : null;
-  const netIncomeCagr = span >= 2 ? cagr(win[0].netIncome, L.netIncome, span) : null;
   const yoys = win.slice(1).map((y, i) => growth(y.revenue, win[i].revenue));
-  const revenueGrowthYearsRatio = yoys.filter(isNum).length ? yoys.filter((g) => isNum(g) && g > 0).length / yoys.filter(isNum).length : null;
-  const revenueVolatility = stdev(yoys);
-  const marginTrend = span >= 2 && isNum(winM[0].operatingMargin) && isNum(m.operatingMargin) ? m.operatingMargin - winM[0].operatingMargin : null;
-  const profitableYearsRatio = win.filter((y) => isNum(y.netIncome)).length ? win.filter((y) => y.netIncome > 0).length / win.filter((y) => isNum(y.netIncome)).length : null;
-  const fcfPositiveRatio = winM.filter((y) => isNum(y.freeCashFlow)).length ? winM.filter((y) => y.freeCashFlow > 0).length / winM.filter((y) => isNum(y.freeCashFlow)).length : null;
-  const shareChangeYearly = span >= 1 && isNum(winM[0].shares) && isNum(m.shares) && winM[0].shares > 0 ? Math.pow(m.shares / winM[0].shares, 1 / span) - 1 : null;
-  const z = altmanZ(L);
-  const fScore = piotroski(L, P);
-  const netDebtToFcf = isNum(m.netDebt) ? (m.netDebt <= 0 ? 0 : (isNum(m.freeCashFlow) && m.freeCashFlow > 0 ? m.netDebt / m.freeCashFlow : Infinity)) : null;
+  const shareStart = first.shares, shareEnd = m.shares;
+
+  // TTM figures (from the latest quarterly filings) are preferred for valuation.
+  const ttm = company.ttm && isNum(company.ttm.revenue) ? company.ttm : null;
+  const lb = company.latestBalance || null;
+  const basis = ttm || L;
+  const bal = lb && isNum(lb.totalAssets) ? { ...L, ...Object.fromEntries(Object.entries(lb).filter(([, v]) => v !== null)) } : L;
+
+  const mk = company.market || {};
+  let marketCap = isNum(mk.marketCap) && mk.marketCap > 0 ? mk.marketCap : null;
+  if (!marketCap && isNum(mk.price) && isNum(mk.sharesOutstanding)) marketCap = mk.price * mk.sharesOutstanding;
+  const bFcf = freeCashFlow(basis);
+  const bEbitda = ebitda(basis);
+  const ev = marketCap && isNum(bal.totalDebt) && isNum(bal.cash) ? marketCap + bal.totalDebt - bal.cash : marketCap;
+  const epsCagr = span >= 2 ? cagr(first.eps, m.eps, span) : null;
+  const pe = marketCap && isNum(basis.netIncome) ? (basis.netIncome > 0 ? marketCap / basis.netIncome : Infinity) : null;
+  const dividends = isNum(basis.dividendsPaid) ? Math.abs(basis.dividendsPaid) : null;
+  const buybacks = isNum(basis.buybacks) ? Math.abs(basis.buybacks) : null;
+
+  const ms = marketStats(company.prices);
 
   const metrics = {
-    grossMargin: m.grossMargin, operatingMargin: m.operatingMargin, netMargin: m.netMargin, fcfMargin: m.fcfMargin,
-    roe: m.roe, roa: m.roa, currentRatio: m.currentRatio, debtToEquity: m.debtToEquity,
-    liabilitiesToAssets: m.liabilitiesToAssets, interestCoverage: m.interestCoverage, netDebt: m.netDebt,
-    netDebtToFcf, altmanZ: z, piotroski: fScore,
-    revenueYoY, netIncomeYoY, fcfYoY, epsYoY, revenueCagr, netIncomeCagr, revenueGrowthYearsRatio,
-    revenueVolatility, marginTrend, profitableYearsRatio, fcfPositiveRatio, shareChangeYearly,
-    yearsOfData: years.length, windowYears: span,
+    ...pick(m, ["grossMargin", "operatingMargin", "netMargin", "fcfMargin", "roe", "roa", "roic", "fcfConversion", "accrualRatio",
+      "sbcToRevenue", "capexToRevenue", "currentRatio", "quickRatio", "cashRatio", "debtToEquity", "equityRatio", "liabilitiesToAssets",
+      "netDebt", "netDebtToEbitda", "interestCoverage", "goodwillToAssets", "payoutRatio", "bookValuePerShare"]),
+    altmanZ: profile === "general" ? altmanZ(L) : null,
+    piotroski: profile === "financial" ? null : piotroski(L, P),
+    revenueYoY: P ? growth(L.revenue, P.revenue) : null,
+    operatingIncomeYoY: mp ? growth(m.operatingIncome, mp.operatingIncome) : null,
+    netIncomeYoY: P ? growth(L.netIncome, P.netIncome) : null,
+    epsYoY: mp ? growth(m.eps, mp.eps) : null,
+    fcfYoY: mp ? growth(m.freeCashFlow, mp.freeCashFlow) : null,
+    revenueCagr: span >= 2 ? cagr(win[0].revenue, L.revenue, span) : null,
+    epsCagr,
+    fcfCagr: span >= 2 ? cagr(first.freeCashFlow, m.freeCashFlow, span) : null,
+    bookValuePerShareCagr: span >= 2 ? cagr(first.bookValuePerShare, m.bookValuePerShare, span) : null,
+    revenueGrowthYearsRatio: ratio(yoys, (g) => g > 0),
+    marginTrend: span >= 2 && isNum(first.operatingMargin) && isNum(m.operatingMargin) ? m.operatingMargin - first.operatingMargin : null,
+    roicChange: span >= 2 && isNum(first.roic) && isNum(m.roic) ? m.roic - first.roic : null,
+    profitableYearsRatio: ratio(win.map((y) => y.netIncome), (x) => x > 0),
+    fcfPositiveRatio: ratio(winM.map((y) => y.freeCashFlow), (x) => x > 0),
+    revenueVolatility: stdev(yoys),
+    marginVolatility: stdev(winM.map((y) => (profile === "financial" ? y.netMargin : y.operatingMargin))),
+    shareChangeYearly: span >= 1 && isNum(shareStart) && isNum(shareEnd) && shareStart > 0 ? Math.pow(shareEnd / shareStart, 1 / span) - 1 : null,
+    marketCap,
+    enterpriseValue: ev,
+    peRatio: pe,
+    psRatio: marketCap ? div(marketCap, basis.revenue) : null,
+    pbRatio: marketCap && isNum(bal.equity) && bal.equity > 0 ? marketCap / bal.equity : null,
+    evToEbit: ev && isNum(basis.operatingIncome) ? (basis.operatingIncome > 0 ? ev / basis.operatingIncome : Infinity) : null,
+    evToEbitda: ev && isNum(bEbitda) ? (bEbitda > 0 ? ev / bEbitda : Infinity) : null,
+    fcfYield: marketCap ? div(bFcf, marketCap) : null,
+    pfcfRatio: marketCap && isNum(bFcf) ? (bFcf > 0 ? marketCap / bFcf : Infinity) : null,
+    pegRatio: isNum(pe) && pe !== Infinity && isNum(epsCagr) && epsCagr > 0 ? pe / (epsCagr * 100) : pe === Infinity || (isNum(epsCagr) && epsCagr <= 0) ? Infinity : null,
+    dividendYield: marketCap && isNum(dividends) ? dividends / marketCap : null,
+    shareholderYield: marketCap && (isNum(dividends) || isNum(buybacks)) ? ((dividends ?? 0) + (buybacks ?? 0)) / marketCap : null,
+    ...ms,
+    yearsOfData: years.length,
+    windowYears: span,
   };
 
-  // --- Dimenziók részletesen: minden tételnél látszik, miből jön a pontszám ---
-  const negEquity = isNum(L.equity) && L.equity <= 0;
-  const parts = {
-    operations: [
-      { key: "operatingMargin", weight: 0.3, score: scale(m.operatingMargin, 0, 0.30) },
-      { key: "netMargin", weight: 0.2, score: scale(m.netMargin, -0.05, 0.20) },
-      { key: "roe", weight: 0.2, score: negEquity ? null : scale(m.roe, 0, 0.25) },
-      { key: "roa", weight: 0.1, score: scale(m.roa, 0, 0.15) },
-      { key: "fcfMargin", weight: 0.2, score: scale(m.fcfMargin, -0.05, 0.20) },
-    ],
-    stability: [
-      { key: "currentRatio", weight: 0.15, score: scale(m.currentRatio, 0.6, 2.0) },
-      { key: "debtToEquity", weight: 0.2, score: negEquity ? 0 : scale(m.debtToEquity, 2.5, 0.3) },
-      { key: "interestCoverage", weight: 0.15, score: isNum(L.interestExpense) && L.interestExpense <= 0 ? 100 : scale(m.interestCoverage, 1.5, 15) },
-      { key: "netDebtToFcf", weight: 0.25, score: netDebtToFcf === Infinity ? 0 : scale(netDebtToFcf, 8, 0.5) },
-      { key: "altmanZ", weight: 0.25, score: scale(z, 1.1, 4.0) },
-    ],
-    growth1y: [
-      { key: "revenueYoY", weight: 0.4, score: scale(revenueYoY, -0.10, 0.20) },
-      { key: "netIncomeYoY", weight: 0.3, score: scale(netIncomeYoY, -0.25, 0.30) },
-      { key: "fcfYoY", weight: 0.3, score: scale(fcfYoY, -0.25, 0.30) },
-    ],
-    longTerm: [
-      { key: "revenueCagr", weight: 0.35, score: scale(revenueCagr, -0.05, 0.15) },
-      { key: "netIncomeCagr", weight: 0.25, score: scale(netIncomeCagr, -0.10, 0.20) },
-      { key: "revenueGrowthYearsRatio", weight: 0.2, score: scale(revenueGrowthYearsRatio, 0, 1) },
-      { key: "marginTrend", weight: 0.2, score: scale(marginTrend, -0.10, 0.10) },
-    ],
-    reliability: [
-      { key: "profitableYearsRatio", weight: 0.3, score: scale(profitableYearsRatio, 0, 1) },
-      { key: "fcfPositiveRatio", weight: 0.25, score: scale(fcfPositiveRatio, 0, 1) },
-      { key: "revenueVolatility", weight: 0.2, score: scale(revenueVolatility, 0.30, 0.03) },
-      { key: "shareChangeYearly", weight: 0.1, score: scale(shareChangeYearly, 0.05, -0.02) },
-      { key: "piotroski", weight: 0.15, score: scale(fScore, 2, 8) },
-    ],
-  };
+  // ---- Part scores ----
+  const negEquity = isNum(bal.equity) && bal.equity <= 0;
+  const parts = {};
+  for (const dim of Object.keys(OVERALL_WEIGHTS).concat("marketRisk")) {
+    parts[dim] = (defs[dim] || []).map((d) => ({ ...d, value: metrics[d.key], score: partScore(d, metrics[d.key], { negEquity, L, metrics }) }));
+  }
 
-  // Ha a cég nettó veszteséges, a negatív bázis miatt a profitnövekedés nem értelmezhető:
-  // ilyenkor a nyereség oldali tételek 0-t kapnak, hogy ne torzítson felfelé.
+  // A loss-making company cannot score on earnings growth from a negative base.
   if (isNum(L.netIncome) && L.netIncome < 0) {
-    parts.growth1y.find((p) => p.key === "netIncomeYoY").score = 0;
-    parts.longTerm.find((p) => p.key === "netIncomeCagr").score = 0;
+    for (const [dim, key] of [["growth1y", "epsYoY"], ["growthLong", "epsCagr"]]) {
+      const p = parts[dim].find((x) => x.key === key);
+      if (p) p.score = 0;
+    }
   }
 
   const scores = {};
-  for (const k of Object.keys(parts)) scores[k] = weighted(parts[k]);
+  for (const dim of Object.keys(parts)) scores[dim] = parts[dim].length ? weighted(parts[dim]) : null;
 
-  const flags = buildFlags({ L, P, m, metrics, negEquity });
+  const flags = buildFlags({ L, P, m, metrics, negEquity, profile, company, now });
 
-  // Kockázat: a gyenge stabilitás, megbízhatóság és működés növeli, a figyelmeztetések tovább emelik.
-  const base = weighted([
-    { score: scores.stability, weight: 0.45 },
-    { score: scores.reliability, weight: 0.30 },
-    { score: scores.operations, weight: 0.25 },
-  ]);
-  const penalty = flags.filter((f) => f.level === "critical").length * 10 + flags.filter((f) => f.level === "warning").length * 4;
-  scores.risk = isNum(base) ? Math.max(0, Math.min(100, 100 - base + penalty)) : null;
+  // ---- Risk: fundamental (75%) + market (25%), raised by warning flags ----
+  const fundamental = weighted(Object.entries(RISK_WEIGHTS).map(([k, w]) => ({ score: scores[k], weight: w })));
+  const safety = isNum(scores.marketRisk) && isNum(fundamental) ? 0.75 * fundamental + 0.25 * scores.marketRisk : fundamental;
+  const penalty = flags.reduce((s, f) => s + (FLAG_PENALTY[f.level] || 0), 0);
+  scores.risk = isNum(safety) ? Math.round(Math.max(0, Math.min(100, 100 - safety + penalty))) : null;
 
-  // Összesített TeraScore (a kockázat ebből származik, ezért nem számít bele külön).
-  scores.overall = weighted([
-    { score: scores.operations, weight: 0.20 },
-    { score: scores.stability, weight: 0.25 },
-    { score: scores.growth1y, weight: 0.10 },
-    { score: scores.longTerm, weight: 0.20 },
-    { score: scores.reliability, weight: 0.25 },
-  ]);
+  scores.overall = weighted(Object.entries(OVERALL_WEIGHTS).map(([k, w]) => ({ score: scores[k], weight: w })));
 
   const allParts = Object.values(parts).flat();
-  const coverage = Math.round((allParts.filter((p) => isNum(p.score)).length / allParts.length) * 100);
-
-  const distress = distressLevel({ z, negEquity, m, L, metrics });
-  const outlook = outlookLevel(scores, metrics);
+  const coverage = allParts.length ? Math.round((allParts.filter((p) => isNum(p.score)).length / allParts.length) * 100) : 0;
 
   return {
     ok: true,
     engineVersion: ENGINE_VERSION,
+    profile,
     latestYear: L.year,
+    latestPeriodEnd: L.periodEnd || null,
+    valuationBasis: ttm ? "ttm" : "annual",
     scores,
     parts,
     metrics,
     flags,
-    distress,
-    outlook,
+    distress: distressLevel({ metrics, negEquity, m, L, profile }),
+    outlook: outlookLevel(scores, metrics),
+    styles: styleTags(scores, metrics, flags),
     coverage,
-    verdict: verdictText(scores, distress, outlook),
-    explanations: explain(scores, metrics, L),
-    series: metricsByYear,
+    series,
   };
 }
 
-// ---------- Figyelmeztetések és erősségek ----------
+function pick(o, keys) {
+  return Object.fromEntries(keys.map((k) => [k, o[k] ?? null]));
+}
 
-function buildFlags({ L, P, m, metrics, negEquity }) {
+function partScore(d, v, { negEquity, L, metrics }) {
+  switch (d.key) {
+    case "roe": return negEquity ? null : scale(v, d.bad, d.good);
+    case "debtToEquity": return negEquity ? 0 : scale(v, d.bad, d.good);
+    case "interestCoverage": return isNum(L.interestExpense) && L.interestExpense <= 0 ? 100 : scale(v, d.bad, d.good);
+    case "fcfConversion":
+      // Negative earnings: positive FCF still counts as moderately good cash generation.
+      if (v === null && isNum(L.netIncome) && L.netIncome <= 0) { const f = freeCashFlow(L); return isNum(f) ? (f > 0 ? 60 : 0) : null; }
+      return scale(v, d.bad, d.good);
+    case "payoutRatio":
+      return v === 0 ? null : v === Infinity ? 0 : scale(v, d.bad, d.good); // no dividend: neutral (not scored)
+    default:
+      if (v === Infinity) return 0;
+      if (v === -Infinity) return 100;
+      return scale(v, d.bad, d.good);
+  }
+}
+
+// ---------- Flags ----------
+
+export const FLAG_IDS = [
+  "negativeEquity", "persistentLosses", "lossLastYear", "negativeFcf", "lowCurrentRatio", "interestCoverageCritical",
+  "interestCoverageWeak", "altmanDistress", "altmanGrey", "debtWithoutEbitda", "highLeverage", "revenueDecline",
+  "heavyDilution", "highSbc", "lowEarningsQuality", "dividendUncovered", "goodwillHeavy", "staleData", "deepDrawdown",
+  "netCash", "highMargin", "highRoic", "alwaysProfitable", "strongGrowth", "buybacks", "altmanSafe", "strongCashConversion",
+];
+
+function buildFlags({ L, P, m, metrics: mt, negEquity, profile, company, now }) {
   const f = [];
-  const add = (level, title, text) => f.push({ level, title, text });
+  const add = (level, id, params = {}) => f.push({ level, id, params });
+  const general = profile !== "financial";
 
-  if (negEquity) add("critical", "Negatív saját tőke", "A cég kötelezettségei meghaladják az eszközeit. Ez lehet tudatos részvény-visszavásárlás következménye, de gyakran súlyos pénzügyi gondot jelez.");
+  if (negEquity) add("critical", "negativeEquity");
   if (isNum(L.netIncome) && L.netIncome < 0) {
-    if (P && isNum(P.netIncome) && P.netIncome < 0) add("critical", "Tartósan veszteséges", "Legalább két egymást követő évben veszteséget termelt.");
-    else add("warning", "Veszteséges az utolsó évben", "Az utolsó lezárt évben a cég nem termelt nyereséget.");
+    if (P && isNum(P.netIncome) && P.netIncome < 0) add("critical", "persistentLosses");
+    else add("warning", "lossLastYear");
   }
-  if (isNum(m.freeCashFlow) && m.freeCashFlow < 0) add("warning", "Negatív szabad cash flow", "A működésből több pénz megy el, mint amennyi bejön – kívülről (hitel, részvénykibocsátás) kell finanszírozni.");
-  if (isNum(m.currentRatio) && m.currentRatio < 1) add("warning", "Szűkös rövid távú likviditás", `Az egy éven belül esedékes kötelezettségek nagyobbak, mint a forgóeszközök (likviditási ráta: ${hu(m.currentRatio, 2)}). Erős cash flow mellett ez kezelhető.`);
-  if (isNum(m.interestCoverage)) {
-    if (m.interestCoverage < 1.5) add("critical", "Nem fedezi a kamatokat", "A működési nyereség alig vagy egyáltalán nem fedezi a kamatköltségeket.");
-    else if (m.interestCoverage < 3) add("warning", "Gyenge kamatfedezet", "A működési nyereség csak kevéssel haladja meg a kamatterheket.");
+  if (general && isNum(m.freeCashFlow) && m.freeCashFlow < 0) add("warning", "negativeFcf");
+  if (profile === "general" && isNum(m.currentRatio) && m.currentRatio < 1) add("warning", "lowCurrentRatio", { value: m.currentRatio });
+  if (general && isNum(m.interestCoverage)) {
+    if (m.interestCoverage < 1.5) add("critical", "interestCoverageCritical", { value: m.interestCoverage });
+    else if (m.interestCoverage < 3) add("warning", "interestCoverageWeak", { value: m.interestCoverage });
   }
-  if (isNum(metrics.altmanZ)) {
-    if (metrics.altmanZ < 1.1) add("critical", "Csődveszélyes zóna (Altman Z)", `Az Altman Z-pontszám ${hu(metrics.altmanZ, 2)}, ami a csődveszélyes tartományba esik.`);
-    else if (metrics.altmanZ < 2.6) add("warning", "Szürke zóna (Altman Z)", `Az Altman Z-pontszám ${hu(metrics.altmanZ, 2)}: nem kritikus, de nem is biztonságos tartomány.`);
+  if (isNum(mt.altmanZ)) {
+    if (mt.altmanZ < 1.1) add("critical", "altmanDistress", { value: mt.altmanZ });
+    else if (mt.altmanZ < 2.6) add("warning", "altmanGrey", { value: mt.altmanZ });
   }
-  if (metrics.netDebtToFcf === Infinity) add("warning", "Adósság fedezet nélkül", "A cégnek nettó adóssága van, de nincs pozitív szabad cash flow-ja a törlesztésre.");
-  else if (isNum(metrics.netDebtToFcf) && metrics.netDebtToFcf > 5) add("warning", "Magas adósság a termelt pénzhez képest", `A jelenlegi szabad cash flow-ból kb. ${hu(metrics.netDebtToFcf, 1)} év kellene a nettó adósság visszafizetéséhez.`);
-  if (isNum(metrics.revenueYoY) && metrics.revenueYoY < -0.10) add("warning", "Jelentősen csökkenő bevétel", `A bevétel ${hu((metrics.revenueYoY * 100), 1)}%-kal esett az előző évhez képest.`);
-  if (isNum(metrics.shareChangeYearly) && metrics.shareChangeYearly > 0.05) add("warning", "Erős részvényhígítás", `A részvények száma évente átlagosan ${hu((metrics.shareChangeYearly * 100), 1)}%-kal nő, ami csökkenti a meglévő részvényesek részesedését.`);
+  if (general) {
+    const limit = profile === "realEstate" ? 8 : 4;
+    if (m.netDebtToEbitda === Infinity) add("warning", "debtWithoutEbitda");
+    else if (isNum(m.netDebtToEbitda) && m.netDebtToEbitda > limit) add("warning", "highLeverage", { value: m.netDebtToEbitda });
+  }
+  if (isNum(mt.revenueYoY) && mt.revenueYoY < -0.10) add("warning", "revenueDecline", { value: mt.revenueYoY });
+  if (isNum(mt.shareChangeYearly) && mt.shareChangeYearly > 0.05) add("warning", "heavyDilution", { value: mt.shareChangeYearly });
+  if (isNum(m.sbcToRevenue) && m.sbcToRevenue > 0.15) add("warning", "highSbc", { value: m.sbcToRevenue });
+  if (general && isNum(m.accrualRatio) && m.accrualRatio > 0.10) add("warning", "lowEarningsQuality", { value: m.accrualRatio });
+  if (m.payoutRatio === Infinity || (isNum(m.payoutRatio) && m.payoutRatio > 1.2)) add("warning", "dividendUncovered", { value: m.payoutRatio });
+  if (isNum(m.goodwillToAssets) && m.goodwillToAssets > 0.4) add("warning", "goodwillHeavy", { value: m.goodwillToAssets });
+  if (L.periodEnd) {
+    const ageMonths = (now - new Date(L.periodEnd)) / (30.44 * 86400000);
+    if (ageMonths > 18) add("warning", "staleData", { value: L.periodEnd });
+  }
+  if (isNum(mt.maxDrawdown) && mt.maxDrawdown < -0.6) add("warning", "deepDrawdown", { value: mt.maxDrawdown });
 
-  // Erősségek
-  if (isNum(m.netDebt) && m.netDebt < 0) add("positive", "Nettó készpénz pozíció", "Több készpénze van, mint adóssága.");
-  if (isNum(m.operatingMargin) && m.operatingMargin > 0.25) add("positive", "Kiemelkedő jövedelmezőség", `A működési árrés ${hu((m.operatingMargin * 100), 1)}%, ami kiemelkedően magas.`);
-  if (isNum(metrics.profitableYearsRatio) && metrics.profitableYearsRatio === 1 && metrics.windowYears >= 3) add("positive", "Minden vizsgált évben nyereséges", "A vizsgált időszak egyik évében sem volt veszteséges.");
-  if (isNum(metrics.revenueCagr) && metrics.revenueCagr > 0.10) add("positive", "Erős hosszú távú növekedés", `A bevétel évente átlagosan ${hu((metrics.revenueCagr * 100), 1)}%-kal nőtt.`);
-  if (isNum(metrics.shareChangeYearly) && metrics.shareChangeYearly < -0.01) add("positive", "Részvény-visszavásárlás", "A részvények száma csökken, így minden megmaradó részvény nagyobb részt képvisel a cégből.");
-  if (isNum(metrics.altmanZ) && metrics.altmanZ > 2.6) add("positive", "Biztonságos zóna (Altman Z)", `Az Altman Z-pontszám ${hu(metrics.altmanZ, 2)}, ami a biztonságos tartomány.`);
+  // Strengths
+  if (general && isNum(m.netDebt) && m.netDebt < 0) add("positive", "netCash", { value: -m.netDebt });
+  if (general && isNum(m.operatingMargin) && m.operatingMargin > 0.25) add("positive", "highMargin", { value: m.operatingMargin });
+  if (general && isNum(m.roic) && m.roic > 0.15) add("positive", "highRoic", { value: m.roic });
+  if (mt.profitableYearsRatio === 1 && mt.windowYears >= 3) add("positive", "alwaysProfitable", { years: mt.windowYears + 1 });
+  if (isNum(mt.revenueCagr) && mt.revenueCagr > 0.10) add("positive", "strongGrowth", { value: mt.revenueCagr });
+  if (isNum(mt.shareChangeYearly) && mt.shareChangeYearly < -0.01) add("positive", "buybacks", { value: mt.shareChangeYearly });
+  if (isNum(mt.altmanZ) && mt.altmanZ > 2.6) add("positive", "altmanSafe", { value: mt.altmanZ });
+  if (general && isNum(m.fcfConversion) && m.fcfConversion > 1 && isNum(m.netIncome) && m.netIncome > 0) add("positive", "strongCashConversion", { value: m.fcfConversion });
 
   return f;
 }
 
-// Csődkockázat: Altman Z-zóna + egyéb kritikus jelek alapján, szöveges szintként.
-function distressLevel({ z, negEquity, m, L, metrics }) {
-  let points = 0;
-  if (isNum(z)) points += z < 1.1 ? 3 : z < 2.6 ? 1 : 0;
-  if (negEquity && !(isNum(m.freeCashFlow) && m.freeCashFlow > 0)) points += 2;
-  if (isNum(m.freeCashFlow) && m.freeCashFlow < 0) points += 1;
-  if (isNum(L.netIncome) && L.netIncome < 0) points += 1;
-  if (isNum(m.interestCoverage) && m.interestCoverage < 1.5) points += 2;
-  if (metrics.netDebtToFcf === Infinity) points += 1;
-  if (points >= 4) return { level: "high", label: "Magas", text: "Több jel is komoly pénzügyi nehézségre utal." };
-  if (points >= 2) return { level: "medium", label: "Közepes", text: "Vannak figyelmeztető jelek, a helyzetet érdemes követni." };
-  return { level: "low", label: "Alacsony", text: "A jelenlegi adatok alapján nem látszik csődközeli helyzet." };
+// ---------- Classifications ----------
+
+// Financial distress: points from Altman zone and critical signals. low / medium / high.
+function distressLevel({ metrics: mt, negEquity, m, L, profile }) {
+  let pts = 0;
+  const z = mt.altmanZ;
+  if (isNum(z)) pts += z < 1.1 ? 3 : z < 2.6 ? 1 : 0;
+  if (negEquity && !(isNum(m.freeCashFlow) && m.freeCashFlow > 0)) pts += 2;
+  if (profile !== "financial" && isNum(m.freeCashFlow) && m.freeCashFlow < 0) pts += 1;
+  if (isNum(L.netIncome) && L.netIncome < 0) pts += 1;
+  if (isNum(m.interestCoverage) && m.interestCoverage < 1.5) pts += 2;
+  if (m.netDebtToEbitda === Infinity) pts += 1;
+  if (profile === "financial" && isNum(m.equityRatio) && m.equityRatio < 0.05) pts += 2;
+  return { level: pts >= 4 ? "high" : pts >= 2 ? "medium" : "low", points: pts };
 }
 
-// Hosszú távú kilátás a múltbeli trendek alapján (nem jóslat!).
-function outlookLevel(scores, metrics) {
-  const lt = scores.longTerm, g = scores.growth1y;
-  if (!isNum(lt)) return { level: "unknown", label: "Nem megállapítható", text: "Nincs elég év a hosszú távú trendhez." };
-  const s = 0.7 * lt + 0.3 * (isNum(g) ? g : lt);
-  if (s >= 65) return { level: "up", label: "Emelkedő trend", text: "Az elmúlt évek tartós növekedést mutatnak." };
-  if (s >= 40) return { level: "flat", label: "Stagnáló trend", text: "A cég nagyjából egy szinten mozog, érdemi növekedés nélkül." };
-  return { level: "down", label: "Csökkenő trend", text: "Az elmúlt évek inkább visszaesést mutatnak." };
+// Long-term trend from historical data (descriptive, not a forecast).
+function outlookLevel(scores, mt) {
+  const lt = scores.growthLong, g = scores.growth1y;
+  if (!isNum(lt)) return { level: "unknown" };
+  let s = 0.7 * lt + 0.3 * (isNum(g) ? g : lt);
+  if (isNum(mt.marginTrend)) s += Math.max(-5, Math.min(5, mt.marginTrend * 50));
+  return { level: s >= 65 ? "up" : s >= 40 ? "flat" : "down", score: Math.round(s) };
 }
 
-// ---------- Közérthető szövegek ----------
+// Investment-style tags.
+function styleTags(s, mt, flags) {
+  const t = [];
+  const crit = flags.some((f) => f.level === "critical");
+  if (s.profitability >= 70 && s.consistency >= 70 && (s.balanceSheet ?? 70) >= 60 && !crit) t.push("quality");
+  if (s.growthLong >= 70) t.push("growth");
+  if (s.valuation >= 65) t.push("value");
+  if (isNum(mt.dividendYield) && mt.dividendYield >= 0.02 && !flags.some((f) => f.id === "dividendUncovered")) t.push("income");
+  if (crit || (isNum(mt.profitableYearsRatio) && mt.profitableYearsRatio < 0.5)) t.push("speculative");
+  return t;
+}
 
-export function grade(score, inverse = false) {
-  if (!isNum(score)) return { label: "Nincs adat", tone: "none" };
+// Grade bands shared by the UI and documentation.
+export function gradeKey(score, inverse = false) {
+  if (!isNum(score)) return "na";
   const s = inverse ? 100 - score : score;
-  if (s >= 80) return { label: inverse ? "Nagyon alacsony" : "Kiváló", tone: "good" };
-  if (s >= 65) return { label: inverse ? "Alacsony" : "Jó", tone: "good" };
-  if (s >= 45) return { label: inverse ? "Mérsékelt" : "Közepes", tone: "warning" };
-  if (s >= 25) return { label: inverse ? "Magas" : "Gyenge", tone: "serious" };
-  return { label: inverse ? "Nagyon magas" : "Rossz", tone: "critical" };
+  if (s >= 80) return "excellent";
+  if (s >= 65) return "strong";
+  if (s >= 45) return "moderate";
+  if (s >= 25) return "weak";
+  return "poor";
 }
 
-const hu = (x, d) => x.toFixed(d).replace(".", ",");
-const pct = (x, d = 1) => `${hu(x * 100, d)}%`;
-const signedPct = (x) => `${x >= 0 ? "+" : ""}${pct(x)}`;
+export const GRADE_TONE = { excellent: "good", strong: "good", moderate: "warning", weak: "serious", poor: "critical", na: "none" };
 
-function explain(scores, mt, L) {
-  const e = {};
-  // Működés
-  if (isNum(mt.netMargin)) {
-    const per100 = Math.round(mt.netMargin * 100);
-    e.operations = mt.netMargin >= 0
-      ? `Minden 100 dollár bevételből kb. ${per100} dollár tiszta nyereség marad a cégnél.`
-      : `A cég veszteséges: minden 100 dollár bevétel mellett kb. ${Math.abs(per100)} dollárt veszít.`;
-  } else e.operations = "Nincs elég adat a jövedelmezőség megítéléséhez.";
-  // Stabilitás
-  if (isNum(mt.netDebt) && mt.netDebt <= 0) e.stability = "Több készpénze van, mint adóssága – az adósság nem jelent problémát.";
-  else if (isNum(mt.netDebtToFcf) && mt.netDebtToFcf !== Infinity) e.stability = `A nettó adósságát a jelenlegi szabad pénzáramából kb. ${mt.netDebtToFcf.toFixed(1).replace(".", ",")} év alatt fizetné vissza.`;
-  else if (mt.netDebtToFcf === Infinity) e.stability = "Van adóssága, de jelenleg nem termel szabad pénzt a visszafizetésre.";
-  else e.stability = "Az adósságról nincs elég adat.";
-  // 1 év
-  if (isNum(mt.revenueYoY)) e.growth1y = `A bevétel ${signedPct(mt.revenueYoY)}${isNum(mt.netIncomeYoY) ? `, a nettó nyereség ${signedPct(mt.netIncomeYoY)}` : ""} változást mutat az előző évhez képest.`;
-  else e.growth1y = "Az előző évhez való összehasonlításhoz nincs elég adat.";
-  // Hosszú táv
-  if (isNum(mt.revenueCagr)) e.longTerm = `Az elmúlt ${mt.windowYears} évben a bevétel évente átlagosan ${signedPct(mt.revenueCagr)}-kal változott.`;
-  else e.longTerm = "Legalább 3 év adat kell a hosszú távú trendhez.";
-  // Megbízhatóság
-  if (isNum(mt.profitableYearsRatio)) e.reliability = `A vizsgált ${mt.windowYears + 1} évből ${Math.round(mt.profitableYearsRatio * (mt.windowYears + 1))} évben volt nyereséges${isNum(mt.piotroski) ? `; Piotroski-pontszám: ${mt.piotroski}/9` : ""}.`;
-  else e.reliability = "Nincs elég adat a következetesség megítéléséhez.";
-  // Kockázat
-  const g = grade(scores.risk, true);
-  e.risk = isNum(scores.risk) ? `A befektetés kockázata a pénzügyi adatok alapján: ${g.label.toLowerCase()}.` : "Nem számolható.";
-  return e;
-}
-
-function verdictText(scores, distress, outlook) {
-  const o = scores.overall;
-  if (!isNum(o)) return "Nincs elég adat az összesített értékeléshez.";
-  let head;
-  if (o >= 80) head = "Kiemelkedően erős cég pénzügyileg.";
-  else if (o >= 65) head = "Pénzügyileg erős, stabil cég.";
-  else if (o >= 45) head = "Vegyes kép: vannak erősségei és gyengeségei is.";
-  else if (o >= 25) head = "Pénzügyileg gyenge, óvatosság javasolt.";
-  else head = "Komoly pénzügyi problémák látszanak.";
-  return `${head} Csődkockázat: ${distress.label.toLowerCase()}. Hosszú távon: ${outlook.label.toLowerCase()}.`;
-}
-
-// ---------- Mutatók leírása (a Módszertan oldal és a részletek ebből épülnek) ----------
-
-export const METRIC_INFO = {
-  grossMargin: { label: "Bruttó árrés", fmt: "pct", desc: "Bruttó nyereség / bevétel. Mennyi marad a bevételből a közvetlen költségek után." },
-  operatingMargin: { label: "Működési árrés", fmt: "pct", desc: "Működési eredmény / bevétel. 0% = 0 pont, 30% = 100 pont.", range: [0, 0.30] },
-  netMargin: { label: "Nettó árrés", fmt: "pct", desc: "Nettó nyereség / bevétel. −5% = 0 pont, 20% = 100 pont.", range: [-0.05, 0.20] },
-  fcfMargin: { label: "Szabad cash flow árrés", fmt: "pct", desc: "(Működési cash flow − beruházások) / bevétel. −5% = 0, 20% = 100 pont.", range: [-0.05, 0.20] },
-  roe: { label: "Sajáttőke-arányos megtérülés (ROE)", fmt: "pct", desc: "Nettó nyereség / átlagos saját tőke. 0% = 0, 25% = 100 pont.", range: [0, 0.25] },
-  roa: { label: "Eszközarányos megtérülés (ROA)", fmt: "pct", desc: "Nettó nyereség / átlagos összes eszköz. 0% = 0, 15% = 100 pont.", range: [0, 0.15] },
-  currentRatio: { label: "Likviditási ráta", fmt: "x", desc: "Forgóeszközök / rövid lejáratú kötelezettségek. 0,6 = 0 pont, 2,0 = 100 pont.", range: [0.6, 2.0] },
-  debtToEquity: { label: "Adósság / saját tőke", fmt: "x", desc: "Pénzügyi adósság / saját tőke. 2,5 = 0 pont, 0,3 = 100 pont. Negatív saját tőke = 0 pont.", range: [2.5, 0.3] },
-  liabilitiesToAssets: { label: "Kötelezettségek / eszközök", fmt: "pct", desc: "Az eszközök mekkora részét finanszírozzák kötelezettségek." },
-  interestCoverage: { label: "Kamatfedezet", fmt: "x", desc: "Működési eredmény / kamatköltség. 1,5× = 0 pont, 15× = 100 pont. Kamatköltség nélkül 100 pont.", range: [1.5, 15] },
-  netDebt: { label: "Nettó adósság", fmt: "money", desc: "Pénzügyi adósság − készpénz. Negatív = nettó készpénz." },
-  netDebtToFcf: { label: "Nettó adósság / szabad cash flow", fmt: "years", desc: "Hány év szabad pénzáramából fizethető vissza a nettó adósság. 8 év = 0, 0,5 év = 100 pont; nettó készpénz = 100 pont.", range: [8, 0.5] },
-  altmanZ: { label: "Altman Z'' pontszám", fmt: "num", desc: "Csődelőrejelző modell: 6,56·(forgótőke/eszközök) + 3,26·(eredménytartalék/eszközök) + 6,72·(működési eredmény/eszközök) + 1,05·(saját tőke/kötelezettségek). <1,1 veszélyes, >2,6 biztonságos.", range: [1.1, 4.0] },
-  piotroski: { label: "Piotroski F-pontszám", fmt: "of9", desc: "9 igen/nem teszt a jövedelmezőség, adósság és hatékonyság javulására. 2 = 0 pont, 8 = 100 pont.", range: [2, 8] },
-  revenueYoY: { label: "Bevétel változása (1 év)", fmt: "spct", desc: "−10% = 0 pont, +20% = 100 pont.", range: [-0.10, 0.20] },
-  netIncomeYoY: { label: "Nettó nyereség változása (1 év)", fmt: "spct", desc: "−25% = 0 pont, +30% = 100 pont. Negatív bázisnál nem értelmezhető.", range: [-0.25, 0.30] },
-  fcfYoY: { label: "Szabad cash flow változása (1 év)", fmt: "spct", desc: "−25% = 0 pont, +30% = 100 pont.", range: [-0.25, 0.30] },
-  epsYoY: { label: "Egy részvényre jutó nyereség változása", fmt: "spct", desc: "Hígított EPS változása az előző évhez képest." },
-  revenueCagr: { label: "Bevétel éves átlagos növekedése (CAGR)", fmt: "spct", desc: "Legfeljebb 5 éves ablakon. −5% = 0, +15% = 100 pont.", range: [-0.05, 0.15] },
-  netIncomeCagr: { label: "Nettó nyereség éves átlagos növekedése", fmt: "spct", desc: "Legfeljebb 5 éves ablakon. −10% = 0, +20% = 100 pont.", range: [-0.10, 0.20] },
-  revenueGrowthYearsRatio: { label: "Növekvő bevételű évek aránya", fmt: "pct0", desc: "Az évek hány százalékában nőtt a bevétel.", range: [0, 1] },
-  marginTrend: { label: "Működési árrés változása", fmt: "pp", desc: "Az ablak eleje és vége közti változás százalékpontban. −10 pp = 0, +10 pp = 100 pont.", range: [-0.10, 0.10] },
-  profitableYearsRatio: { label: "Nyereséges évek aránya", fmt: "pct0", desc: "Az ablakban hány év zárult nyereséggel.", range: [0, 1] },
-  fcfPositiveRatio: { label: "Pozitív szabad cash flow-s évek aránya", fmt: "pct0", desc: "Hány évben termelt több pénzt, mint amennyit elköltött.", range: [0, 1] },
-  revenueVolatility: { label: "Bevétel ingadozása", fmt: "pct", desc: "Az éves bevételnövekedés szórása. 30% = 0, 3% = 100 pont.", range: [0.30, 0.03] },
-  shareChangeYearly: { label: "Részvényszám éves változása", fmt: "spct", desc: "Pozitív = hígítás, negatív = visszavásárlás. +5% = 0, −2% = 100 pont.", range: [0.05, -0.02] },
+// Number format kind for every metric (used by UI and docs).
+export const METRIC_FORMAT = {
+  grossMargin: "pct", operatingMargin: "pct", netMargin: "pct", fcfMargin: "pct", roe: "pct", roa: "pct", roic: "pct",
+  fcfConversion: "pct0", accrualRatio: "pct", sbcToRevenue: "pct", capexToRevenue: "pct",
+  currentRatio: "x", quickRatio: "x", cashRatio: "x", debtToEquity: "x", equityRatio: "pct", liabilitiesToAssets: "pct",
+  netDebt: "money", netDebtToEbitda: "xyears", interestCoverage: "x", goodwillToAssets: "pct", payoutRatio: "pct0",
+  bookValuePerShare: "usd", altmanZ: "num", piotroski: "of9",
+  revenueYoY: "spct", operatingIncomeYoY: "spct", netIncomeYoY: "spct", epsYoY: "spct", fcfYoY: "spct",
+  revenueCagr: "spct", epsCagr: "spct", fcfCagr: "spct", bookValuePerShareCagr: "spct", revenueGrowthYearsRatio: "pct0",
+  marginTrend: "pp", roicChange: "pp", profitableYearsRatio: "pct0", fcfPositiveRatio: "pct0",
+  revenueVolatility: "pct", marginVolatility: "pp", shareChangeYearly: "spct",
+  marketCap: "money", enterpriseValue: "money", peRatio: "mult", psRatio: "mult", pbRatio: "mult", evToEbit: "mult",
+  evToEbitda: "mult", fcfYield: "pct", pfcfRatio: "mult", pegRatio: "num", dividendYield: "pct", shareholderYield: "pct",
+  priceReturn1y: "spct", priceCagr5y: "spct", volatility: "pct", maxDrawdown: "pct",
 };

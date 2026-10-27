@@ -1,42 +1,222 @@
 {
-  "cik": 1, "entityName": "Teszt Kft. Inc.",
-  "facts": { "us-gaap": {
-    "Revenues": { "units": { "USD": [
-      { "start": "2022-01-01", "end": "2022-12-31", "val": 1000, "form": "10-K", "filed": "2023-02-01" },
-      { "start": "2022-10-01", "end": "2022-12-31", "val": 300, "form": "10-K", "filed": "2023-02-01" },
-      { "start": "2023-01-01", "end": "2023-12-31", "val": 1100, "form": "10-K", "filed": "2024-02-01" },
-      { "start": "2023-01-01", "end": "2023-12-31", "val": 1150, "form": "10-K/A", "filed": "2024-05-01" },
-      { "start": "2024-01-01", "end": "2024-03-31", "val": 280, "form": "10-Q", "filed": "2024-05-01" }
-    ] } },
-    "CostOfRevenue": { "units": { "USD": [
-      { "start": "2022-01-01", "end": "2022-12-31", "val": 600, "form": "10-K", "filed": "2023-02-01" },
-      { "start": "2023-01-01", "end": "2023-12-31", "val": 650, "form": "10-K", "filed": "2024-02-01" }
-    ] } },
-    "NetIncomeLoss": { "units": { "USD": [
-      { "start": "2022-01-01", "end": "2022-12-31", "val": 100, "form": "10-K", "filed": "2023-02-01" },
-      { "start": "2023-01-01", "end": "2023-12-31", "val": -50, "form": "10-K", "filed": "2024-02-01" }
-    ] } },
-    "NetCashProvidedByUsedInOperatingActivities": { "units": { "USD": [
-      { "start": "2023-01-01", "end": "2023-12-31", "val": 200, "form": "10-K", "filed": "2024-02-01" }
-    ] } },
-    "PaymentsToAcquirePropertyPlantAndEquipment": { "units": { "USD": [
-      { "start": "2023-01-01", "end": "2023-12-31", "val": 80, "form": "10-K", "filed": "2024-02-01" }
-    ] } },
-    "EarningsPerShareDiluted": { "units": { "USD/shares": [
-      { "start": "2023-01-01", "end": "2023-12-31", "val": -0.5, "form": "10-K", "filed": "2024-02-01" }
-    ] } },
-    "Assets": { "units": { "USD": [
-      { "end": "2022-12-31", "val": 5000, "form": "10-K", "filed": "2023-02-01" },
-      { "end": "2023-12-30", "val": 5200, "form": "10-K", "filed": "2024-02-01" }
-    ] } },
-    "StockholdersEquity": { "units": { "USD": [
-      { "end": "2023-12-31", "val": 2000, "form": "10-K", "filed": "2024-02-01" }
-    ] } },
-    "LongTermDebtNoncurrent": { "units": { "USD": [
-      { "end": "2023-12-31", "val": 900, "form": "10-K", "filed": "2024-02-01" }
-    ] } },
-    "LongTermDebtCurrent": { "units": { "USD": [
-      { "end": "2023-12-31", "val": 100, "form": "10-K", "filed": "2024-02-01" }
-    ] } }
-  } }
+ "cik": 1,
+ "entityName": "Teszt Kft. Inc.",
+ "facts": {
+  "us-gaap": {
+   "Revenues": {
+    "units": {
+     "USD": [
+      {
+       "start": "2022-01-01",
+       "end": "2022-12-31",
+       "val": 1000,
+       "form": "10-K",
+       "filed": "2023-02-01"
+      },
+      {
+       "start": "2022-10-01",
+       "end": "2022-12-31",
+       "val": 300,
+       "form": "10-K",
+       "filed": "2023-02-01"
+      },
+      {
+       "start": "2023-01-01",
+       "end": "2023-12-31",
+       "val": 1100,
+       "form": "10-K",
+       "filed": "2024-02-01"
+      },
+      {
+       "start": "2023-01-01",
+       "end": "2023-12-31",
+       "val": 1150,
+       "form": "10-K/A",
+       "filed": "2024-05-01"
+      },
+      {
+       "start": "2024-01-01",
+       "end": "2024-03-31",
+       "val": 280,
+       "form": "10-Q",
+       "filed": "2024-05-01"
+      },
+      {
+       "start": "2024-01-01",
+       "end": "2024-06-30",
+       "val": 600,
+       "form": "10-Q",
+       "filed": "2024-08-01"
+      },
+      {
+       "start": "2023-01-01",
+       "end": "2023-06-30",
+       "val": 500,
+       "form": "10-Q",
+       "filed": "2024-08-01"
+      }
+     ]
+    }
+   },
+   "CostOfRevenue": {
+    "units": {
+     "USD": [
+      {
+       "start": "2022-01-01",
+       "end": "2022-12-31",
+       "val": 600,
+       "form": "10-K",
+       "filed": "2023-02-01"
+      },
+      {
+       "start": "2023-01-01",
+       "end": "2023-12-31",
+       "val": 650,
+       "form": "10-K",
+       "filed": "2024-02-01"
+      }
+     ]
+    }
+   },
+   "NetIncomeLoss": {
+    "units": {
+     "USD": [
+      {
+       "start": "2022-01-01",
+       "end": "2022-12-31",
+       "val": 100,
+       "form": "10-K",
+       "filed": "2023-02-01"
+      },
+      {
+       "start": "2023-01-01",
+       "end": "2023-12-31",
+       "val": -50,
+       "form": "10-K",
+       "filed": "2024-02-01"
+      }
+     ]
+    }
+   },
+   "NetCashProvidedByUsedInOperatingActivities": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-12-31",
+       "val": 200,
+       "form": "10-K",
+       "filed": "2024-02-01"
+      }
+     ]
+    }
+   },
+   "PaymentsToAcquirePropertyPlantAndEquipment": {
+    "units": {
+     "USD": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-12-31",
+       "val": 80,
+       "form": "10-K",
+       "filed": "2024-02-01"
+      }
+     ]
+    }
+   },
+   "EarningsPerShareDiluted": {
+    "units": {
+     "USD/shares": [
+      {
+       "start": "2023-01-01",
+       "end": "2023-12-31",
+       "val": -0.5,
+       "form": "10-K",
+       "filed": "2024-02-01"
+      }
+     ]
+    }
+   },
+   "Assets": {
+    "units": {
+     "USD": [
+      {
+       "end": "2022-12-31",
+       "val": 5000,
+       "form": "10-K",
+       "filed": "2023-02-01"
+      },
+      {
+       "end": "2023-12-30",
+       "val": 5200,
+       "form": "10-K",
+       "filed": "2024-02-01"
+      },
+      {
+       "end": "2024-06-30",
+       "val": 5600,
+       "form": "10-Q",
+       "filed": "2024-08-01"
+      }
+     ]
+    }
+   },
+   "StockholdersEquity": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-12-31",
+       "val": 2000,
+       "form": "10-K",
+       "filed": "2024-02-01"
+      }
+     ]
+    }
+   },
+   "LongTermDebtNoncurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-12-31",
+       "val": 900,
+       "form": "10-K",
+       "filed": "2024-02-01"
+      }
+     ]
+    }
+   },
+   "LongTermDebtCurrent": {
+    "units": {
+     "USD": [
+      {
+       "end": "2023-12-31",
+       "val": 100,
+       "form": "10-K",
+       "filed": "2024-02-01"
+      }
+     ]
+    }
+   }
+  },
+  "dei": {
+   "EntityCommonStockSharesOutstanding": {
+    "units": {
+     "shares": [
+      {
+       "end": "2024-07-20",
+       "val": 300,
+       "form": "10-Q",
+       "filed": "2024-08-01"
+      },
+      {
+       "end": "2024-01-20",
+       "val": 290,
+       "form": "10-K",
+       "filed": "2024-02-01"
+      }
+     ]
+    }
+   }
+  }
+ }
 }

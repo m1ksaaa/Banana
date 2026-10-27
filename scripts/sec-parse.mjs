@@ -1,138 +1,210 @@
-// SEC EDGAR "companyfacts" (XBRL) JSON -> TeraStockX sablon éves adatai.
-// A cégek eltérő XBRL-címkéket használnak ugyanarra a tételre, ezért minden
-// mezőhöz egy prioritási sorrendű címkelista tartozik; az első találat nyer.
+// SEC EDGAR "companyfacts" (XBRL) JSON -> TeraStockX template.
+// Companies use different XBRL tags for the same line item, so every field has a
+// priority-ordered tag list; the first tag that has data wins.
+//
+// Produces:
+//   annual[]       – fiscal-year figures from annual reports (10-K / 20-F / 40-F)
+//   ttm            – trailing-twelve-month flows from the latest quarterly report (FY + YTD − prior YTD)
+//   latestBalance  – balance sheet at the latest reported quarter end
+//   sharesOutstanding – latest cover-page share count (dei:EntityCommonStockSharesOutstanding)
 
-const FLOW = {
-  revenue: ["RevenueFromContractWithCustomerExcludingAssessedTax", "Revenues", "RevenueFromContractWithCustomerIncludingAssessedTax", "SalesRevenueNet", "SalesRevenueGoodsNet", "RevenuesNetOfInterestExpense"],
-  costOfRevenue: ["CostOfRevenue", "CostOfGoodsAndServicesSold", "CostOfGoodsSold"],
+export const FLOW = {
+  revenue: ["RevenueFromContractWithCustomerExcludingAssessedTax", "Revenues", "RevenueFromContractWithCustomerIncludingAssessedTax", "SalesRevenueNet", "SalesRevenueGoodsNet", "SalesRevenueServicesNet", "RevenuesNetOfInterestExpense", "InterestAndDividendIncomeOperating"],
+  costOfRevenue: ["CostOfRevenue", "CostOfGoodsAndServicesSold", "CostOfGoodsSold", "CostOfServices"],
   grossProfit: ["GrossProfit"],
-  operatingIncome: ["OperatingIncomeLoss"],
-  netIncome: ["NetIncomeLoss", "ProfitLoss", "NetIncomeLossAvailableToCommonStockholdersBasic"],
-  operatingCashFlow: ["NetCashProvidedByUsedInOperatingActivities", "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations"],
-  capex: ["PaymentsToAcquirePropertyPlantAndEquipment", "PaymentsToAcquireProductiveAssets"],
-  dividendsPaid: ["PaymentsOfDividends", "PaymentsOfDividendsCommonStock"],
   researchAndDevelopment: ["ResearchAndDevelopmentExpense", "ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost"],
-  interestExpense: ["InterestExpense", "InterestExpenseNonoperating", "InterestExpenseDebt"],
+  operatingIncome: ["OperatingIncomeLoss"],
+  interestExpense: ["InterestExpense", "InterestExpenseNonoperating", "InterestExpenseDebt", "InterestAndDebtExpense"],
+  pretaxIncome: ["IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest", "IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments", "IncomeLossFromContinuingOperationsBeforeIncomeTaxesDomestic"],
+  incomeTaxExpense: ["IncomeTaxExpenseBenefit"],
+  netIncome: ["NetIncomeLoss", "ProfitLoss", "NetIncomeLossAvailableToCommonStockholdersBasic"],
+  depreciationAndAmortization: ["DepreciationDepletionAndAmortization", "DepreciationAmortizationAndAccretionNet", "DepreciationAndAmortization", "Depreciation"],
+  shareBasedCompensation: ["ShareBasedCompensation", "AllocatedShareBasedCompensationExpense"],
+  operatingCashFlow: ["NetCashProvidedByUsedInOperatingActivities", "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations"],
+  capex: ["PaymentsToAcquirePropertyPlantAndEquipment", "PaymentsToAcquireProductiveAssets", "PaymentsForCapitalImprovements"],
+  dividendsPaid: ["PaymentsOfDividends", "PaymentsOfDividendsCommonStock"],
+  buybacks: ["PaymentsForRepurchaseOfCommonStock", "PaymentsForRepurchaseOfEquity"],
 };
 
-const FLOW_PER_SHARE = {
-  epsDiluted: ["EarningsPerShareDiluted", "EarningsPerShareBasicAndDiluted", "EarningsPerShareBasic"],
-};
+const FLOW_PER_SHARE = { epsDiluted: ["EarningsPerShareDiluted", "EarningsPerShareBasicAndDiluted", "EarningsPerShareBasic"] };
+const FLOW_SHARES = { sharesDiluted: ["WeightedAverageNumberOfDilutedSharesOutstanding", "WeightedAverageNumberOfShareOutstandingBasicAndDiluted", "WeightedAverageNumberOfSharesOutstandingBasic"] };
 
-const FLOW_SHARES = {
-  sharesDiluted: ["WeightedAverageNumberOfDilutedSharesOutstanding", "WeightedAverageNumberOfShareOutstandingBasicAndDiluted", "WeightedAverageNumberOfSharesOutstandingBasic"],
-};
-
-const INSTANT = {
+export const INSTANT = {
   totalAssets: ["Assets"],
   totalLiabilities: ["Liabilities"],
   currentAssets: ["AssetsCurrent"],
   currentLiabilities: ["LiabilitiesCurrent"],
-  cash: ["CashAndCashEquivalentsAtCarryingValue", "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents", "Cash"],
+  cash: ["CashAndCashEquivalentsAtCarryingValue", "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents", "CashAndDueFromBanks", "Cash"],
+  inventory: ["InventoryNet", "InventoryFinishedGoodsNetOfReserves"],
+  accountsReceivable: ["AccountsReceivableNetCurrent", "ReceivablesNetCurrent"],
+  goodwill: ["Goodwill"],
+  intangibleAssets: ["IntangibleAssetsNetExcludingGoodwill", "FiniteLivedIntangibleAssetsNet"],
   equity: ["StockholdersEquity", "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest"],
   retainedEarnings: ["RetainedEarningsAccumulatedDeficit"],
 };
 
-// Az adósság több tétel összege; ha a részletes bontás hiányzik, az összesített címkét használjuk.
+// Financial debt = sum of components; if no breakdown is reported, a total tag is used.
 const DEBT_PARTS = [
-  ["LongTermDebtNoncurrent", "LongTermDebtAndCapitalLeaseObligations", "LongTermNotesPayable"],
-  ["LongTermDebtCurrent", "LongTermDebtAndCapitalLeaseObligationsCurrent"],
+  ["LongTermDebtNoncurrent", "LongTermDebtAndCapitalLeaseObligations", "LongTermNotesPayable", "SeniorLongTermNotes"],
+  ["LongTermDebtCurrent", "LongTermDebtAndCapitalLeaseObligationsCurrent", "DebtCurrent"],
   ["CommercialPaper"],
   ["ShortTermBorrowings"],
 ];
-const DEBT_TOTAL = ["LongTermDebt", "DebtInstrumentCarryingAmount"];
+const DEBT_TOTAL = ["LongTermDebt", "DebtInstrumentCarryingAmount", "DebtLongtermAndShorttermCombinedAmount"];
+const SHARES_INSTANT = ["CommonStockSharesOutstanding"];
 
 const ANNUAL_FORMS = new Set(["10-K", "10-K/A", "20-F", "20-F/A", "40-F", "40-F/A", "10-KT"]);
+const QUARTER_FORMS = new Set(["10-Q", "10-Q/A", "6-K"]);
 
-const days = (a, b) => (new Date(b) - new Date(a)) / 86400000;
+const DAY = 86400000;
+const days = (a, b) => (new Date(b) - new Date(a)) / DAY;
+const addDays = (d, n) => new Date(new Date(d).getTime() + n * DAY).toISOString().slice(0, 10);
 
-function unitValues(facts, tag, unitPred) {
-  const node = facts?.["us-gaap"]?.[tag] || facts?.["ifrs-full"]?.[tag];
-  if (!node) return [];
+function node(facts, tag) {
+  return facts?.["us-gaap"]?.[tag] || facts?.["ifrs-full"]?.[tag] || facts?.dei?.[tag] || null;
+}
+
+// Values of all tags in the list. Companies switch tags over the years (e.g. SalesRevenueNet
+// before 2018), so periods are merged across tags; for the same period the higher-priority tag wins.
+function entries(facts, tags, unit, forms) {
   const out = [];
-  for (const [unit, arr] of Object.entries(node.units || {})) {
-    if (!unitPred(unit)) continue;
-    for (const v of arr) if (ANNUAL_FORMS.has(v.form)) out.push(v);
-  }
+  tags.forEach((tag, p) => {
+    const arr = node(facts, tag)?.units?.[unit];
+    if (arr) for (const v of arr) if (forms.has(v.form)) out.push({ ...v, _p: p });
+  });
   return out;
 }
 
-const isUsd = (u) => u === "USD";
-const isUsdPerShare = (u) => u === "USD/shares";
-const isShares = (u) => u === "shares";
-
-// Éves (kb. 365 napos) időszakok értékei, a periódus vége szerint. Ha ugyanarra
-// a periódusra több bejelentés is van, a legkésőbb beadott (javított) érték nyer.
-function annualFlow(facts, tags, unitPred) {
-  for (const tag of tags) {
-    const map = new Map();
-    for (const v of unitValues(facts, tag, unitPred)) {
-      if (!v.start || !v.end) continue;
-      const d = days(v.start, v.end);
-      if (d < 340 || d > 390) continue;
-      const prev = map.get(v.end);
-      if (!prev || (v.filed || "") > (prev.filed || "")) map.set(v.end, v);
-    }
-    if (map.size) return new Map([...map].map(([k, v]) => [k, v.val]));
+// One value per key: higher-priority tag first, then the latest filing (restatements).
+function dedupe(list, keyFn) {
+  const map = new Map();
+  for (const v of list) {
+    const k = keyFn(v);
+    const prev = map.get(k);
+    if (!prev || (v._p ?? 0) < (prev._p ?? 0) || ((v._p ?? 0) === (prev._p ?? 0) && (v.filed || "") > (prev.filed || ""))) map.set(k, v);
   }
-  return new Map();
+  return map;
 }
 
-function instantValues(facts, tags) {
-  for (const tag of tags) {
-    const map = new Map();
-    for (const v of unitValues(facts, tag, isUsd)) {
-      if (v.start) continue;
-      const prev = map.get(v.end);
-      if (!prev || (v.filed || "") > (prev.filed || "")) map.set(v.end, v);
-    }
-    if (map.size) return new Map([...map].map(([k, v]) => [k, v.val]));
-  }
-  return new Map();
+const ALL_FORMS = new Set([...ANNUAL_FORMS, ...QUARTER_FORMS]);
+
+function flowSeries(facts, tags, unit) {
+  const all = entries(facts, tags, unit, ALL_FORMS).filter((v) => v.start && v.end);
+  const annual = new Map();
+  for (const [, v] of dedupe(all.filter((v) => { const d = days(v.start, v.end); return d >= 340 && d <= 390; }), (v) => v.end)) annual.set(v.end, v.val);
+  const durations = [...dedupe(all, (v) => `${v.start}|${v.end}`).values()];
+  return { annual, durations };
 }
 
-// Mérleg-adat a pénzügyi év végén; néhány napos eltérést is elfogadunk.
+function instantSeries(facts, tags, unit = "USD") {
+  const all = entries(facts, tags, unit, ALL_FORMS).filter((v) => !v.start && v.end);
+  return new Map([...dedupe(all, (v) => v.end)].map(([k, v]) => [k, v.val]));
+}
+
+// Value at a date, accepting up to 7 days of difference (52/53-week fiscal years).
 function atDate(map, end) {
   if (map.has(end)) return map.get(end);
   for (const [k, v] of map) if (Math.abs(days(k, end)) <= 7) return v;
   return null;
 }
 
+function findDuration(durations, start, end, tol = 7) {
+  let best = null;
+  for (const v of durations) {
+    if (Math.abs(days(v.end, end)) <= tol && Math.abs(days(v.start, start)) <= tol) {
+      if (!best || (v.filed || "") > (best.filed || "")) best = v;
+    }
+  }
+  return best;
+}
+
+// Trailing twelve months ending at quarter end E: FY + YTD(E) − YTD(E − 1 year).
+function ttmValue(series, fyEnd, qEnd) {
+  const fy = atDate(series.annual, fyEnd);
+  if (qEnd === fyEnd) return fy;
+  const ytdStart = addDays(fyEnd, 1);
+  const ytd = findDuration(series.durations, ytdStart, qEnd);
+  const prior = findDuration(series.durations, addDays(ytdStart, -365), addDays(qEnd, -365), 10);
+  if (fy === null || !ytd || !prior) return null;
+  return fy + ytd.val - prior.val;
+}
+
+function debtAt(debtParts, debtTotal, end) {
+  const parts = debtParts.map((m) => atDate(m, end));
+  const total = atDate(debtTotal, end);
+  if (parts.some((p) => p !== null)) {
+    if (parts[0] === null && total !== null) return total + (parts[2] ?? 0) + (parts[3] ?? 0);
+    return parts.reduce((a, b) => a + (b ?? 0), 0);
+  }
+  return total;
+}
+
+function finishPeriod(y) {
+  if (y.grossProfit === null && y.revenue !== null && y.costOfRevenue !== null) y.grossProfit = y.revenue - y.costOfRevenue;
+  for (const k of ["capex", "dividendsPaid", "buybacks"]) if (y[k] !== null && y[k] !== undefined) y[k] = Math.abs(y[k]);
+  y.freeCashFlow = y.operatingCashFlow !== null && y.capex !== null ? y.operatingCashFlow - y.capex : null;
+  return y;
+}
+
 export function parseCompanyFacts(cf, { maxYears = 10 } = {}) {
   const facts = cf.facts || {};
   const flows = {};
-  for (const [k, tags] of Object.entries(FLOW)) flows[k] = annualFlow(facts, tags, isUsd);
-  for (const [k, tags] of Object.entries(FLOW_PER_SHARE)) flows[k] = annualFlow(facts, tags, isUsdPerShare);
-  for (const [k, tags] of Object.entries(FLOW_SHARES)) flows[k] = annualFlow(facts, tags, isShares);
+  for (const [k, tags] of Object.entries(FLOW)) flows[k] = flowSeries(facts, tags, "USD");
+  for (const [k, tags] of Object.entries(FLOW_PER_SHARE)) flows[k] = flowSeries(facts, tags, "USD/shares");
+  for (const [k, tags] of Object.entries(FLOW_SHARES)) flows[k] = flowSeries(facts, tags, "shares");
   const inst = {};
-  for (const [k, tags] of Object.entries(INSTANT)) inst[k] = instantValues(facts, tags);
-  const debtParts = DEBT_PARTS.map((tags) => instantValues(facts, tags));
-  const debtTotal = instantValues(facts, DEBT_TOTAL);
+  for (const [k, tags] of Object.entries(INSTANT)) inst[k] = instantSeries(facts, tags);
+  const debtParts = DEBT_PARTS.map((tags) => instantSeries(facts, tags));
+  const debtTotal = instantSeries(facts, DEBT_TOTAL);
+  const sharesInst = instantSeries(facts, SHARES_INSTANT, "shares");
 
-  // A pénzügyi évek végét a bevétel (vagy nettó eredmény) éves periódusai adják.
-  const anchor = flows.revenue.size ? flows.revenue : flows.netIncome;
-  const ends = [...anchor.keys()].sort().slice(-maxYears);
+  // Fiscal year ends come from the annual revenue (or net income) periods.
+  const anchor = flows.revenue.annual.size ? flows.revenue : flows.netIncome;
+  const ends = [...anchor.annual.keys()].sort().slice(-maxYears);
 
-  const annual = ends.map((end) => {
-    const y = { year: Number(end.slice(0, 4)), periodEnd: end };
-    for (const k of Object.keys(flows)) y[k] = flows[k].get(end) ?? null;
-    for (const k of Object.keys(inst)) y[k] = atDate(inst[k], end);
-    const parts = debtParts.map((m) => atDate(m, end));
-    const total = atDate(debtTotal, end);
-    if (parts.some((p) => p !== null)) {
-      y.totalDebt = parts.reduce((a, b) => a + (b ?? 0), 0);
-      // Ha csak a rövid lejáratú részek ismertek, de van összesített hosszú lejáratú adat, azt használjuk alapnak.
-      if (parts[0] === null && total !== null) y.totalDebt = total + (parts[2] ?? 0) + (parts[3] ?? 0);
-    } else y.totalDebt = total;
-    if (y.grossProfit === null && y.revenue !== null && y.costOfRevenue !== null) y.grossProfit = y.revenue - y.costOfRevenue;
-    if (y.capex !== null) y.capex = Math.abs(y.capex);
-    if (y.operatingCashFlow !== null && y.capex !== null) y.freeCashFlow = y.operatingCashFlow - y.capex;
-    else y.freeCashFlow = null;
-    return y;
-  });
+  const balanceAt = (end) => {
+    const b = {};
+    for (const k of Object.keys(inst)) b[k] = atDate(inst[k], end);
+    b.totalDebt = debtAt(debtParts, debtTotal, end);
+    b.sharesOutstanding = atDate(sharesInst, end);
+    return b;
+  };
 
-  // Ha két periódus ugyanarra a naptári évre esik (pl. pénzügyi év váltás), az utóbbit tartjuk meg.
   const byYear = new Map();
-  for (const y of annual) byYear.set(y.year, y);
-  return [...byYear.values()].sort((a, b) => a.year - b.year);
+  for (const end of ends) {
+    const y = { year: Number(end.slice(0, 4)), periodEnd: end };
+    for (const k of Object.keys(flows)) y[k] = flows[k].annual.get(end) ?? null;
+    Object.assign(y, balanceAt(end));
+    byYear.set(y.year, finishPeriod(y)); // a fiscal-year change keeps the later period
+  }
+  const annual = [...byYear.values()].sort((a, b) => a.year - b.year);
+
+  // ---- TTM and latest balance sheet ----
+  let ttm = null, latestBalance = null;
+  const fyEnd = ends[ends.length - 1];
+  if (fyEnd) {
+    const qEnds = [...anchor.durations].map((v) => v.end).filter((e) => e > fyEnd && days(fyEnd, e) < 370);
+    const qEnd = qEnds.sort().pop();
+    if (qEnd) {
+      const t = { periodEnd: qEnd };
+      for (const k of Object.keys(flows)) t[k] = k === "sharesDiluted" ? null : ttmValue(flows[k], fyEnd, qEnd);
+      if (t.revenue !== null || t.netIncome !== null) {
+        ttm = finishPeriod(t);
+        latestBalance = { periodEnd: qEnd, ...balanceAt(qEnd) };
+      }
+    }
+  }
+
+  // Latest cover-page share count (any filing type).
+  const dei = node(facts, "EntityCommonStockSharesOutstanding")?.units?.shares || [];
+  const latestShares = dei.filter((v) => v.end).sort((a, b) => (a.end < b.end ? -1 : a.end > b.end ? 1 : (a.filed || "") < (b.filed || "") ? -1 : 1));
+  // Multi-class companies report one value per class on the same date: sum them.
+  let sharesOutstanding = null, sharesDate = null;
+  if (latestShares.length) {
+    sharesDate = latestShares[latestShares.length - 1].end;
+    const sameDate = dedupe(latestShares.filter((v) => v.end === sharesDate), (v) => `${v.frame || ""}|${v.val}`);
+    sharesOutstanding = [...sameDate.values()].reduce((a, v) => a + v.val, 0);
+  }
+
+  return { annual, ttm, latestBalance, sharesOutstanding, sharesOutstandingDate: sharesDate };
 }

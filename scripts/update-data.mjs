@@ -1,22 +1,26 @@
 #!/usr/bin/env node
-// TeraStockX adatfrissítő.
-// 1) Letölti a NASDAQ-on jegyzett összes részvény listáját (nasdaqtrader.com).
-// 2) A SEC EDGAR-ból hozzárendeli a CIK azonosítókat.
-// 3) Minden céghez letölti a hivatalos éves (10-K / 20-F) XBRL adatokat, és a sablon szerint menti:
-//    data/companies/<TICKER>.json
-// 4) Lefuttatja az elemzőmotort, és elkészíti a kereső listát: data/index.json
+// TeraStockX data updater.
+// 1) Downloads the list of all Nasdaq-listed stocks (nasdaqtrader.com).
+// 2) Maps tickers to SEC CIK numbers.
+// 3) For every company downloads the official XBRL financial data from SEC EDGAR,
+//    plus price / market cap (Nasdaq screener) and monthly price history (Yahoo / Stooq),
+//    and writes it in the template format: data/companies/<TICKER>.json
+// 4) Runs the analysis engine and writes the search index: data/index.json
 //
-// Használat:
-//   SEC_USER_AGENT="Név email@cim.hu" node scripts/update-data.mjs            # minden NASDAQ cég
-//   node scripts/update-data.mjs --tickers AAPL,MSFT                          # csak megadott cégek
-//   node scripts/update-data.mjs --limit 50                                   # első 50 cég (teszteléshez)
-//   node scripts/update-data.mjs --index-only                                 # csak data/index.json újraépítése
+// Usage:
+//   SEC_USER_AGENT="Name email@example.com" node scripts/update-data.mjs     # all Nasdaq companies
+//   node scripts/update-data.mjs --tickers AAPL,MSFT                          # selected tickers only
+//   node scripts/update-data.mjs --limit 50                                   # first 50 (testing)
+//   node scripts/update-data.mjs --skip-prices                                # no price history
+//   node scripts/update-data.mjs --index-only                                 # rebuild data/index.json only
 
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseCompanyFacts } from "./sec-parse.mjs";
-import { analyze, ENGINE_VERSION } from "../assets/js/scoring.js";
+import { sectorFromSic, sectorFromNasdaq, profileFor } from "./sectors.mjs";
+import { nasdaqScreener, priceHistory } from "./market.mjs";
+import { analyze, ENGINE_VERSION, DIMENSIONS } from "../assets/js/scoring.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DATA = join(ROOT, "data");
@@ -26,8 +30,9 @@ const UA = process.env.SEC_USER_AGENT || "TeraStockX (github.com/m1ksaaa/Banana)
 const args = process.argv.slice(2);
 const opt = (name) => { const i = args.indexOf(name); return i >= 0 ? args[i + 1] : null; };
 const indexOnly = args.includes("--index-only");
+const skipPrices = args.includes("--skip-prices");
 const limit = opt("--limit") ? Number(opt("--limit")) : Infinity;
-const onlyTickers = opt("--tickers") ? new Set(opt("--tickers").split(",").map((s) => s.trim().toUpperCase())) : null;
+const onlyTickers = opt("--tickers") ? new Set(opt("--tickers").split(",").map((s) => s.trim().toUpperCase()).filter(Boolean)) : null;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -56,7 +61,7 @@ async function nasdaqListed() {
     .filter((l) => !l.startsWith("File Creation Time"))
     .map((l) => l.split("|"))
     .filter((c) => c[col("Test Issue")] === "N" && c[col("ETF")] === "N")
-    .map((c) => ({ ticker: c[col("Symbol")], name: cleanName(c[col("Security Name")]), financialStatus: c[col("Financial Status")] }));
+    .map((c) => ({ ticker: c[col("Symbol")], name: cleanName(c[col("Security Name")]) }));
 }
 
 function cleanName(n) {
@@ -66,66 +71,89 @@ function cleanName(n) {
 async function secTickers() {
   const j = await get("https://www.sec.gov/files/company_tickers_exchange.json");
   const map = new Map();
-  const f = j.fields;
   for (const row of j.data) {
-    const r = Object.fromEntries(f.map((k, i) => [k, row[i]]));
-    map.set(String(r.ticker).toUpperCase(), { cik: String(r.cik).padStart(10, "0"), name: r.name, exchange: r.exchange });
+    const r = Object.fromEntries(j.fields.map((k, i) => [k, row[i]]));
+    map.set(String(r.ticker).toUpperCase(), { cik: String(r.cik).padStart(10, "0"), name: r.name });
   }
   return map;
 }
 
-async function sicDescription(cik) {
-  const sub = await get(`https://data.sec.gov/submissions/CIK${cik}.json`);
-  return { sector: sub?.sicDescription || null, fiscalYearEnd: sub?.fiscalYearEnd || null };
-}
-
 async function updateCompanies() {
   mkdirSync(COMPANIES, { recursive: true });
-  console.log("NASDAQ lista letöltése…");
+  console.log("Downloading Nasdaq listing…");
   let list = await nasdaqListed();
-  console.log(`  ${list.length} részvény (ETF-ek és teszt-papírok nélkül)`);
+  console.log(`  ${list.length} securities (excluding ETFs and test issues)`);
   const ciks = await secTickers();
+  const screener = await nasdaqScreener();
+  console.log(`  Nasdaq screener: ${screener.size} quotes`);
   if (onlyTickers) list = list.filter((x) => onlyTickers.has(x.ticker));
   list = list.slice(0, limit);
 
-  let ok = 0, noData = 0, failed = 0;
+  let ok = 0, noData = 0, failed = 0, withPrices = 0;
   for (const [i, item] of list.entries()) {
     const sec = ciks.get(item.ticker.replace(".", "-")) || ciks.get(item.ticker);
-    const base = { schemaVersion: 1, ticker: item.ticker, name: item.name, exchange: "NASDAQ", currency: "USD", demo: false };
+    const q = screener.get(item.ticker) || {};
+    const base = { schemaVersion: 2, ticker: item.ticker, name: item.name, exchange: "NASDAQ", currency: "USD", demo: false };
     try {
-      if (!sec) { noData++; writeCompany({ ...base, cik: null, sector: null, source: null, annual: [], note: "Nincs SEC-azonosító (valószínűleg alap, warrant, unit vagy külföldi papír)." }); continue; }
+      if (!sec) {
+        noData++;
+        writeCompany({ ...base, cik: null, sector: sectorFromNasdaq(q.sector), industry: q.industry || null, profile: "general", source: null, annual: [], note: "noSecFiling" });
+        continue;
+      }
       const cf = await get(`https://data.sec.gov/api/xbrl/companyfacts/CIK${sec.cik}.json`);
-      await sleep(120); // SEC limit: max. 10 kérés / másodperc
-      const meta = await sicDescription(sec.cik);
-      await sleep(120);
-      const annual = cf ? parseCompanyFacts(cf) : [];
-      if (!annual.length) noData++; else ok++;
+      await sleep(110); // SEC fair-access limit: max 10 requests / second
+      const sub = await get(`https://data.sec.gov/submissions/CIK${sec.cik}.json`);
+      await sleep(110);
+      const parsed = cf ? parseCompanyFacts(cf) : { annual: [] };
+      if (!parsed.annual.length) noData++; else ok++;
+
+      const sector = sectorFromSic(sub?.sic) || sectorFromNasdaq(q.sector);
+      const hist = skipPrices || !parsed.annual.length ? null : await priceHistory(item.ticker);
+      if (hist) withPrices++;
+      const price = q.price ?? hist?.price ?? null;
+      const shares = parsed.sharesOutstanding ?? null;
+
       writeCompany({
         ...base,
-        name: cf?.entityName || item.name,
+        name: sub?.name || cf?.entityName || item.name,
         cik: sec.cik,
-        sector: meta.sector,
-        fiscalYearEndMonth: meta.fiscalYearEnd ? Number(meta.fiscalYearEnd.slice(0, 2)) : null,
-        source: { name: "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)", url: `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${sec.cik}&type=10-K`, retrieved: new Date().toISOString() },
-        annual,
+        sicCode: sub?.sic ? Number(sub.sic) : null,
+        sicDescription: sub?.sicDescription || null,
+        sector,
+        industry: q.industry || sub?.sicDescription || null,
+        profile: profileFor(sub?.sic, sector),
+        fiscalYearEndMonth: sub?.fiscalYearEnd ? Number(sub.fiscalYearEnd.slice(0, 2)) : null,
+        source: { name: "SEC EDGAR XBRL company facts (10-K, 10-Q, 20-F)", url: `https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=${sec.cik}`, retrieved: new Date().toISOString() },
+        market: {
+          price,
+          priceDate: new Date().toISOString().slice(0, 10),
+          marketCap: q.marketCap || (price && shares ? price * shares : null),
+          sharesOutstanding: shares,
+          sharesOutstandingDate: parsed.sharesOutstandingDate ?? null,
+          source: q.price ? "Nasdaq" : hist?.source || null,
+        },
+        prices: hist ? { interval: "1mo", adjusted: true, source: hist.source, data: hist.data } : null,
+        ttm: parsed.ttm,
+        latestBalance: parsed.latestBalance,
+        annual: parsed.annual,
       });
     } catch (e) {
       failed++;
-      console.warn(`  HIBA ${item.ticker}: ${e.message}`);
+      console.warn(`  ERROR ${item.ticker}: ${e.message}`);
     }
-    if ((i + 1) % 100 === 0) console.log(`  ${i + 1}/${list.length} feldolgozva`);
+    if ((i + 1) % 100 === 0) console.log(`  ${i + 1}/${list.length} processed`);
   }
-  console.log(`Kész: ${ok} cég adattal, ${noData} adat nélkül, ${failed} hiba.`);
+  console.log(`Done: ${ok} with financials, ${noData} without data, ${failed} errors, ${withPrices} with price history.`);
 }
 
 function writeCompany(c) {
-  // A demó adatot csak valódi adat írhatja felül; üres eredmény nem törli.
+  // An empty result never overwrites existing financial data.
   const file = join(COMPANIES, `${c.ticker}.json`);
   if (!c.annual.length && existsSync(file)) {
     const old = JSON.parse(readFileSync(file, "utf8"));
     if (old.annual?.length) return;
   }
-  writeFileSync(file, JSON.stringify(c, null, 1) + "\n");
+  writeFileSync(file, JSON.stringify(c) + "\n");
 }
 
 function buildIndex() {
@@ -134,18 +162,22 @@ function buildIndex() {
     const c = JSON.parse(readFileSync(join(COMPANIES, f), "utf8"));
     const a = analyze(c);
     const row = { t: c.ticker, n: c.name, s: c.sector || null };
+    if (c.industry) row.i = c.industry;
     if (c.demo) row.demo = true;
     if (a.ok) {
       row.y = a.latestYear;
-      row.sc = a.scores;
+      row.sc = ["overall", ...DIMENSIONS].map((k) => a.scores[k] ?? null);
       row.d = a.distress.level;
+      row.o = a.outlook.level;
+      if (a.styles.length) row.st = a.styles;
       row.cov = a.coverage;
+      if (a.metrics.marketCap) row.mc = Math.round(a.metrics.marketCap);
     }
     return row;
   }).sort((a, b) => a.t.localeCompare(b.t));
-  const index = { generated: new Date().toISOString(), engineVersion: ENGINE_VERSION, count: companies.length, companies };
+  const index = { generated: new Date().toISOString(), engineVersion: ENGINE_VERSION, scoreKeys: ["overall", ...DIMENSIONS], count: companies.length, companies };
   writeFileSync(join(DATA, "index.json"), JSON.stringify(index) + "\n");
-  console.log(`data/index.json: ${companies.length} cég.`);
+  console.log(`data/index.json: ${companies.length} companies.`);
 }
 
 if (!indexOnly) await updateCompanies();
