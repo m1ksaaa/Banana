@@ -6,6 +6,7 @@ import { parseCompanyFacts } from "../scripts/sec-parse.mjs";
 import { sectorFromSic, profileFor } from "../scripts/sectors.mjs";
 import { analyze, scale, DIMENSIONS, METRIC_FORMAT, PROFILES, FLAG_IDS, marketStats } from "../assets/js/scoring.js";
 import { LANGS } from "../assets/js/i18n/index.js";
+import { EVENT_SEVERITY, majorEvents } from "../scripts/events.mjs";
 
 const load = (p) => JSON.parse(readFileSync(new URL(p, import.meta.url), "utf8"));
 const fixture = () => parseCompanyFacts(load("./fixtures/companyfacts-mini.json"));
@@ -95,5 +96,22 @@ test("Every language has every key used by the engine", () => {
     for (const k of Object.keys(LANGS.en.raw)) assert.ok(d.raw[k], `${code}: raw.${k}`);
     for (const k of Object.keys(LANGS.en.method)) assert.ok(d.method[k], `${code}: method.${k}`);
     for (const k of Object.keys(LANGS.en.sectors)) assert.ok(d.sectors[k], `${code}: sectors.${k}`);
+    for (const k of Object.keys(EVENT_SEVERITY)) assert.ok(d.events[k], `${code}: events.${k}`);
   }
+});
+
+test("8-K events: only significant items, last 12 months, flags raised", () => {
+  const sub = { cik: "0000000001", filings: { recent: {
+    form: ["8-K", "8-K", "8-K", "10-Q", "8-K"],
+    filingDate: ["2026-09-01", "2026-08-01", "2026-07-01", "2026-06-01", "2024-01-01"],
+    items: ["2.02,9.01", "4.02", "5.02,1.01", "", "1.03"],
+    accessionNumber: ["0001-26-1", "0001-26-2", "0001-26-3", "0001-26-4", "0001-24-5"],
+    primaryDocument: ["a.htm", "b.htm", "c.htm", "d.htm", "e.htm"],
+  } } };
+  const ev = majorEvents(sub, { now: new Date("2026-10-01") });
+  assert.deepEqual(ev.map((e) => e.items), [["4.02"], ["1.01"]]);
+  assert.equal(ev[0].url, "https://www.sec.gov/Archives/edgar/data/1/0001262/b.htm");
+  const p = fixture();
+  const a = analyze({ annual: p.annual, events: ev }, { now: new Date("2026-10-01") });
+  assert.ok(a.flags.some((f) => f.id === "restatement" && f.level === "critical"));
 });

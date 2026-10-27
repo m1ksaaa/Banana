@@ -317,7 +317,7 @@ Pontok: Altman Z'' veszélyzóna +3 / szürke zóna +1; negatív saját tőke po
 
 **Szektor-összehasonlítás:** Minden pontszám a szektor összes elemzett vállalatához viszonyított rangsorban (percentilis) is megjelenik.
 
-## 5. Jelzések (27)
+## 5. Jelzések (32)
 
 | Azonosító | Jelzés | Leírás |
 |---|---|---|
@@ -340,6 +340,11 @@ Pontok: Altman Z'' veszélyzóna +3 / szürke zóna +1; negatív saját tőke po
 | `goodwillHeavy` | Magas goodwill és immateriális javak | Goodwill és immateriális javak a mérlegfőösszeg arányában: ‹value›; értékvesztési kockázatnak kitett. |
 | `staleData` | Elavult pénzügyi adatok | A legutóbbi éves jelentés fordulónapja: ‹value›. |
 | `deepDrawdown` | Mély árfolyamesés | Legnagyobb árfolyamesés az ötéves csúcshoz képest: ‹value›. |
+| `bankruptcyFiling` | Csőd- vagy felszámolási eljárás | 8-K bejelentés 1.03-as pontja, benyújtva: ‹value›. |
+| `restatement` | Pénzügyi kimutatások helyesbítése | 8-K bejelentés 4.02-es pontja (a korábban közzétett kimutatások nem megbízhatók), benyújtva: ‹value›. |
+| `debtAcceleration` | Adósság lejáratának előrehozása | 8-K bejelentés 2.04-es pontja (pénzügyi kötelezettség esedékessé válása), benyújtva: ‹value›. |
+| `delistingNotice` | Tőzsdei kivezetési figyelmeztetés | 8-K bejelentés 3.01-es pontja (tőzsdei szabály megsértése), benyújtva: ‹value›. |
+| `auditorChange` | Könyvvizsgáló-váltás | 8-K bejelentés 4.01-es pontja, benyújtva: ‹value›. |
 | `netCash` | Nettó készpénz-pozíció | A pénzeszközök a pénzügyi adósságot ‹value› összeggel haladják meg. |
 | `highMargin` | Magas üzemi árrés | Az üzemi árrés ‹value›. |
 | `highRoic` | Magas befektetett tőke megtérülés | A ROIC ‹value›, jóval a szokásos tőkeköltség felett. |

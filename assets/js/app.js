@@ -22,6 +22,15 @@ async function loadIndex() {
   return indexCache;
 }
 
+let newsCache = null;
+async function loadNews() {
+  if (!newsCache) {
+    const r = await fetch("data/news.json", { cache: "no-cache" });
+    newsCache = r.ok ? await r.json() : { events: [] };
+  }
+  return newsCache;
+}
+
 const companyCache = new Map();
 async function loadCompany(ticker) {
   if (!companyCache.has(ticker)) {
@@ -89,7 +98,8 @@ const FLAG_FORMAT = {
 function flagText(f) {
   const [title, text] = t(`flags.${f.id}`);
   const p = { ...f.params };
-  if ("value" in p) p.value = f.id === "staleData" ? date(p.value) : fmt(p.value, FLAG_FORMAT[f.id]);
+  const isDate = ["staleData", "bankruptcyFiling", "restatement", "debtAcceleration", "delistingNotice", "auditorChange"].includes(f.id);
+  if ("value" in p) p.value = isDate ? date(p.value) : fmt(p.value, FLAG_FORMAT[f.id]);
   return { title, text: fill(text, p) };
 }
 
@@ -97,11 +107,16 @@ function flagText(f) {
 
 function renderChrome() {
   const icon = (d) => `<svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="${d}"/></svg>`;
-  document.getElementById("nav").innerHTML = `
-    <a href="#/" data-nav="list" title="${esc(t("ui.navCompanies"))}">${icon("M4 6h16M4 12h16M4 18h10")}<span class="nav-label">${esc(t("ui.navCompanies"))}</span></a>
-    <a href="#/compare" data-nav="compare" title="${esc(t("ui.navCompare"))}">${icon("M8 4v16M16 4v16M4 8h8M12 16h8")}<span class="nav-label">${esc(t("ui.navCompare"))}</span></a>
-    <a href="#/methodology" data-nav="method" title="${esc(t("ui.navMethod"))}">${icon("M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 11v5M12 8h.01")}<span class="nav-label">${esc(t("ui.navMethod"))}</span></a>
-    <select class="lang-select" id="lang" aria-label="${esc(t("ui.language"))}">
+const links = (short) => `
+    <a href="#/" data-nav="list" title="${esc(t("ui.navCompanies"))}">${icon("M4 6h16M4 12h16M4 18h10")}<span class="nav-label">${esc(t(short ? "ui.tabCompanies" : "ui.navCompanies"))}</span></a>
+    <a href="#/news" data-nav="news" title="${esc(t("ui.navNews"))}">${icon("M5 4h11v16H5zM16 8h3v10a2 2 0 0 1-2 2M8 8h5M8 12h5M8 16h3")}<span class="nav-label">${esc(t(short ? "ui.tabNews" : "ui.navNews"))}</span></a>
+    <a href="#/data" data-nav="data" title="${esc(t("ui.navData"))}">${icon("M4 5h16v14H4zM4 10h16M10 10v9")}<span class="nav-label">${esc(t(short ? "ui.tabData" : "ui.navData"))}</span></a>
+    <a href="#/compare" data-nav="compare" title="${esc(t("ui.navCompare"))}">${icon("M8 4v16M16 4v16M4 8h8M12 16h8")}<span class="nav-label">${esc(t(short ? "ui.tabCompare" : "ui.navCompare"))}</span></a>
+    <a href="#/methodology" data-nav="method" title="${esc(t("ui.navMethod"))}">${icon("M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 11v5M12 8h.01")}<span class="nav-label">${esc(t(short ? "ui.tabMethod" : "ui.navMethod"))}</span></a>
+`;
+  document.getElementById("nav").innerHTML = links(false);
+  document.getElementById("tabbar").innerHTML = links(true);
+  document.getElementById("lang-wrap").innerHTML = `<select class="lang-select" id="lang" aria-label="${esc(t("ui.language"))}">
       ${Object.entries(LANGS).map(([code, d]) => `<option value="${code}" ${code === lang() ? "selected" : ""}>${d.meta.short}</option>`).join("")}
     </select>`;
   document.getElementById("lang").addEventListener("change", (e) => { setLang(e.target.value); renderChrome(); route(false); });
@@ -112,7 +127,7 @@ function renderChrome() {
 function markNav() {
   const page = location.hash.replace(/^#\/?/, "").split("/")[0];
   document.querySelectorAll("[data-nav]").forEach((a) => a.classList.toggle("active",
-    (a.dataset.nav === "list" && (page === "" || page === "c")) || (a.dataset.nav === "compare" && page === "compare") || (a.dataset.nav === "method" && page === "methodology")));
+    (a.dataset.nav === "list" && (page === "" || page === "c")) || (a.dataset.nav === "compare" && page === "compare") || (a.dataset.nav === "news" && page === "news") || (a.dataset.nav === "data" && page === "data") || (a.dataset.nav === "method" && page === "methodology")));
 }
 
 // ---------- Router ----------
@@ -128,6 +143,8 @@ async function route(scroll = true) {
     if (page === "c" && arg) await renderCompany(decodeURIComponent(arg).toUpperCase());
     else if (page === "compare") await renderCompare(arg ? decodeURIComponent(arg).toUpperCase().split(",").filter(Boolean).slice(0, 3) : []);
     else if (page === "methodology") renderMethod();
+    else if (page === "news") await renderNews();
+    else if (page === "data") await renderData(arg ? decodeURIComponent(arg).toUpperCase() : null);
     else await renderList();
   } catch (e) {
     app.innerHTML = `<div class="glass empty">${esc(t("ui.errorLoad", { e: e.message }))}<br><span class="small">${esc(t("ui.serveHint"))}</span></div>`;
@@ -166,6 +183,7 @@ async function renderList() {
       </div>
       <img class="hero-art" src="assets/img/hero.svg" alt="" width="560" height="360">
     </section>
+    <div id="home-news"></div>
     <div class="controls">
       <label class="search">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"/></svg>
@@ -260,6 +278,76 @@ async function renderList() {
     listState.page += Number(b.dataset.p); draw(); window.scrollTo({ top: 0, behavior: "smooth" });
   });
   draw();
+  loadNews().then((n) => {
+    const top = (n.events || []).filter((e) => e.severity >= 4).slice(0, 4);
+    const el = document.getElementById("home-news");
+    if (!top.length || !el) return;
+    el.innerHTML = `<div class="section-title" style="margin-top:4px">${esc(t("ui.latestEvents"))} <a class="small" href="#/news">${esc(t("ui.allNews"))} ›</a></div>
+      <div class="events" style="margin-bottom:20px">${top.map(eventCard).join("")}</div>`;
+  }).catch(() => {});
+}
+
+// ---------- Major events ----------
+
+const SEV_TONE = { 5: "critical", 4: "serious", 3: "warning", 2: "none" };
+function eventCard(e, withCompany = true) {
+  const sev = e.severity;
+  return `<div class="glass event">
+    <div class="event-head">
+      <span class="pill tone-${SEV_TONE[sev]}"><span class="dot"></span>${esc(t(`ui.sev${sev}`))}</span>
+      <span class="small muted">${esc(date(e.date))}</span>
+    </div>
+    ${withCompany ? `<a class="event-co" href="#/c/${encodeURIComponent(e.t)}"><span class="tick">${esc(e.t)}</span> <span class="muted">${esc(e.n)}</span></a>` : ""}
+    <div class="event-items">${e.items.map((i) => `<span>${esc(t(`events.${i}`))} <span class="small muted">(8-K ${esc(i)})</span></span>`).join("")}</div>
+    <a class="small" href="${esc(e.url)}" target="_blank" rel="noopener">${esc(t("ui.viewFiling"))} ↗</a>
+  </div>`;
+}
+
+async function renderNews() {
+  document.title = `${t("ui.newsTitle")} | TeraStockX`;
+  app.innerHTML = `<div class="skeleton"></div>`;
+  const n = await loadNews();
+  const state = { min: 4 };
+  app.innerHTML = `
+    <div class="prose" style="max-width:none;margin-top:8px"><h1>${esc(t("ui.newsTitle"))}</h1><p style="max-width:820px">${esc(t("ui.newsIntro"))}</p></div>
+    <div class="controls"><select class="select" id="sev">
+      <option value="4">${esc(t("ui.onlyCritical"))}</option><option value="3">${esc(t("ui.allSeverities"))}</option>
+    </select></div>
+    <div class="events" id="news-list"></div>`;
+  const draw = () => {
+    const list = (n.events || []).filter((e) => e.severity >= state.min).slice(0, 60);
+    document.getElementById("news-list").innerHTML = list.length ? list.map((e) => eventCard(e)).join("") : `<div class="glass empty">${esc(t("ui.newsEmpty"))}</div>`;
+  };
+  document.getElementById("sev").addEventListener("change", (e) => { state.min = Number(e.target.value); draw(); });
+  draw();
+}
+
+// ---------- Financial data page ----------
+
+async function renderData(ticker) {
+  document.title = `${t("ui.dataTitle")} | TeraStockX`;
+  app.innerHTML = `<div class="skeleton"></div>`;
+  const idx = await loadIndex();
+  const c = ticker ? await loadCompany(ticker) : null;
+  const top = idx.companies.filter((x) => isNum(x.mc)).sort((a, b) => b.mc - a.mc).slice(0, 16);
+  const chips = (top.length ? top : idx.companies.filter((x) => x.sc).slice(0, 16));
+  app.innerHTML = `
+    <div class="prose" style="max-width:none;margin-top:8px"><h1>${esc(t("ui.dataTitle"))}</h1><p style="max-width:820px">${esc(t("ui.dataIntro"))}</p></div>
+    <div class="compare-pick">
+      <input id="data-pick" list="data-list" placeholder="${esc(t("ui.dataPick"))}" autocomplete="off" value="${esc(ticker || "")}">
+      <datalist id="data-list">${idx.companies.map((x) => `<option value="${esc(x.t)}">${esc(x.n)}</option>`).join("")}</datalist>
+    </div>
+    ${c ? `<div class="company-head" style="margin-bottom:14px"><div><h2 style="font-size:24px">${esc(c.name)}</h2>
+        <div class="sub"><span class="ticker-chip">${esc(c.ticker)}</span>${c.sector ? `<span>· ${esc(sectorName(c.sector))}</span>` : ""}</div></div>
+        <a class="btn btn-primary" href="#/c/${encodeURIComponent(c.ticker)}">${esc(t("ui.openAnalysis"))} ›</a></div>
+        ${rawView(c, analyze(c), true)}`
+      : `<div class="styles">${chips.map((x) => `<a class="tag" href="#/data/${encodeURIComponent(x.t)}">${esc(x.t)}</a>`).join("")}</div>
+         ${ticker ? `<div class="glass empty" style="margin-top:14px">${esc(t("ui.notFound", { t: ticker }))}</div>` : ""}`}`;
+  const pick = document.getElementById("data-pick");
+  const go = () => { const v = pick.value.trim().toUpperCase(); if (v && idx.companies.some((x) => x.t === v)) location.hash = `#/data/${encodeURIComponent(v)}`; };
+  pick.addEventListener("change", go);
+  pick.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  if (c) document.getElementById("csv")?.addEventListener("click", () => downloadCsv(c));
 }
 
 // ---------- Company page ----------
@@ -419,6 +507,8 @@ function analysisView(c, a, idx) {
     <div class="score-grid">${cards}</div>
     <h2 class="section-title">${esc(t("ui.sectionFlags"))}</h2>
     ${flagsHtml}
+    <h2 class="section-title">${esc(t("ui.sectionEvents"))}</h2>
+    ${(c.events || []).length ? `<div class="events">${c.events.map((e) => eventCard(e, false)).join("")}</div>` : `<div class="glass empty small">${esc(c.events ? t("ui.eventsNone") : t("ui.notEnough"))}</div>`}
     <h2 class="section-title">${esc(t("ui.sectionCharts"))}</h2>
     ${charts}
     <p class="small muted" style="margin-top:22px">${esc(t("ui.engine", { v: ENGINE_VERSION }))}</p>`;
@@ -445,7 +535,7 @@ function rawCell(v, k, cls = "") {
   return `<td class="${cls}">${money(v)}</td>`;
 }
 
-function rawView(c, a) {
+function rawView(c, a, onDataPage = false) {
   const years = [...(c.annual || [])].sort((x, y) => x.year - y.year);
   if (!years.length) return `<div class="glass empty">${esc(t("ui.notEnough"))}</div>`;
   const ttm = c.ttm ? { ...c.ttm, ...(c.latestBalance || {}) } : null;
@@ -463,6 +553,7 @@ function rawView(c, a) {
     <div class="raw-actions">
       <span class="small muted">${esc(t("ui.currencyNote"))} ${src}</span>
       <span style="display:flex;gap:8px;flex-wrap:wrap">
+        ${onDataPage ? "" : `<a class="btn" href="#/data/${encodeURIComponent(c.ticker)}">${esc(t("ui.navData"))}</a>`}
         <button class="btn" id="csv" type="button">${esc(t("ui.downloadCsv"))}</button>
         <a class="btn" href="data/companies/${encodeURIComponent(c.ticker)}.json" download>${esc(t("ui.downloadJson"))}</a>
       </span>
@@ -575,6 +666,7 @@ function renderMethod() {
     <h2>${esc(t("method.distressTitle"))}</h2><p>${esc(t("method.distressText"))}</p>
     <h2>${esc(t("method.trendTitle"))}</h2><p>${esc(t("method.trendText"))}</p>
     <h2>${esc(t("method.stylesTitle"))}</h2><p>${esc(t("method.stylesText"))}</p>
+    <h2>${esc(t("method.eventsTitle"))}</h2><p>${esc(t("method.eventsText"))}</p>
     <h2>${esc(t("method.sectorTitle"))}</h2><p>${esc(t("method.sectorText"))}</p>
     <h2>${esc(t("method.limitsTitle"))}</h2><p>${esc(t("method.limitsText"))}</p>
   </div>`;

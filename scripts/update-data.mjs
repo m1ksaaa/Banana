@@ -20,6 +20,7 @@ import { fileURLToPath } from "node:url";
 import { parseCompanyFacts } from "./sec-parse.mjs";
 import { sectorFromSic, sectorFromNasdaq, profileFor } from "./sectors.mjs";
 import { nasdaqScreener, priceHistory } from "./market.mjs";
+import { majorEvents } from "./events.mjs";
 import { analyze, ENGINE_VERSION, DIMENSIONS } from "../assets/js/scoring.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -132,6 +133,7 @@ async function updateCompanies() {
           sharesOutstandingDate: parsed.sharesOutstandingDate ?? null,
           source: q.price ? "Nasdaq" : hist?.source || null,
         },
+        events: majorEvents(sub),
         prices: hist ? { interval: "1mo", adjusted: true, source: hist.source, data: hist.data } : null,
         ttm: parsed.ttm,
         latestBalance: parsed.latestBalance,
@@ -158,6 +160,7 @@ function writeCompany(c) {
 
 function buildIndex() {
   const files = readdirSync(COMPANIES).filter((f) => f.endsWith(".json"));
+  const news = [];
   const companies = files.map((f) => {
     const c = JSON.parse(readFileSync(join(COMPANIES, f), "utf8"));
     const a = analyze(c);
@@ -173,11 +176,15 @@ function buildIndex() {
       row.cov = a.coverage;
       if (a.metrics.marketCap) row.mc = Math.round(a.metrics.marketCap);
     }
+    for (const e of c.events || []) if (e.severity >= 3) news.push({ t: c.ticker, n: c.name, mc: row.mc ?? null, ...e });
     return row;
   }).sort((a, b) => a.t.localeCompare(b.t));
   const index = { generated: new Date().toISOString(), engineVersion: ENGINE_VERSION, scoreKeys: ["overall", ...DIMENSIONS], count: companies.length, companies };
   writeFileSync(join(DATA, "index.json"), JSON.stringify(index) + "\n");
-  console.log(`data/index.json: ${companies.length} companies.`);
+  // Major-events feed: newest first, capped so that only the significant few are shown.
+  news.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.severity - a.severity));
+  writeFileSync(join(DATA, "news.json"), JSON.stringify({ generated: index.generated, events: news.slice(0, 150) }) + "\n");
+  console.log(`data/index.json: ${companies.length} companies; data/news.json: ${Math.min(news.length, 150)} events.`);
 }
 
 if (!indexOnly) await updateCompanies();

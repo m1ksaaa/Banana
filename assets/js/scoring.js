@@ -434,7 +434,7 @@ export function analyze(company, { now = new Date() } = {}) {
     parts,
     metrics,
     flags,
-    distress: distressLevel({ metrics, negEquity, m, L, profile }),
+    distress: distressLevel({ metrics, negEquity, m, L, profile, flags }),
     outlook: outlookLevel(scores, metrics),
     styles: styleTags(scores, metrics, flags),
     coverage,
@@ -470,6 +470,7 @@ export const FLAG_IDS = [
   "negativeEquity", "persistentLosses", "lossLastYear", "negativeFcf", "lowCurrentRatio", "interestCoverageCritical",
   "interestCoverageWeak", "altmanDistress", "altmanGrey", "debtWithoutEbitda", "highLeverage", "revenueDecline",
   "heavyDilution", "highSbc", "lowEarningsQuality", "dividendUncovered", "goodwillHeavy", "staleData", "deepDrawdown",
+  "bankruptcyFiling", "restatement", "debtAcceleration", "delistingNotice", "auditorChange",
   "netCash", "highMargin", "highRoic", "alwaysProfitable", "strongGrowth", "buybacks", "altmanSafe", "strongCashConversion",
 ];
 
@@ -510,6 +511,14 @@ function buildFlags({ L, P, m, metrics: mt, negEquity, profile, company, now }) 
   }
   if (isNum(mt.maxDrawdown) && mt.maxDrawdown < -0.6) add("warning", "deepDrawdown", { value: mt.maxDrawdown });
 
+  // Material events reported on Form 8-K within the last 12 months.
+  const recent = (company.events || []).filter((e) => (now - new Date(e.date)) / 86400000 <= 365);
+  const lastWith = (item) => recent.filter((e) => e.items.includes(item)).map((e) => e.date).sort().pop();
+  for (const [item, level, id] of [["1.03", "critical", "bankruptcyFiling"], ["4.02", "critical", "restatement"], ["2.04", "warning", "debtAcceleration"], ["3.01", "warning", "delistingNotice"], ["4.01", "warning", "auditorChange"]]) {
+    const d = lastWith(item);
+    if (d) add(level, id, { value: d });
+  }
+
   // Strengths
   if (general && isNum(m.netDebt) && m.netDebt < 0) add("positive", "netCash", { value: -m.netDebt });
   if (general && isNum(m.operatingMargin) && m.operatingMargin > 0.25) add("positive", "highMargin", { value: m.operatingMargin });
@@ -526,7 +535,7 @@ function buildFlags({ L, P, m, metrics: mt, negEquity, profile, company, now }) 
 // ---------- Classifications ----------
 
 // Financial distress: points from Altman zone and critical signals. low / medium / high.
-function distressLevel({ metrics: mt, negEquity, m, L, profile }) {
+function distressLevel({ metrics: mt, negEquity, m, L, profile, flags }) {
   let pts = 0;
   const z = mt.altmanZ;
   if (isNum(z)) pts += z < 1.1 ? 3 : z < 2.6 ? 1 : 0;
@@ -536,6 +545,8 @@ function distressLevel({ metrics: mt, negEquity, m, L, profile }) {
   if (isNum(m.interestCoverage) && m.interestCoverage < 1.5) pts += 2;
   if (m.netDebtToEbitda === Infinity) pts += 1;
   if (profile === "financial" && isNum(m.equityRatio) && m.equityRatio < 0.05) pts += 2;
+  if (flags.some((f) => f.id === "bankruptcyFiling")) pts += 4;
+  if (flags.some((f) => f.id === "debtAcceleration" || f.id === "delistingNotice")) pts += 1;
   return { level: pts >= 4 ? "high" : pts >= 2 ? "medium" : "low", points: pts };
 }
 
