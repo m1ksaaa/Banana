@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "LFST",
+ "name": "LifeStance Health Group, Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001845257",
+ "sector": "Services-Health Services",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001845257&type=10-K",
+  "retrieved": "2026-10-27T19:27:44.397Z"
+ },
+ "annual": [
+  {
+   "year": 2021,
+   "periodEnd": "2021-12-31",
+   "revenue": 1445000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -286353000,
+   "netIncome": -307197000,
+   "operatingCashFlow": 9420000,
+   "capex": 94492000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": 38911000,
+   "epsDiluted": null,
+   "sharesDiluted": 327523,
+   "totalAssets": 1927109000,
+   "totalLiabilities": 382081000,
+   "currentAssets": 266520000,
+   "currentLiabilities": 116752000,
+   "cash": 148029000,
+   "equity": 1545028000,
+   "retainedEarnings": -357072000,
+   "totalDebt": 158739000,
+   "freeCashFlow": -85072000
+  }
+ ]
+}

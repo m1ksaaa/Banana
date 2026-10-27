@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ESYN",
+ "name": "HWH     INTERNATIONAL INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001897245",
+ "sector": "Wholesale-Drugs, Proprietaries & Druggists' Sundries",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001897245&type=10-K",
+  "retrieved": "2026-10-27T19:19:30.178Z"
+ },
+ "annual": [
+  {
+   "year": 2023,
+   "periodEnd": "2023-12-31",
+   "revenue": 1184,
+   "costOfRevenue": 334825,
+   "grossProfit": 495694,
+   "operatingIncome": null,
+   "netIncome": -1080492,
+   "operatingCashFlow": -2600370,
+   "capex": 14574,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 23710684,
+   "totalLiabilities": null,
+   "currentAssets": 1337854,
+   "currentLiabilities": 6024798,
+   "cash": 1159201,
+   "equity": -3608031,
+   "retainedEarnings": -3567016,
+   "totalDebt": null,
+   "freeCashFlow": -2614944
+  }
+ ]
+}

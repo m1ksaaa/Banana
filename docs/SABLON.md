@@ -31,7 +31,7 @@ Minden összeg **USD-ben, egész dollárban**. A hiányzó adat `null`.
 
 | Mező | Megnevezés | XBRL-címkék prioritási sorrendben |
 |---|---|---|
-| `revenue` | Árbevétel | RevenueFromContractWithCustomerExcludingAssessedTax, Revenues, RevenueFromContractWithCustomerIncludingAssessedTax, SalesRevenueNet, SalesRevenueGoodsNet, SalesRevenueServicesNet, RevenuesNetOfInterestExpense, InterestAndDividendIncomeOperating |
+| `revenue` | Árbevétel | Revenues, RevenueFromContractWithCustomerExcludingAssessedTax, RevenueFromContractWithCustomerIncludingAssessedTax, SalesRevenueNet, SalesRevenueGoodsNet, SalesRevenueServicesNet, RevenuesNetOfInterestExpense, InterestAndDividendIncomeOperating |
 | `costOfRevenue` | Közvetlen költségek | CostOfRevenue, CostOfGoodsAndServicesSold, CostOfGoodsSold, CostOfServices |
 | `grossProfit` | Bruttó eredmény | GrossProfit |
 | `researchAndDevelopment` | Kutatás-fejlesztés | ResearchAndDevelopmentExpense, ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost |

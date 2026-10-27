@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "NPACU",
+ "name": "New Providence Acquisition Corp. III/Cayman",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002048948",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002048948&type=10-K",
+  "retrieved": "2026-10-27T19:31:55.524Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -669420,
+   "netIncome": 7675973,
+   "operatingCashFlow": -739616,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 310806263,
+   "totalLiabilities": 12884684,
+   "currentAssets": 810120,
+   "currentLiabilities": 95684,
+   "cash": 701592,
+   "equity": -12074564,
+   "retainedEarnings": -12075401,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

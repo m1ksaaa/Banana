@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "SOGP",
+ "name": "Sound Group Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001783407",
+ "sector": "Services-Computer Programming, Data Processing, Etc.",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001783407&type=10-K",
+  "retrieved": "2026-10-27T19:39:27.347Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 443688000,
+   "costOfRevenue": 314252000,
+   "grossProfit": 129436000,
+   "operatingIncome": 31031000,
+   "netIncome": null,
+   "operatingCashFlow": 40044000,
+   "capex": 493000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 34350000,
+   "interestExpense": null,
+   "epsDiluted": 0.03,
+   "sharesDiluted": 943559133,
+   "totalAssets": 107195000,
+   "totalLiabilities": 53671000,
+   "currentAssets": 101609000,
+   "currentLiabilities": 52246000,
+   "cash": 93672000,
+   "equity": 57351000,
+   "retainedEarnings": -331025000,
+   "totalDebt": null,
+   "freeCashFlow": 39551000
+  }
+ ]
+}

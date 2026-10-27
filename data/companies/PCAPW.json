@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "PCAPW",
+ "name": "ProCap Acquisition Corp",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002056634",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002056634&type=10-K",
+  "retrieved": "2026-10-27T19:34:09.834Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -470085,
+   "netIncome": 5659179,
+   "operatingCashFlow": -486104,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 257302148,
+   "totalLiabilities": 11365789,
+   "currentAssets": 1194095,
+   "currentLiabilities": 115789,
+   "cash": 1069737,
+   "equity": -10171694,
+   "retainedEarnings": -10172362,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "CHARR",
+ "name": "Charlton Aria Acquisition Corporation",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002024459",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002024459&type=10-K",
+  "retrieved": "2026-10-27T19:15:02.209Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -595545,
+   "netIncome": 2982042,
+   "operatingCashFlow": -543165,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 89457824,
+   "totalLiabilities": 1898508,
+   "currentAssets": 13291,
+   "currentLiabilities": 198508,
+   "cash": 5135,
+   "equity": -1885217,
+   "retainedEarnings": -1885464,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

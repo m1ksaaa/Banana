@@ -1,0 +1,17 @@
+{
+ "schemaVersion": 1,
+ "ticker": "BIDWR",
+ "name": "Tribeca Strategic Acquisition Corp.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002094919",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002094919&type=10-K",
+  "retrieved": "2026-10-27T19:12:35.682Z"
+ },
+ "annual": []
+}

@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "BJDX",
+ "name": "Bluejay Diagnostics, Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001704287",
+ "sector": "Surgical & Medical Instruments & Apparatus",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001704287&type=10-K",
+  "retrieved": "2026-10-27T19:12:42.256Z"
+ },
+ "annual": [
+  {
+   "year": 2022,
+   "periodEnd": "2022-12-31",
+   "revenue": 249040,
+   "costOfRevenue": 200129,
+   "grossProfit": 48911,
+   "operatingIncome": -9317776,
+   "netIncome": -9296948,
+   "operatingCashFlow": -7741593,
+   "capex": 1199270,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 4152152,
+   "interestExpense": null,
+   "epsDiluted": -9.22,
+   "sharesDiluted": 1008196,
+   "totalAssets": 13521265,
+   "totalLiabilities": 1979992,
+   "currentAssets": 11788470,
+   "currentLiabilities": 1640254,
+   "cash": 10114990,
+   "equity": 11541273,
+   "retainedEarnings": -16997102,
+   "totalDebt": null,
+   "freeCashFlow": -8940863
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ALMS",
+ "name": "Alumis Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001847367",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001847367&type=10-K",
+  "retrieved": "2026-10-27T19:09:55.285Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 24050000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -453804000,
+   "netIncome": -243325000,
+   "operatingCashFlow": -369523000,
+   "capex": 653000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 385998000,
+   "interestExpense": null,
+   "epsDiluted": -2.86,
+   "sharesDiluted": 85029624,
+   "totalAssets": 411940000,
+   "totalLiabilities": 110643000,
+   "currentAssets": 318232000,
+   "currentLiabilities": 73318000,
+   "cash": 89670000,
+   "equity": 301297000,
+   "retainedEarnings": -901876000,
+   "totalDebt": null,
+   "freeCashFlow": -370176000
+  }
+ ]
+}

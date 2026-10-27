@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "LCNB",
+ "name": "LCNB CORP",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001074902",
+ "sector": "National Commercial Banks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001074902&type=10-K",
+  "retrieved": "2026-10-27T19:27:33.905Z"
+ },
+ "annual": [
+  {
+   "year": 2013,
+   "periodEnd": "2013-12-31",
+   "revenue": 6445000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": null,
+   "netIncome": 8780000,
+   "operatingCashFlow": 10434000,
+   "capex": 858000,
+   "dividendsPaid": 4860000,
+   "researchAndDevelopment": null,
+   "interestExpense": 4065000,
+   "epsDiluted": 1.1,
+   "sharesDiluted": 7982997,
+   "totalAssets": 932338000,
+   "totalLiabilities": 813465000,
+   "currentAssets": null,
+   "currentLiabilities": null,
+   "cash": 14688000,
+   "equity": 118873000,
+   "retainedEarnings": 65475000,
+   "totalDebt": 8655000,
+   "freeCashFlow": 9576000
+  }
+ ]
+}

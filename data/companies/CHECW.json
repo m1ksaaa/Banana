@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "CHECW",
+ "name": "CHENGHE ACQUISITION III CO.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002047177",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002047177&type=10-K",
+  "retrieved": "2026-10-27T19:15:04.951Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -281678,
+   "netIncome": 1088407,
+   "operatingCashFlow": -189897,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 128678635,
+   "totalLiabilities": 5238499,
+   "currentAssets": 808550,
+   "currentLiabilities": 178499,
+   "cash": 696825,
+   "equity": -4429949,
+   "retainedEarnings": -4430412,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

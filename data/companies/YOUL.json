@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "YOUL",
+ "name": "Youlife Group Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002028177",
+ "sector": "Services-Educational Services",
+ "fiscalYearEndMonth": null,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002028177&type=10-K",
+  "retrieved": "2026-10-27T19:44:59.771Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 265162000,
+   "costOfRevenue": 237697000,
+   "grossProfit": 27465000,
+   "operatingIncome": 967000,
+   "netIncome": 6159000,
+   "operatingCashFlow": 1714000,
+   "capex": 4000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 2412000,
+   "interestExpense": 372000,
+   "epsDiluted": 0.08,
+   "sharesDiluted": 72899967,
+   "totalAssets": 177726000,
+   "totalLiabilities": 70012000,
+   "currentAssets": 134013000,
+   "currentLiabilities": 66367000,
+   "cash": 20623000,
+   "equity": 104999000,
+   "retainedEarnings": -82921000,
+   "totalDebt": 18025000,
+   "freeCashFlow": 1710000
+  }
+ ]
+}

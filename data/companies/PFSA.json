@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "PFSA",
+ "name": "PROFUSA, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001859807",
+ "sector": "Surgical & Medical Instruments & Apparatus",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001859807&type=10-K",
+  "retrieved": "2026-10-27T19:34:28.164Z"
+ },
+ "annual": [
+  {
+   "year": 2024,
+   "periodEnd": "2024-12-31",
+   "revenue": 100000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -4500000,
+   "netIncome": -9230000,
+   "operatingCashFlow": -2066000,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 1608000,
+   "interestExpense": 4424000,
+   "epsDiluted": -357.14,
+   "sharesDiluted": 25844,
+   "totalAssets": 3073000,
+   "totalLiabilities": 57129000,
+   "currentAssets": 260000,
+   "currentLiabilities": 57129000,
+   "cash": 191000,
+   "equity": -119205000,
+   "retainedEarnings": -124958000,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "YXT",
+ "name": "YXT.COM GROUP HOLDING LIMITED",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001872090",
+ "sector": "Services-Prepackaged Software",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001872090&type=10-K",
+  "retrieved": "2026-10-27T19:45:02.048Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 48651000,
+   "costOfRevenue": 15400000,
+   "grossProfit": 33251000,
+   "operatingIncome": -20166000,
+   "netIncome": -22725000,
+   "operatingCashFlow": -20856000,
+   "capex": 227000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 15931000,
+   "interestExpense": 940000,
+   "epsDiluted": -0.12,
+   "sharesDiluted": 181828823,
+   "totalAssets": 72506000,
+   "totalLiabilities": 61833000,
+   "currentAssets": 25592000,
+   "currentLiabilities": 51749000,
+   "cash": 16444000,
+   "equity": 10673000,
+   "retainedEarnings": -492840000,
+   "totalDebt": 1144000,
+   "freeCashFlow": -21083000
+  }
+ ]
+}

@@ -1,0 +1,17 @@
+{
+ "schemaVersion": 1,
+ "ticker": "AMRO",
+ "name": "Amaero Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002141616",
+ "sector": "Miscellaneous Primary Metal Products",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002141616&type=10-K",
+  "retrieved": "2026-10-27T19:10:15.804Z"
+ },
+ "annual": []
+}

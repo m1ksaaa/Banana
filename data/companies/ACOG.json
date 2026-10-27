@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ACOG",
+ "name": "Alpha Cognition Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001655923",
+ "sector": "Biological Products, (No Diagnostic Substances)",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001655923&type=10-K",
+  "retrieved": "2026-10-27T19:08:43.495Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 10220275,
+   "costOfRevenue": 603400,
+   "grossProfit": 9616875,
+   "operatingIncome": -22660689,
+   "netIncome": -20669875,
+   "operatingCashFlow": -20380367,
+   "capex": 293489,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 1867972,
+   "interestExpense": null,
+   "epsDiluted": -1.18,
+   "sharesDiluted": 17681429,
+   "totalAssets": 79730235,
+   "totalLiabilities": 17200060,
+   "currentAssets": 79010272,
+   "currentLiabilities": 9130075,
+   "cash": 66046789,
+   "equity": 62530175,
+   "retainedEarnings": -97106775,
+   "totalDebt": null,
+   "freeCashFlow": -20673856
+  }
+ ]
+}

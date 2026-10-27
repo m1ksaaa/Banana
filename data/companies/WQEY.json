@@ -1,0 +1,17 @@
+{
+ "schemaVersion": 1,
+ "ticker": "WQEY",
+ "name": "WISeKey International Corp.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002107968",
+ "sector": "Services-Computer Processing & Data Preparation",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002107968&type=10-K",
+  "retrieved": "2026-10-27T19:44:04.359Z"
+ },
+ "annual": []
+}

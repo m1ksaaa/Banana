@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "SKYAW",
+ "name": "SkyAI, Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001737995",
+ "sector": "Finance Services",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001737995&type=10-K",
+  "retrieved": "2026-10-27T19:38:54.369Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 204120,
+   "costOfRevenue": 617445,
+   "grossProfit": -413325,
+   "operatingIncome": -269735374,
+   "netIncome": -282502126,
+   "operatingCashFlow": -10990651,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 198762,
+   "interestExpense": 416660,
+   "epsDiluted": -11.16,
+   "sharesDiluted": 25305644,
+   "totalAssets": 269075173,
+   "totalLiabilities": 4695027,
+   "currentAssets": 18882511,
+   "currentLiabilities": 4695027,
+   "cash": 10382745,
+   "equity": 264380146,
+   "retainedEarnings": -316947332,
+   "totalDebt": 3084931,
+   "freeCashFlow": null
+  }
+ ]
+}

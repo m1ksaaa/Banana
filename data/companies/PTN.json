@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "PTN",
+ "name": "PALATIN TECHNOLOGIES, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0000911216",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 6,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000911216&type=10-K",
+  "retrieved": "2026-10-27T19:35:36.361Z"
+ },
+ "annual": [
+  {
+   "year": 2026,
+   "periodEnd": "2026-06-30",
+   "revenue": 13185031,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -8668288,
+   "netIncome": -8377895,
+   "operatingCashFlow": -13533270,
+   "capex": 51299,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 12368873,
+   "interestExpense": null,
+   "epsDiluted": -2.96,
+   "sharesDiluted": 2827233,
+   "totalAssets": 8523854,
+   "totalLiabilities": 1837389,
+   "currentAssets": 8164487,
+   "currentLiabilities": 1771973,
+   "cash": 7492014,
+   "equity": 6686465,
+   "retainedEarnings": -467451794,
+   "totalDebt": null,
+   "freeCashFlow": -13584569
+  }
+ ]
+}

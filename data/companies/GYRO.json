@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "GYRO",
+ "name": "GYRODYNE, LLC",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001589061",
+ "sector": "Opeators of  Nonresidential Buildings",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001589061&type=10-K",
+  "retrieved": "2026-10-27T19:23:11.381Z"
+ },
+ "annual": [
+  {
+   "year": 2014,
+   "periodEnd": "2014-12-31",
+   "revenue": 2798528,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": null,
+   "netIncome": -3105366,
+   "operatingCashFlow": -5470298,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": 749004,
+   "epsDiluted": -2.09,
+   "sharesDiluted": 1482680,
+   "totalAssets": 43876364,
+   "totalLiabilities": 20418753,
+   "currentAssets": null,
+   "currentLiabilities": null,
+   "cash": 4028337,
+   "equity": 23457611,
+   "retainedEarnings": -12914871,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

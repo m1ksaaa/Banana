@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "SGMT",
+ "name": "Sagimet Biosciences Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001400118",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001400118&type=10-K",
+  "retrieved": "2026-10-27T19:38:31.707Z"
+ },
+ "annual": [
+  {
+   "year": 2023,
+   "periodEnd": "2023-12-31",
+   "revenue": 2000000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -30740000,
+   "netIncome": -27876000,
+   "operatingCashFlow": -23766000,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 19777000,
+   "interestExpense": null,
+   "epsDiluted": -2.66,
+   "sharesDiluted": 10460335,
+   "totalAssets": 96719000,
+   "totalLiabilities": 5654000,
+   "currentAssets": 96646000,
+   "currentLiabilities": 5654000,
+   "cash": 75139000,
+   "equity": 91065000,
+   "retainedEarnings": -249744000,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

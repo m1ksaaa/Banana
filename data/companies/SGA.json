@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "SGA",
+ "name": "Saga Communications, Inc",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0000886136",
+ "sector": "Radio Broadcasting Stations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000886136&type=10-K",
+  "retrieved": "2026-10-27T19:38:28.966Z"
+ },
+ "annual": [
+  {
+   "year": 2023,
+   "periodEnd": "2023-12-31",
+   "revenue": 115504000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": 11488000,
+   "netIncome": 9500000,
+   "operatingCashFlow": 15379000,
+   "capex": 4356000,
+   "dividendsPaid": 19875000,
+   "researchAndDevelopment": null,
+   "interestExpense": 173000,
+   "epsDiluted": 1.55,
+   "sharesDiluted": 6045000,
+   "totalAssets": 232213000,
+   "totalLiabilities": 61664000,
+   "currentAssets": 60644000,
+   "currentLiabilities": 28029000,
+   "cash": 29582000,
+   "equity": 170549000,
+   "retainedEarnings": 134771000,
+   "totalDebt": 0,
+   "freeCashFlow": 11023000
+  }
+ ]
+}

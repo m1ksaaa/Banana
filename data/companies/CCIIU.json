@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "CCIIU",
+ "name": "COHEN CIRCLE ACQUISITION CORP. II",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002064683",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002064683&type=10-K",
+  "retrieved": "2026-10-27T19:14:28.287Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -694814,
+   "netIncome": 4355499,
+   "operatingCashFlow": -819729,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 259709691,
+   "totalLiabilities": 10897791,
+   "currentAssets": 2015628,
+   "currentLiabilities": 117791,
+   "cash": 1852928,
+   "equity": -8838413,
+   "retainedEarnings": -8839352,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

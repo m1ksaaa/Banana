@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "CTW",
+ "name": "CTW",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002047148",
+ "sector": "Services-Computer Processing & Data Preparation",
+ "fiscalYearEndMonth": 7,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002047148&type=10-K",
+  "retrieved": "2026-10-27T19:16:58.547Z"
+ },
+ "annual": [
+  {
+   "year": 2026,
+   "periodEnd": "2026-07-31",
+   "revenue": 3311508,
+   "costOfRevenue": 28471179,
+   "grossProfit": -25159671,
+   "operatingIncome": -7323735,
+   "netIncome": -4131668,
+   "operatingCashFlow": -3156993,
+   "capex": 408305,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 3805447,
+   "interestExpense": null,
+   "epsDiluted": -0.07,
+   "sharesDiluted": 62418382,
+   "totalAssets": 54839806,
+   "totalLiabilities": 20734908,
+   "currentAssets": 20545489,
+   "currentLiabilities": 13052011,
+   "cash": 14437097,
+   "equity": 34104898,
+   "retainedEarnings": 27715707,
+   "totalDebt": null,
+   "freeCashFlow": -3565298
+  }
+ ]
+}

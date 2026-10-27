@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "DMAC",
+ "name": "DiaMedica Therapeutics Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001401040",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001401040&type=10-K",
+  "retrieved": "2026-10-27T19:17:55.952Z"
+ },
+ "annual": [
+  {
+   "year": 2018,
+   "periodEnd": "2018-12-31",
+   "revenue": 500000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -6761000,
+   "netIncome": -5734000,
+   "operatingCashFlow": -5696000,
+   "capex": 50000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 4522000,
+   "interestExpense": null,
+   "epsDiluted": -0.74,
+   "sharesDiluted": 7743520,
+   "totalAssets": 18339000,
+   "totalLiabilities": null,
+   "currentAssets": 17972000,
+   "currentLiabilities": 1296000,
+   "cash": 16823000,
+   "equity": 17025000,
+   "retainedEarnings": -45968000,
+   "totalDebt": null,
+   "freeCashFlow": -5746000
+  }
+ ]
+}

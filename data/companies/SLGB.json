@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "SLGB",
+ "name": "Smart Logistics Global Limited",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001987189",
+ "sector": "Arrangement of  Transportation of  Freight & Cargo",
+ "fiscalYearEndMonth": null,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001987189&type=10-K",
+  "retrieved": "2026-10-27T19:39:00.672Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 89852324,
+   "costOfRevenue": 85655526,
+   "grossProfit": 4196798,
+   "operatingIncome": -2028198,
+   "netIncome": -2600624,
+   "operatingCashFlow": -5812780,
+   "capex": 42646,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": -0.06,
+   "sharesDiluted": 40367123,
+   "totalAssets": 28209268,
+   "totalLiabilities": 8736018,
+   "currentAssets": 18505758,
+   "currentLiabilities": 7944012,
+   "cash": 449766,
+   "equity": 19473250,
+   "retainedEarnings": 10887174,
+   "totalDebt": null,
+   "freeCashFlow": -5855426
+  }
+ ]
+}

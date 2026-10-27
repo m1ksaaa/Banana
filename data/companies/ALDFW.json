@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ALDFW",
+ "name": "ALDEL FINANCIAL II INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002031561",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002031561&type=10-K",
+  "retrieved": "2026-10-27T19:09:44.766Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -653532,
+   "netIncome": 9225582,
+   "operatingCashFlow": 9416679,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 243725291,
+   "totalLiabilities": 28145,
+   "currentAssets": 679676,
+   "currentLiabilities": null,
+   "cash": 541650,
+   "equity": 651531,
+   "retainedEarnings": 650844,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

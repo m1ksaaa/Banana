@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "MGN",
+ "name": "Megan Holdings Ltd.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001995075",
+ "sector": "Agricultural Prod-Livestock & Animal Specialties",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001995075&type=10-K",
+  "retrieved": "2026-10-27T19:29:42.221Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 20681805,
+   "costOfRevenue": null,
+   "grossProfit": 358916,
+   "operatingIncome": 149594,
+   "netIncome": 216823,
+   "operatingCashFlow": -2364082,
+   "capex": 64,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": 5860,
+   "epsDiluted": 0.01,
+   "sharesDiluted": 15318493,
+   "totalAssets": 23315055,
+   "totalLiabilities": 11402209,
+   "currentAssets": 23137699,
+   "currentLiabilities": 11308848,
+   "cash": 42412,
+   "equity": 11912843,
+   "retainedEarnings": 8675086,
+   "totalDebt": 80370,
+   "freeCashFlow": -2364146
+  }
+ ]
+}

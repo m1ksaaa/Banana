@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "DRDB",
+ "name": "Roman DBDR Acquisition Corp. II",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002032528",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002032528&type=10-K",
+  "retrieved": "2026-10-27T19:18:07.154Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -2252636,
+   "netIncome": 7737428,
+   "operatingCashFlow": -1288906,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 241506267,
+   "totalLiabilities": 1095805,
+   "currentAssets": 317712,
+   "currentLiabilities": 895805,
+   "cash": 183022,
+   "equity": -778093,
+   "retainedEarnings": -778860,
+   "totalDebt": 200000,
+   "freeCashFlow": null
+  }
+ ]
+}

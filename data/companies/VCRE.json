@@ -1,0 +1,17 @@
+{
+ "schemaVersion": 1,
+ "ticker": "VCRE",
+ "name": "Vicore Pharma Holding AB",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002124403",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002124403&type=10-K",
+  "retrieved": "2026-10-27T19:42:51.802Z"
+ },
+ "annual": []
+}

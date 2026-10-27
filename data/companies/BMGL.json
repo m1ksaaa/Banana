@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "BMGL",
+ "name": "Basel Medical Group Ltd",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002004489",
+ "sector": "Services-Offices & Clinics of  Doctors of  Medicine",
+ "fiscalYearEndMonth": 6,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002004489&type=10-K",
+  "retrieved": "2026-10-27T19:12:58.359Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-06-30",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": null,
+   "netIncome": -8362433,
+   "operatingCashFlow": null,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 14686612,
+   "totalLiabilities": 10410996,
+   "currentAssets": null,
+   "currentLiabilities": null,
+   "cash": null,
+   "equity": null,
+   "retainedEarnings": null,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

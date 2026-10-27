@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "KLRS",
+ "name": "KALARIS THERAPEUTICS, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001754068",
+ "sector": "Biological Products, (No Diagnostic Substances)",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001754068&type=10-K",
+  "retrieved": "2026-10-27T19:26:54.649Z"
+ },
+ "annual": [
+  {
+   "year": 2019,
+   "periodEnd": "2019-12-31",
+   "revenue": 165000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -26701000,
+   "netIncome": -23839000,
+   "operatingCashFlow": -20155000,
+   "capex": 339000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 16248000,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 139422000,
+   "totalLiabilities": 17798000,
+   "currentAssets": 127313000,
+   "currentLiabilities": 9106000,
+   "cash": 61084000,
+   "equity": -51503000,
+   "retainedEarnings": -55319000,
+   "totalDebt": null,
+   "freeCashFlow": -20494000
+  }
+ ]
+}

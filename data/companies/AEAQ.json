@@ -1,0 +1,17 @@
+{
+ "schemaVersion": 1,
+ "ticker": "AEAQ",
+ "name": "ACTIVATE ENERGY ACQUISITION CORP.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002083689",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002083689&type=10-K",
+  "retrieved": "2026-10-27T19:09:03.076Z"
+ },
+ "annual": []
+}

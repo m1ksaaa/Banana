@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "PURR",
+ "name": "Hyperliquid Strategies Inc",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002078856",
+ "sector": "Finance Services",
+ "fiscalYearEndMonth": 6,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002078856&type=10-K",
+  "retrieved": "2026-10-27T19:35:40.287Z"
+ },
+ "annual": [
+  {
+   "year": 2026,
+   "periodEnd": "2026-06-30",
+   "revenue": 9460000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": 500623000,
+   "netIncome": 305542000,
+   "operatingCashFlow": -19147000,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": 3.21,
+   "sharesDiluted": 79798538,
+   "totalAssets": 2060008000,
+   "totalLiabilities": 187137000,
+   "currentAssets": 152406000,
+   "currentLiabilities": 3662000,
+   "cash": 137917000,
+   "equity": 1872871000,
+   "retainedEarnings": 304945000,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

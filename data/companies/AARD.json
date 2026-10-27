@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "AARD",
+ "name": "AARDVARK THERAPEUTICS, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001774857",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001774857&type=10-K",
+  "retrieved": "2026-10-27T19:08:23.548Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 0,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -62725000,
+   "netIncome": -57591000,
+   "operatingCashFlow": -54172000,
+   "capex": 95000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 48936000,
+   "interestExpense": null,
+   "epsDiluted": -2.93,
+   "sharesDiluted": 19624626,
+   "totalAssets": 117181000,
+   "totalLiabilities": 10548000,
+   "currentAssets": 111886000,
+   "currentLiabilities": 10548000,
+   "cash": 47051000,
+   "equity": 106633000,
+   "retainedEarnings": -115918000,
+   "totalDebt": null,
+   "freeCashFlow": -54267000
+  }
+ ]
+}

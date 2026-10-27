@@ -1,0 +1,17 @@
+{
+ "schemaVersion": 1,
+ "ticker": "RFAMR",
+ "name": "RF ACQUISITION CORP III",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002091712",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 9,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002091712&type=10-K",
+  "retrieved": "2026-10-27T19:36:42.455Z"
+ },
+ "annual": []
+}

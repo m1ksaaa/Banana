@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "VWAV",
+ "name": "VISIONWAVE HOLDINGS INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002038439",
+ "sector": "Services-Prepackaged Software",
+ "fiscalYearEndMonth": 9,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002038439&type=10-K",
+  "retrieved": "2026-10-27T19:43:33.078Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-09-30",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -6741189,
+   "netIncome": -6548095,
+   "operatingCashFlow": -2837894,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 156462,
+   "interestExpense": 59327,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 2693013,
+   "totalLiabilities": 14488460,
+   "currentAssets": 2692732,
+   "currentLiabilities": null,
+   "cash": 0,
+   "equity": -11795447,
+   "retainedEarnings": -15108906,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "TGHL",
+ "name": "THE GROWHUB LIMITED",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002024114",
+ "sector": "Services-Computer Processing & Data Preparation",
+ "fiscalYearEndMonth": null,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002024114&type=10-K",
+  "retrieved": "2026-10-27T19:41:03.512Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 64574,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -13161589,
+   "netIncome": -13376898,
+   "operatingCashFlow": -10919652,
+   "capex": 1242,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": 70621,
+   "epsDiluted": -0.59,
+   "sharesDiluted": 22834057,
+   "totalAssets": 1023009,
+   "totalLiabilities": 3322138,
+   "currentAssets": 959928,
+   "currentLiabilities": 3320480,
+   "cash": 905187,
+   "equity": -2299129,
+   "retainedEarnings": -18622962,
+   "totalDebt": null,
+   "freeCashFlow": -10920894
+  }
+ ]
+}

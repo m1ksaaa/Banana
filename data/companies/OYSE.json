@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "OYSE",
+ "name": "OYSTER ENTERPRISES II ACQUISITION CORP",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002042182",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002042182&type=10-K",
+  "retrieved": "2026-10-27T19:33:46.328Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -456691,
+   "netIncome": 5784370,
+   "operatingCashFlow": -567932,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 260284528,
+   "totalLiabilities": 8972542,
+   "currentAssets": 1000238,
+   "currentLiabilities": 117542,
+   "cash": 864584,
+   "equity": -7929075,
+   "retainedEarnings": -7929937,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

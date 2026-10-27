@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "FVNNR",
+ "name": "FUTURE VISION II ACQUISITION CORP.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002010653",
+ "sector": "Services-Computer Integrated Systems Design",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002010653&type=10-K",
+  "retrieved": "2026-10-27T19:21:30.854Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -391049,
+   "netIncome": 2070450,
+   "operatingCashFlow": -307796,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 62060299,
+   "totalLiabilities": 158000,
+   "currentAssets": 62060299,
+   "currentLiabilities": 158000,
+   "cash": 1024709,
+   "equity": 1804521,
+   "retainedEarnings": null,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "schemaVersion": 1,
+ "ticker": "TOWN",
+ "name": "Towne Bank",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": null,
+ "sector": null,
+ "source": null,
+ "annual": [],
+ "note": "Nincs SEC-azonosító (valószínűleg alap, warrant, unit vagy külföldi papír)."
+}

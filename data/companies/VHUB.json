@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "VHUB",
+ "name": "VENHUB GLOBAL, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001972234",
+ "sector": "Misc Industrial & Commercial Machinery & Equipment",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001972234&type=10-K",
+  "retrieved": "2026-10-27T19:43:01.940Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 864450,
+   "costOfRevenue": 583760,
+   "grossProfit": 280690,
+   "operatingIncome": -39430965,
+   "netIncome": -62399163,
+   "operatingCashFlow": -5939092,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 1215098,
+   "interestExpense": 563069,
+   "epsDiluted": -1.67,
+   "sharesDiluted": 37344429,
+   "totalAssets": 3623962,
+   "totalLiabilities": 13943270,
+   "currentAssets": 1361613,
+   "currentLiabilities": 10554350,
+   "cash": 89634,
+   "equity": -10319308,
+   "retainedEarnings": -82168510,
+   "totalDebt": 2550930,
+   "freeCashFlow": null
+  }
+ ]
+}

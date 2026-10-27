@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "CBIO",
+ "name": "CRESCENT BIOPHARMA, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001253689",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001253689&type=10-K",
+  "retrieved": "2026-10-27T19:14:17.220Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 10844000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -152632000,
+   "netIncome": -153942000,
+   "operatingCashFlow": -71532000,
+   "capex": 919000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 138086000,
+   "interestExpense": 2185000,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 240293000,
+   "totalLiabilities": 37281000,
+   "currentAssets": 236655000,
+   "currentLiabilities": 36072000,
+   "cash": 213192000,
+   "equity": 203012000,
+   "retainedEarnings": -171809000,
+   "totalDebt": 0,
+   "freeCashFlow": -72451000
+  }
+ ]
+}

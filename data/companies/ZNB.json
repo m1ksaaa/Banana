@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "ZNB",
+ "name": "Zeta Network Group",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001747661",
+ "sector": "Finance Services",
+ "fiscalYearEndMonth": 6,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001747661&type=10-K",
+  "retrieved": "2026-10-27T19:45:11.904Z"
+ },
+ "annual": [
+  {
+   "year": 2021,
+   "periodEnd": "2021-06-30",
+   "revenue": 3596821,
+   "costOfRevenue": 4139251,
+   "grossProfit": 2644706,
+   "operatingIncome": -9655606,
+   "netIncome": -8238513,
+   "operatingCashFlow": -2803980,
+   "capex": 2020000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 817794,
+   "interestExpense": null,
+   "epsDiluted": -4.84,
+   "sharesDiluted": 1702387,
+   "totalAssets": 81075167,
+   "totalLiabilities": 4124666,
+   "currentAssets": 7642627,
+   "currentLiabilities": 4124666,
+   "cash": 174189,
+   "equity": 76950501,
+   "retainedEarnings": -70162245,
+   "totalDebt": null,
+   "freeCashFlow": -4823980
+  }
+ ]
+}

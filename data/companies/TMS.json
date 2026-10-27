@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "TMS",
+ "name": "Teamshares Inc",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002048951",
+ "sector": "Retail-Miscellaneous Retail",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002048951&type=10-K",
+  "retrieved": "2026-10-27T19:41:24.831Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -9113588,
+   "netIncome": -16495381,
+   "operatingCashFlow": -1275338,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 240473275,
+   "totalLiabilities": 30185375,
+   "currentAssets": 1416813,
+   "currentLiabilities": 1111287,
+   "cash": 1329433,
+   "equity": -28754395,
+   "retainedEarnings": -28754970,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

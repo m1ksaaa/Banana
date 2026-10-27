@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "CSPI",
+ "name": "CSP Inc",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0000356037",
+ "sector": "Services-Computer Integrated Systems Design",
+ "fiscalYearEndMonth": 9,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0000356037&type=10-K",
+  "retrieved": "2026-10-27T19:16:45.250Z"
+ },
+ "annual": [
+  {
+   "year": 2019,
+   "periodEnd": "2019-09-30",
+   "revenue": 79061000,
+   "costOfRevenue": 61035000,
+   "grossProfit": 18026000,
+   "operatingIncome": -826000,
+   "netIncome": -371000,
+   "operatingCashFlow": -3329000,
+   "capex": 832000,
+   "dividendsPaid": 2467000,
+   "researchAndDevelopment": 2800000,
+   "interestExpense": null,
+   "epsDiluted": -0.09,
+   "sharesDiluted": 3924000,
+   "totalAssets": 59369000,
+   "totalLiabilities": 28941000,
+   "currentAssets": 46534000,
+   "currentLiabilities": 20027000,
+   "cash": 18099000,
+   "equity": 30428000,
+   "retainedEarnings": 27246000,
+   "totalDebt": 684000,
+   "freeCashFlow": -4161000
+  }
+ ]
+}

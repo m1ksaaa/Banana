@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "FRMI",
+ "name": "Fermi Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002071778",
+ "sector": "Real Estate Investment Trusts",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002071778&type=10-K",
+  "retrieved": "2026-10-27T19:21:06.614Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -177779000,
+   "netIncome": -486379000,
+   "operatingCashFlow": -34151000,
+   "capex": 569304000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": -3732000,
+   "epsDiluted": -1.13,
+   "sharesDiluted": 467963408,
+   "totalAssets": 1413314000,
+   "totalLiabilities": 317442000,
+   "currentAssets": null,
+   "currentLiabilities": null,
+   "cash": 408529000,
+   "equity": 1095872000,
+   "retainedEarnings": -133199000,
+   "totalDebt": 297972000,
+   "freeCashFlow": -603455000
+  }
+ ]
+}

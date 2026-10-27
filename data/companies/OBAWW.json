@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "OBAWW",
+ "name": "Oxley Bridge Acquisition Limited",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002034313",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002034313&type=10-K",
+  "retrieved": "2026-10-27T19:32:40.144Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -463503,
+   "netIncome": 4782187,
+   "operatingCashFlow": -448134,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 259327478,
+   "totalLiabilities": 12156507,
+   "currentAssets": 1060807,
+   "currentLiabilities": 111507,
+   "cash": 978307,
+   "equity": -11056054,
+   "retainedEarnings": -11056687,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

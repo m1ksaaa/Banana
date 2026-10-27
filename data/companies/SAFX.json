@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "SAFX",
+ "name": "XCF GLOBAL, INC.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002019793",
+ "sector": "Industrial Organic Chemicals",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002019793&type=10-K",
+  "retrieved": "2026-10-27T19:37:46.551Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": 20815955,
+   "costOfRevenue": 24586068,
+   "grossProfit": -3770113,
+   "operatingIncome": -67887181,
+   "netIncome": 74004768,
+   "operatingCashFlow": -17857747,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": 0.52,
+   "sharesDiluted": 142298067,
+   "totalAssets": 419472575,
+   "totalLiabilities": 381820626,
+   "currentAssets": 27648607,
+   "currentLiabilities": 249014438,
+   "cash": 154937,
+   "equity": 37651949,
+   "retainedEarnings": -16725685,
+   "totalDebt": 2099347,
+   "freeCashFlow": null
+  }
+ ]
+}

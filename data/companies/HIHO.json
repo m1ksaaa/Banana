@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "HIHO",
+ "name": "HIGHWAY HOLDINGS LIMITED",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001026785",
+ "sector": "Miscellaneous Fabricated Metal Products",
+ "fiscalYearEndMonth": 3,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001026785&type=10-K",
+  "retrieved": "2026-10-27T19:23:39.702Z"
+ },
+ "annual": [
+  {
+   "year": 2026,
+   "periodEnd": "2026-03-31",
+   "revenue": 57000,
+   "costOfRevenue": 3439000,
+   "grossProfit": 1366000,
+   "operatingIncome": -2307000,
+   "netIncome": -1524000,
+   "operatingCashFlow": -1411000,
+   "capex": 103000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": -0.33,
+   "sharesDiluted": 4554360,
+   "totalAssets": 10996000,
+   "totalLiabilities": 5560000,
+   "currentAssets": 7137000,
+   "currentLiabilities": 3195000,
+   "cash": 4409000,
+   "equity": 4892000,
+   "retainedEarnings": -6961000,
+   "totalDebt": 569000,
+   "freeCashFlow": -1514000
+  }
+ ]
+}

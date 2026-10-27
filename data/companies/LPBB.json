@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "LPBB",
+ "name": "Launch Two Acquisition Corp.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002023676",
+ "sector": "Fabricated Plate Work (Boiler Shops)",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002023676&type=10-K",
+  "retrieved": "2026-10-27T19:28:25.115Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -909063,
+   "netIncome": 8911506,
+   "operatingCashFlow": -610622,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 243717770,
+   "totalLiabilities": 11106201,
+   "currentAssets": 359534,
+   "currentLiabilities": 156201,
+   "cash": 250079,
+   "equity": -10746667,
+   "retainedEarnings": -10747242,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

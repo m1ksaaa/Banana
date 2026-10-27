@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "POLEW",
+ "name": "Andretti Acquisition Corp. II",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002025341",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002025341&type=10-K",
+  "retrieved": "2026-10-27T19:35:02.137Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": 180000,
+   "grossProfit": null,
+   "operatingIncome": -1410877,
+   "netIncome": 8350365,
+   "operatingCashFlow": -1199985,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 244423346,
+   "totalLiabilities": 10416059,
+   "currentAssets": 162053,
+   "currentLiabilities": 191059,
+   "cash": 48469,
+   "equity": -10254006,
+   "retainedEarnings": -10254657,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

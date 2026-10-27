@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "HTHT",
+ "name": "H World Group Ltd",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001483994",
+ "sector": "Hotels & Motels",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001483994&type=10-K",
+  "retrieved": "2026-10-27T19:24:09.287Z"
+ },
+ "annual": [
+  {
+   "year": 2018,
+   "periodEnd": "2018-12-31",
+   "revenue": 1464000000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": 341000000,
+   "netIncome": 104000000,
+   "operatingCashFlow": 444000000,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": 35000000,
+   "epsDiluted": 0.36,
+   "sharesDiluted": 303605809,
+   "totalAssets": 3490000000,
+   "totalLiabilities": 2571000000,
+   "currentAssets": 1014000000,
+   "currentLiabilities": 868000000,
+   "cash": 620000000,
+   "equity": 898000000,
+   "retainedEarnings": 380000000,
+   "totalDebt": 1420000000,
+   "freeCashFlow": null
+  }
+ ]
+}

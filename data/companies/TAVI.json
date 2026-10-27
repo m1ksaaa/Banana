@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "TAVI",
+ "name": "Tavia Acquisition Corp.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0002020385",
+ "sector": "Blank Checks",
+ "fiscalYearEndMonth": 12,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0002020385&type=10-K",
+  "retrieved": "2026-10-27T19:40:41.307Z"
+ },
+ "annual": [
+  {
+   "year": 2025,
+   "periodEnd": "2025-12-31",
+   "revenue": null,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -1221951,
+   "netIncome": 3605405,
+   "operatingCashFlow": -674034,
+   "capex": null,
+   "dividendsPaid": null,
+   "researchAndDevelopment": null,
+   "interestExpense": null,
+   "epsDiluted": null,
+   "sharesDiluted": null,
+   "totalAssets": 121115768,
+   "totalLiabilities": 1414840,
+   "currentAssets": 361475,
+   "currentLiabilities": null,
+   "cash": 229625,
+   "equity": -1053365,
+   "retainedEarnings": -1053807,
+   "totalDebt": null,
+   "freeCashFlow": null
+  }
+ ]
+}

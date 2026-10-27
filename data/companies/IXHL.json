@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "ticker": "IXHL",
+ "name": "Incannex Healthcare Inc.",
+ "exchange": "NASDAQ",
+ "currency": "USD",
+ "demo": false,
+ "cik": "0001873875",
+ "sector": "Pharmaceutical Preparations",
+ "fiscalYearEndMonth": 6,
+ "source": {
+  "name": "SEC EDGAR – XBRL company facts (10-K / 20-F éves jelentések)",
+  "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=0001873875&type=10-K",
+  "retrieved": "2026-10-27T19:26:06.263Z"
+ },
+ "annual": [
+  {
+   "year": 2024,
+   "periodEnd": "2024-06-30",
+   "revenue": 12000,
+   "costOfRevenue": null,
+   "grossProfit": null,
+   "operatingIncome": -30041000,
+   "netIncome": -18459000,
+   "operatingCashFlow": -15845000,
+   "capex": 277000,
+   "dividendsPaid": null,
+   "researchAndDevelopment": 12879000,
+   "interestExpense": null,
+   "epsDiluted": -1.15,
+   "sharesDiluted": 16164338,
+   "totalAssets": 17047000,
+   "totalLiabilities": 5830000,
+   "currentAssets": 16202000,
+   "currentLiabilities": 5620000,
+   "cash": 5858000,
+   "equity": 11217000,
+   "retainedEarnings": -110671000,
+   "totalDebt": null,
+   "freeCashFlow": -16122000
+  }
+ ]
+}
