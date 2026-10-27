@@ -16,7 +16,7 @@ const num = (s) => {
 
 export async function nasdaqScreener() {
   try {
-    const r = await fetch("https://api.nasdaq.com/api/screener/stocks?tableonly=true&download=true&exchange=nasdaq", { headers: BROWSER_HEADERS });
+    const r = await fetch("https://api.nasdaq.com/api/screener/stocks?tableonly=true&download=true&exchange=nasdaq", { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(20000) });
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const j = await r.json();
     const map = new Map();
@@ -38,7 +38,7 @@ async function nasdaqMonthly(ticker) {
   const from = new Date(to.getTime() - 6 * 365.25 * 86400000);
   const d = (x) => x.toISOString().slice(0, 10);
   const sym = encodeURIComponent(ticker.replace(".", "^"));
-  const r = await fetch(`https://api.nasdaq.com/api/quote/${sym}/historical?assetclass=stocks&fromdate=${d(from)}&todate=${d(to)}&limit=9999`, { headers: BROWSER_HEADERS });
+  const r = await fetch(`https://api.nasdaq.com/api/quote/${sym}/historical?assetclass=stocks&fromdate=${d(from)}&todate=${d(to)}&limit=9999`, { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(20000) });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   const j = await r.json();
   const rows = j?.data?.tradesTable?.rows || [];
@@ -58,7 +58,7 @@ async function nasdaqMonthly(ticker) {
 
 async function yahooMonthly(ticker) {
   const sym = ticker.replace(".", "-");
-  const r = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?range=10y&interval=1mo&events=split`, { headers: BROWSER_HEADERS });
+  const r = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}?range=10y&interval=1mo&events=split`, { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(20000) });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   const j = await r.json();
   const res = j?.chart?.result?.[0];
@@ -72,7 +72,7 @@ async function yahooMonthly(ticker) {
 
 async function stooqMonthly(ticker) {
   const sym = `${ticker.toLowerCase().replace(".", "-")}.us`;
-  const r = await fetch(`https://stooq.com/q/d/l/?s=${sym}&i=m`, { headers: BROWSER_HEADERS });
+  const r = await fetch(`https://stooq.com/q/d/l/?s=${sym}&i=m`, { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(20000) });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   const txt = await r.text();
   if (!txt.startsWith("Date")) throw new Error("no data");
@@ -88,7 +88,11 @@ function dedupeMonths(data) {
 
 // Tries each source in order; a source that fails 25 times in a row is switched off for the run.
 const failures = { nasdaq: 0, yahoo: 0, stooq: 0 };
+// Price history is optional: after the time budget it is skipped so the financial data always gets saved.
+const started = Date.now();
+const BUDGET_MS = Number(process.env.PRICE_BUDGET_MIN || 90) * 60000;
 export async function priceHistory(ticker) {
+  if (Date.now() - started > BUDGET_MS) return null;
   for (const [name, fn] of [["nasdaq", nasdaqMonthly], ["yahoo", yahooMonthly], ["stooq", stooqMonthly]]) {
     if (failures[name] >= 25) continue;
     try {

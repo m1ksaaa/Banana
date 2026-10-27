@@ -40,7 +40,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function get(url, type = "json", tries = 4) {
   for (let i = 0; i < tries; i++) {
     try {
-      const res = await fetch(url, { headers: { "User-Agent": UA, "Accept-Encoding": "gzip, deflate" } });
+      const res = await fetch(url, { headers: { "User-Agent": UA, "Accept-Encoding": "gzip, deflate" }, signal: AbortSignal.timeout(60000) });
       if (res.status === 404) return null;
       if (res.ok) return type === "json" ? res.json() : res.text();
       if (res.status !== 429 && res.status < 500) throw new Error(`HTTP ${res.status}`);
