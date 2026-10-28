@@ -18,10 +18,10 @@ export const FLOW = {
   pretaxIncome: ["IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest", "IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments", "IncomeLossFromContinuingOperationsBeforeIncomeTaxesDomestic", "ProfitLossBeforeTax"],
   incomeTaxExpense: ["IncomeTaxExpenseBenefit", "IncomeTaxExpenseContinuingOperations"],
   netIncome: ["NetIncomeLoss", "ProfitLossAttributableToOwnersOfParent", "ProfitLoss", "NetIncomeLossAvailableToCommonStockholdersBasic"],
-  depreciationAndAmortization: ["DepreciationDepletionAndAmortization", "DepreciationAmortizationAndAccretionNet", "DepreciationAndAmortization", "Depreciation", "DepreciationAndAmortisationExpense", "DepreciationAmortisationAndImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss"],
+  depreciationAndAmortization: ["DepreciationDepletionAndAmortization", "DepreciationAmortizationAndAccretionNet", "DepreciationAndAmortization", "Depreciation", "DepreciationAndAmortisationExpense", "AdjustmentsForDepreciationAndAmortisationExpense", "DepreciationAmortisationAndImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss", "AdjustmentsForDepreciationAndAmortisationExpenseAndImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss"],
   shareBasedCompensation: ["ShareBasedCompensation", "AllocatedShareBasedCompensationExpense", "AdjustmentsForSharebasedPayments"],
   operatingCashFlow: ["NetCashProvidedByUsedInOperatingActivities", "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations", "CashFlowsFromUsedInOperatingActivities"],
-  capex: ["PaymentsToAcquirePropertyPlantAndEquipment", "PaymentsToAcquireProductiveAssets", "PaymentsForCapitalImprovements", "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities", "PurchaseOfPropertyPlantAndEquipment"],
+  capex: ["PaymentsToAcquirePropertyPlantAndEquipment", "PaymentsToAcquireProductiveAssets", "PaymentsForCapitalImprovements", "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities", "PurchaseOfPropertyPlantAndEquipment", "PurchaseOfPropertyPlantAndEquipmentIntangibleAssetsOtherThanGoodwillInvestmentPropertyAndOtherNoncurrentAssets"],
   dividendsPaid: ["PaymentsOfDividends", "PaymentsOfDividendsCommonStock", "DividendsPaidClassifiedAsFinancingActivities", "DividendsPaidToEquityHoldersOfParentClassifiedAsFinancingActivities"],
   buybacks: ["PaymentsForRepurchaseOfCommonStock", "PaymentsForRepurchaseOfEquity", "PaymentsToAcquireOrRedeemEntitysShares"],
 };
@@ -36,7 +36,7 @@ export const INSTANT = {
   currentLiabilities: ["LiabilitiesCurrent", "CurrentLiabilities"],
   cash: ["CashAndCashEquivalentsAtCarryingValue", "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents", "CashAndDueFromBanks", "Cash", "CashAndCashEquivalents"],
   inventory: ["InventoryNet", "InventoryFinishedGoodsNetOfReserves", "Inventories"],
-  accountsReceivable: ["AccountsReceivableNetCurrent", "ReceivablesNetCurrent", "TradeAndOtherCurrentReceivables"],
+  accountsReceivable: ["AccountsReceivableNetCurrent", "ReceivablesNetCurrent", "TradeAndOtherCurrentReceivables", "CurrentTradeReceivables"],
   goodwill: ["Goodwill"],
   intangibleAssets: ["IntangibleAssetsNetExcludingGoodwill", "FiniteLivedIntangibleAssetsNet", "IntangibleAssetsOtherThanGoodwill"],
   equity: ["StockholdersEquity", "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest", "EquityAttributableToOwnersOfParent", "Equity"],
@@ -60,17 +60,26 @@ const DAY = 86400000;
 const days = (a, b) => (new Date(b) - new Date(a)) / DAY;
 const addDays = (d, n) => new Date(new Date(d).getTime() + n * DAY).toISOString().slice(0, 10);
 
+// The same tag from every taxonomy (see entries()).
+function nodes(facts, tag) {
+  return ["us-gaap", "ifrs-full", "dei"].map((ns) => facts?.[ns]?.[tag]).filter(Boolean);
+}
+
 function node(facts, tag) {
   return facts?.["us-gaap"]?.[tag] || facts?.["ifrs-full"]?.[tag] || facts?.dei?.[tag] || null;
 }
 
 // Values of all tags in the list. Companies switch tags over the years (e.g. SalesRevenueNet
 // before 2018), so periods are merged across tags; for the same period the higher-priority tag wins.
+// Both taxonomies are read: a company that moved from US GAAP to IFRS (e.g. Toyota, Sony) has the
+// older years under us-gaap and the newer ones under ifrs-full, often with the same tag name.
 function entries(facts, tags, unit, forms) {
   const out = [];
   tags.forEach((tag, p) => {
-    const arr = node(facts, tag)?.units?.[unit];
-    if (arr) for (const v of arr) if (forms.has(v.form)) out.push({ ...v, _p: p });
+    for (const ns of ["us-gaap", "ifrs-full", "dei"]) {
+      const arr = facts?.[ns]?.[tag]?.units?.[unit];
+      if (arr) for (const v of arr) if (forms.has(v.form)) out.push({ ...v, _p: p });
+    }
   });
   return out;
 }
@@ -148,17 +157,26 @@ function finishPeriod(y) {
 
 // Reporting currency: the monetary unit used most by the main income-statement and balance-sheet tags.
 // US filers report in USD; foreign private issuers (20-F / 40-F) often in EUR, JPY, TWD, …
+// A company that changed its reporting currency (e.g. Nebius: RUB → USD) is read in the currency of
+// its latest annual report; the older years in the previous currency are left out rather than mixed.
 export function reportingCurrency(facts) {
-  const count = {};
+  const count = {}, latest = {};
   for (const tags of [FLOW.revenue, FLOW.netIncome, INSTANT.totalAssets]) {
     for (const tag of tags) {
-      for (const [unit, arr] of Object.entries(node(facts, tag)?.units || {})) {
-        if (/^[A-Z]{3}$/.test(unit)) count[unit] = (count[unit] || 0) + arr.filter((v) => ANNUAL_FORMS.has(v.form)).length;
+      for (const n of nodes(facts, tag)) {
+        for (const [unit, arr] of Object.entries(n.units || {})) {
+          if (!/^[A-Z]{3}$/.test(unit)) continue;
+          for (const v of arr) {
+            if (!ANNUAL_FORMS.has(v.form)) continue;
+            count[unit] = (count[unit] || 0) + 1;
+            if (!latest[unit] || v.end > latest[unit]) latest[unit] = v.end;
+          }
+        }
       }
     }
   }
-  const best = Object.entries(count).sort((a, b) => b[1] - a[1])[0];
-  return best ? best[0] : "USD";
+  const best = Object.keys(count).sort((a, b) => (latest[b] > latest[a] ? 1 : latest[b] < latest[a] ? -1 : count[b] - count[a]))[0];
+  return best || "USD";
 }
 
 export function parseCompanyFacts(cf, { maxYears = 10 } = {}) {
@@ -242,7 +260,7 @@ export function splitEvidence(facts) {
   const scan = (tags, unit, sharesLike) => {
     for (const tag of tags) {
       const groups = new Map();
-      for (const v of node(facts, tag)?.units?.[unit] || []) {
+      for (const v of nodes(facts, tag).flatMap((n) => n.units?.[unit] || [])) {
         if (!v.start || !v.end || !v.filed || !v.val) continue;
         const k = `${v.start}|${v.end}`;
         if (!groups.has(k)) groups.set(k, []);

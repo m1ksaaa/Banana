@@ -145,6 +145,7 @@ async function updateCompanies() {
           fxToUsd: currency === "USD" ? 1 : fx[currency] ?? null,
           source: q.price ? "Nasdaq" : hist?.source || null,
         },
+        foreignPrivateIssuer: (sub?.filings?.recent?.form || []).some((f) => f === "20-F" || f === "40-F"),
         events: majorEvents(sub),
         insiders: old?.insiders ?? null,
         scoreHistory: old?.scoreHistory ?? undefined,

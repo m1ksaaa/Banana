@@ -247,3 +247,28 @@ test("Filings missing from companyfacts are read from the XBRL instance", async 
   assert.deepEqual(missingFilings(cf, sub), [], "a filing is not fetched again once its facts are present");
   assert.equal(instanceFile(["FilingSummary.xml", "tsm-20251231_cal.xml", "tsm-20251231_htm.xml", "R2.htm"], "tsm-20251231.htm"), "tsm-20251231_htm.xml");
 });
+
+test("US GAAP → IFRS switch: newer ifrs-full facts are used even when the same tag exists in us-gaap", () => {
+  const fy = (y, val, ns) => ({ start: `${y - 1}-04-01`, end: `${y}-03-31`, val, form: "20-F", filed: `${y}-06-20`, accn: `${ns}${y}` });
+  const inst = (y, val, ns) => ({ end: `${y}-03-31`, val, form: "20-F", filed: `${y}-06-20`, accn: `${ns}${y}` });
+  const cf = { facts: {
+    "us-gaap": { Revenues: { units: { JPY: [fy(2019, 30e12, "g"), fy(2020, 31e12, "g")] } }, NetIncomeLoss: { units: { JPY: [fy(2019, 1.9e12, "g"), fy(2020, 2.0e12, "g")] } }, Assets: { units: { JPY: [inst(2019, 52e12, "g"), inst(2020, 54e12, "g")] } } },
+    "ifrs-full": { Revenue: { units: { JPY: [fy(2024, 45e12, "i"), fy(2025, 48e12, "i")] } }, ProfitLoss: { units: { JPY: [fy(2024, 5e12, "i"), fy(2025, 4.8e12, "i")] } }, Assets: { units: { JPY: [inst(2024, 90e12, "i"), inst(2025, 93e12, "i")] } } },
+  } };
+  const p = parseCompanyFacts(cf);
+  assert.equal(p.currency, "JPY");
+  const last = p.annual.at(-1);
+  assert.equal(last.periodEnd, "2025-03-31");
+  assert.equal(last.totalAssets, 93e12);
+  assert.equal(p.annual.find((y) => y.periodEnd === "2020-03-31").totalAssets, 54e12);
+});
+
+test("Reporting currency follows the latest annual report (RUB → USD)", async () => {
+  const { reportingCurrency } = await import("../scripts/sec-parse.mjs");
+  const fy = (y, val) => ({ start: `${y}-01-01`, end: `${y}-12-31`, val, form: "20-F", filed: `${y + 1}-04-01` });
+  const facts = { "us-gaap": { Revenues: { units: { RUB: [2018, 2019, 2020, 2021, 2022, 2023].map((y) => fy(y, 5e11)), USD: [fy(2024, 1.2e8), fy(2025, 5e8)] } } } };
+  assert.equal(reportingCurrency(facts), "USD");
+  // Companies that report a convenience translation in a second currency for the same years keep the main one.
+  const tsm = { "ifrs-full": { Revenue: { units: { TWD: [2023, 2024].map((y) => fy(y, 2.8e12)).concat([fy(2022, 2.2e12)]), USD: [fy(2023, 9e10), fy(2024, 9e10)] } } } };
+  assert.equal(reportingCurrency(tsm), "TWD");
+});

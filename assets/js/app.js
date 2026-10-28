@@ -707,8 +707,12 @@ function analysisView(c, a, idx, history = []) {
 
 function insiderView(c) {
   const ins = c.insiders;
-  if (!ins) return `<div class="glass empty small">${esc(t(c.currency && c.currency !== "USD" ? "ui.insiderForeign" : "ui.notEnough"))}</div>`;
-  if (ins.none || (!ins.buy?.count && !ins.sell?.count)) return `<div class="glass empty small">${esc(t("ui.insiderNone"))}</div>`;
+  // Foreign private issuers (20-F / 40-F filers) are exempt from Form 4 reporting.
+  const foreign = c.foreignPrivateIssuer ?? ((c.currency && c.currency !== "USD") || (c.country && c.country !== "United States"));
+  const traded = ins && !ins.none && (ins.buy?.count || ins.sell?.count);
+  if (!traded && foreign) return `<div class="glass empty small">${esc(t("ui.insiderForeign"))}</div>`;
+  if (!ins) return `<div class="glass empty small">${esc(t("ui.notEnough"))}</div>`;
+  if (!traded) return `<div class="glass empty small">${esc(t("ui.insiderNone"))}</div>`;
   const side = (key, s, tone) => `<div class="fact"><div class="k">${esc(t(key))}</div><div class="v"><span class="pill tone-${tone}"><span class="dot"></span>${money(s.value)}</span>
     <span class="small muted">${esc(t("ui.insiderCount", { n: s.count, p: s.insiders }))}</span></div></div>`;
   const rows = (ins.recent || []).map((r) => `<tr>
