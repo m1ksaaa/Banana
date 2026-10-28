@@ -59,6 +59,7 @@ export default {
     tabData: "Data",
     tabCompare: "Compare",
     tabMethod: "Method",
+    newsTop: "Most important (critical events; major events of companies above $1B)",
   },
   dims: {
     profitability: { name: "Profitability", q: "How efficiently does the company turn revenue and capital into profit?", summary: "Operating margin {operatingMargin}, net margin {netMargin}, ROIC {roic}, ROE {roe}." },

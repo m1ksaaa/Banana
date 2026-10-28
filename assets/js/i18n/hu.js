@@ -59,6 +59,7 @@ export default {
     tabData: "Adatok",
     tabCompare: "Összevetés",
     tabMethod: "Módszer",
+    newsTop: "Legfontosabbak (kritikus események; 1 Mrd $ feletti cégek jelentős eseményei)",
   },
   dims: {
     profitability: { name: "Jövedelmezőség", q: "Milyen hatékonyan alakítja a vállalat az árbevételt és a tőkét nyereséggé?", summary: "Üzemi árrés {operatingMargin}, nettó árrés {netMargin}, ROIC {roic}, ROE {roe}." },

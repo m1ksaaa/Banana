@@ -59,6 +59,7 @@ export default {
     tabData: "Données",
     tabCompare: "Comparer",
     tabMethod: "Méthode",
+    newsTop: "Les plus importants (événements critiques ; événements majeurs des sociétés de plus de 1 Md $)",
   },
   dims: {
     profitability: { name: "Rentabilité", q: "Avec quelle efficacité la société transforme-t-elle ventes et capitaux en bénéfices ?", summary: "Marge opérationnelle {operatingMargin}, marge nette {netMargin}, ROIC {roic}, ROE {roe}." },

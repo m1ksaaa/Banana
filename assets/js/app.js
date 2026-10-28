@@ -1,5 +1,5 @@
 import { analyze, gradeKey, GRADE_TONE, DIMENSIONS, METRIC_FORMAT, ENGINE_VERSION, PROFILES, OVERALL_WEIGHTS, FLAG_PENALTY } from "./scoring.js";
-import { LANGS, lang, setLang, t, fill, fmt, money, date, num } from "./i18n/index.js";
+import { LANGS, lang, setLang, t, fill, fmt, money, date, num, dict } from "./i18n/index.js";
 import { barChart, lineChart, wireCharts } from "./charts.js";
 
 const app = document.getElementById("app");
@@ -279,7 +279,7 @@ async function renderList() {
   });
   draw();
   loadNews().then((n) => {
-    const top = (n.events || []).filter((e) => e.severity >= 4).slice(0, 4);
+    const top = (n.events || []).filter(isTopEvent).slice(0, 4);
     const el = document.getElementById("home-news");
     if (!top.length || !el) return;
     el.innerHTML = `<div class="section-title" style="margin-top:4px">${esc(t("ui.latestEvents"))} <a class="small" href="#/news">${esc(t("ui.allNews"))} ›</a></div>
@@ -289,6 +289,10 @@ async function renderList() {
 
 // ---------- Major events ----------
 
+// Event item codes contain a dot ("3.01"), so they are looked up directly rather than via a t() path.
+const eventName = (item) => dict().events?.[item] ?? LANGS.en.events[item] ?? item;
+// "Most important": critical events of any company, major events of companies above $1 billion.
+const isTopEvent = (e) => e.severity >= 5 || (e.severity >= 4 && (e.mc ?? 0) >= 1e9);
 const SEV_TONE = { 5: "critical", 4: "serious", 3: "warning", 2: "none" };
 function eventCard(e, withCompany = true) {
   const sev = e.severity;
@@ -298,7 +302,7 @@ function eventCard(e, withCompany = true) {
       <span class="small muted">${esc(date(e.date))}</span>
     </div>
     ${withCompany ? `<a class="event-co" href="#/c/${encodeURIComponent(e.t)}"><span class="tick">${esc(e.t)}</span> <span class="muted">${esc(e.n)}</span></a>` : ""}
-    <div class="event-items">${e.items.map((i) => `<span>${esc(t(`events.${i}`))} <span class="small muted">(8-K ${esc(i)})</span></span>`).join("")}</div>
+    <div class="event-items">${e.items.map((i) => `<span>${esc(eventName(i))} <span class="small muted">(8-K ${esc(i)})</span></span>`).join("")}</div>
     <a class="small" href="${esc(e.url)}" target="_blank" rel="noopener">${esc(t("ui.viewFiling"))} ↗</a>
   </div>`;
 }
@@ -307,18 +311,18 @@ async function renderNews() {
   document.title = `${t("ui.newsTitle")} | TeraStockX`;
   app.innerHTML = `<div class="skeleton"></div>`;
   const n = await loadNews();
-  const state = { min: 4 };
+  const state = { filter: "top" };
   app.innerHTML = `
     <div class="prose" style="max-width:none;margin-top:8px"><h1>${esc(t("ui.newsTitle"))}</h1><p style="max-width:820px">${esc(t("ui.newsIntro"))}</p></div>
     <div class="controls"><select class="select" id="sev">
-      <option value="4">${esc(t("ui.onlyCritical"))}</option><option value="3">${esc(t("ui.allSeverities"))}</option>
+      <option value="top">${esc(t("ui.newsTop"))}</option><option value="4">${esc(t("ui.onlyCritical"))}</option><option value="3">${esc(t("ui.allSeverities"))}</option>
     </select></div>
     <div class="events" id="news-list"></div>`;
   const draw = () => {
-    const list = (n.events || []).filter((e) => e.severity >= state.min).slice(0, 60);
+    const list = (n.events || []).filter((e) => (state.filter === "top" ? isTopEvent(e) : e.severity >= Number(state.filter))).slice(0, 60);
     document.getElementById("news-list").innerHTML = list.length ? list.map((e) => eventCard(e)).join("") : `<div class="glass empty">${esc(t("ui.newsEmpty"))}</div>`;
   };
-  document.getElementById("sev").addEventListener("change", (e) => { state.min = Number(e.target.value); draw(); });
+  document.getElementById("sev").addEventListener("change", (e) => { state.filter = e.target.value; draw(); });
   draw();
 }
 

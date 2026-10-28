@@ -218,8 +218,13 @@ function buildIndex() {
   writeFileSync(join(DATA, "index.json"), JSON.stringify(index) + "\n");
   // Major-events feed: newest first, capped so that only the significant few are shown.
   news.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.severity - a.severity));
-  writeFileSync(join(DATA, "news.json"), JSON.stringify({ generated: index.generated, events: news.slice(0, 150) }) + "\n");
-  console.log(`data/index.json: ${companies.length} companies; data/news.json: ${Math.min(news.length, 150)} events.`);
+  // Critical events and major events of companies above $1 billion are kept for the full 12 months;
+  // of the rest only the latest 150.
+  const top = (e) => e.severity >= 5 || (e.severity >= 4 && (e.mc ?? 0) >= 1e9);
+  const rest = news.filter((e) => !top(e)).slice(0, 150);
+  const kept = news.filter((e) => top(e) || rest.includes(e));
+  writeFileSync(join(DATA, "news.json"), JSON.stringify({ generated: index.generated, events: kept }) + "\n");
+  console.log(`data/index.json: ${companies.length} companies; data/news.json: ${kept.length} events (${kept.length - rest.length} top).`);
 }
 
 if (!indexOnly) await updateCompanies();

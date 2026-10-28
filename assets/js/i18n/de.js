@@ -59,6 +59,7 @@ export default {
     tabData: "Daten",
     tabCompare: "Vergleich",
     tabMethod: "Methodik",
+    newsTop: "Wichtigste (kritische Ereignisse; bedeutende Ereignisse von Unternehmen über 1 Mrd. $)",
   },
   dims: {
     profitability: { name: "Rentabilität", q: "Wie effizient wandelt das Unternehmen Umsatz und Kapital in Gewinn um?", summary: "Operative Marge {operatingMargin}, Nettomarge {netMargin}, ROIC {roic}, ROE {roe}." },

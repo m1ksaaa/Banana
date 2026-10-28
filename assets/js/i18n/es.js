@@ -59,6 +59,7 @@ export default {
     tabData: "Datos",
     tabCompare: "Comparar",
     tabMethod: "Método",
+    newsTop: "Más importantes (eventos críticos; eventos graves de empresas de más de 1.000 M$)",
   },
   dims: {
     profitability: { name: "Rentabilidad", q: "¿Con qué eficiencia convierte la empresa ingresos y capital en beneficios?", summary: "Margen operativo {operatingMargin}, margen neto {netMargin}, ROIC {roic}, ROE {roe}." },

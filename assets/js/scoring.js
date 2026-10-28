@@ -80,7 +80,10 @@ export function yearMetrics(y, prev) {
   const ic = (yy) => (isNum(yy?.equity) && isNum(yy?.cash) ? yy.equity + (isNum(yy.totalDebt) ? yy.totalDebt : 0) - yy.cash : null);
   const investedCapital = avg2(ic(y), ic(prev));
   const nopat = isNum(y.operatingIncome) ? y.operatingIncome * (1 - taxRate(y)) : null;
-  const shares = isNum(y.sharesOutstanding) ? y.sharesOutstanding : y.sharesDiluted;
+  // One consistent share basis across years: diluted weighted shares, else net income / diluted EPS.
+  // (Balance-sheet share counts are skipped: multi-class companies often report a single class there.)
+  const impliedShares = isNum(y.netIncome) && isNum(y.epsDiluted) && y.epsDiluted !== 0 && Math.sign(y.netIncome) === Math.sign(y.epsDiluted) ? y.netIncome / y.epsDiluted : null;
+  const shares = isNum(y.sharesDiluted) && y.sharesDiluted > 0 ? y.sharesDiluted : impliedShares;
   return {
     year: y.year,
     revenue: y.revenue ?? null,
@@ -114,7 +117,7 @@ export function yearMetrics(y, prev) {
     debtToAssets: div(debt, y.totalAssets),
     payoutRatio: isNum(y.dividendsPaid) && y.dividendsPaid !== 0 ? (isNum(fcf) && fcf > 0 ? Math.abs(y.dividendsPaid) / fcf : Infinity) : isNum(y.dividendsPaid) ? 0 : null,
     bookValuePerShare: isNum(y.equity) && isNum(shares) && shares > 0 ? y.equity / shares : null,
-    shares: y.sharesDiluted ?? y.sharesOutstanding ?? null,
+    shares,
   };
 }
 
