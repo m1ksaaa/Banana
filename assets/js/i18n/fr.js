@@ -203,7 +203,7 @@ export default {
   method: {
     title: "Méthodologie",
     intro: "Chaque société est intégrée dans le même modèle de données à partir de ses rapports annuels audités (10-K / 20-F) et de ses derniers rapports trimestriels (10-Q). Chaque indicateur est converti en note de 0 à 100 ; chaque dimension est la moyenne pondérée de ses indicateurs. 100 est la meilleure note – sauf pour le Risque, où plus bas est meilleur.",
-    scaling: "La conversion est linéaire entre la valeur valant 0 point et celle valant 100 points, et plafonnée au-delà. Les indicateurs manquants sont ignorés et les poids restants renormalisés ; la couverture des données indique la part d'indicateurs calculables.",
+    scaling: "La conversion est linéaire entre la valeur valant 0 point et celle valant 100 points, et plafonnée au-delà. Les indicateurs manquants sont ignorés et les poids restants renormalisés ; la couverture des données indique la part d'indicateurs calculables. Une dimension n'est notée que si des indicateurs représentant au moins la moitié de son poids sont disponibles.",
     bands: "Niveaux de notation :",
     profiles: "Les banques, assureurs et courtiers (profil financier) ainsi que les REIT (profil immobilier) sont notés avec des indicateurs et seuils adaptés, indiqués ci-dessous lorsqu'ils diffèrent.",
     overall: "TeraScore (global)", overallText: "Moyenne pondérée des neuf dimensions fondamentales :",

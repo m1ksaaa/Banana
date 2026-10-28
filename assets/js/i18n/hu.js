@@ -203,7 +203,7 @@ export default {
   method: {
     title: "Módszertan",
     intro: "Minden vállalat ugyanabba az adatsablonba kerül az auditált éves jelentések (10-K / 20-F) és a legfrissebb negyedéves jelentések (10-Q) alapján. Minden mutatót 0–100 pontos skálára váltunk; egy szempont pontszáma a mutatók súlyozott átlaga. A 100 a legjobb – kivéve a Kockázatot, ahol az alacsonyabb a jobb.",
-    scaling: "A skálázás lineáris a 0 pontot és a 100 pontot érő érték között, azon kívül vágott. A hiányzó mutatók kimaradnak, a többi súlya arányosan nő; az adatlefedettség a kiszámítható mutatók arányát mutatja.",
+    scaling: "A skálázás lineáris a 0 pontot és a 100 pontot érő érték között, azon kívül vágott. A hiányzó mutatók kimaradnak, a többi súlya arányosan nő; az adatlefedettség a kiszámítható mutatók arányát mutatja. Egy szempont csak akkor kap pontszámot, ha a mutatói legalább felének (súly szerint) van adata.",
     bands: "Minősítési sávok:",
     profiles: "A bankok, biztosítók és brókercégek (pénzügyi profil), valamint a REIT-ek (ingatlanprofil) módosított mutatókkal és küszöbökkel kerülnek pontozásra; ahol eltérnek, alább látható.",
     overall: "TeraScore (összesített)", overallText: "A kilenc fundamentális szempont súlyozott átlaga:",

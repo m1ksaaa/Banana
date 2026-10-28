@@ -203,7 +203,7 @@ export default {
   method: {
     title: "Methodology",
     intro: "Every company is mapped into the same data template from its audited annual reports (10-K / 20-F) and latest quarterly reports (10-Q). Each metric is converted to a 0–100 score; each dimension is the weighted average of its metrics. 100 is best — except for Risk, where lower is better.",
-    scaling: "Scaling is linear between the value that scores 0 points and the value that scores 100 points, and capped outside that range. Missing metrics are skipped and the remaining weights are renormalized; data coverage shows the share of metrics that could be computed.",
+    scaling: "Scaling is linear between the value that scores 0 points and the value that scores 100 points, and capped outside that range. Missing metrics are skipped and the remaining weights are renormalized; data coverage shows the share of metrics that could be computed. A dimension is scored only when metrics carrying at least half of its weight are available.",
     bands: "Grade bands:",
     profiles: "Banks, insurers and brokers (financial profile) and REITs (real-estate profile) are scored with adapted metrics and thresholds, shown below where they differ.",
     overall: "TeraScore (overall)", overallText: "Weighted average of the nine fundamental dimensions:",

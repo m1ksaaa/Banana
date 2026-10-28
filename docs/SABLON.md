@@ -80,7 +80,7 @@ Minden összeg **USD-ben, egész dollárban**. A hiányzó adat `null`.
 
 ## 2. Pontozás
 
-Minden mutatót lineárisan váltunk 0–100 pontra a „0 pont” és „100 pont” érték között, azon kívül vágva. Egy szempont pontszáma a mutatók súlyozott átlaga; hiányzó mutató kimarad, a többi súlya arányosan nő. Az értékeltség a TTM-adatokon alapul (ha elérhető), a többi szempont az auditált éves adatokon. A hosszú távú mutatók legfeljebb az utolsó 6 üzleti évet (5 év változást) veszik figyelembe.
+Minden mutatót lineárisan váltunk 0–100 pontra a „0 pont” és „100 pont” érték között, azon kívül vágva. Egy szempont pontszáma a mutatók súlyozott átlaga; hiányzó mutató kimarad, a többi súlya arányosan nő. Egy szempont csak akkor kap pontszámot, ha a mutatói legalább felének (súly szerint) van adata. Az értékeltség a TTM-adatokon alapul (ha elérhető), a többi szempont az auditált éves adatokon. A hosszú távú mutatók legfeljebb az utolsó 6 üzleti évet (5 év változást) veszik figyelembe.
 
 ### Jövedelmezőség
 

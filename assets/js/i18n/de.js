@@ -203,7 +203,7 @@ export default {
   method: {
     title: "Methodik",
     intro: "Jedes Unternehmen wird aus seinen geprüften Jahresberichten (10-K / 20-F) und den jüngsten Quartalsberichten (10-Q) in dieselbe Datenvorlage überführt. Jede Kennzahl wird in einen Wert von 0–100 umgerechnet; jede Dimension ist der gewichtete Durchschnitt ihrer Kennzahlen. 100 ist der Bestwert – außer beim Risiko, wo niedriger besser ist.",
-    scaling: "Die Skalierung ist linear zwischen dem Wert für 0 Punkte und dem Wert für 100 Punkte und wird außerhalb begrenzt. Fehlende Kennzahlen entfallen, die übrigen Gewichte werden neu normiert; die Datenabdeckung zeigt den Anteil berechenbarer Kennzahlen.",
+    scaling: "Die Skalierung ist linear zwischen dem Wert für 0 Punkte und dem Wert für 100 Punkte und wird außerhalb begrenzt. Fehlende Kennzahlen entfallen, die übrigen Gewichte werden neu normiert; die Datenabdeckung zeigt den Anteil berechenbarer Kennzahlen. Eine Dimension wird nur bewertet, wenn Kennzahlen mit mindestens der Hälfte ihres Gewichts verfügbar sind.",
     bands: "Bewertungsstufen:",
     profiles: "Banken, Versicherer und Broker (Finanzprofil) sowie REITs (Immobilienprofil) werden mit angepassten Kennzahlen und Schwellen bewertet; Abweichungen sind unten dargestellt.",
     overall: "TeraScore (gesamt)", overallText: "Gewichteter Durchschnitt der neun fundamentalen Dimensionen:",

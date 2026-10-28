@@ -313,6 +313,7 @@ export const OVERALL_WEIGHTS = {
 export const RISK_WEIGHTS = { balanceSheet: 0.30, liquidity: 0.10, consistency: 0.25, profitability: 0.15, cashFlow: 0.20 };
 export const FLAG_PENALTY = { critical: 10, warning: 4 };
 export const MIN_DIMENSIONS = 5;
+export const MIN_DIMENSION_COVERAGE = 0.5;
 
 // ---------- Main analysis ----------
 
@@ -412,7 +413,11 @@ export function analyze(company, { now = new Date() } = {}) {
   }
 
   const scores = {};
-  for (const dim of Object.keys(parts)) scores[dim] = parts[dim].length ? weighted(parts[dim]) : null;
+  // A dimension is scored only when metrics carrying at least half of its weight are available.
+  for (const dim of Object.keys(parts)) {
+    const covered = parts[dim].reduce((sum, p) => sum + (isNum(p.score) ? p.weight : 0), 0);
+    scores[dim] = covered >= MIN_DIMENSION_COVERAGE ? weighted(parts[dim]) : null;
+  }
 
   const flags = buildFlags({ L, P, m, metrics, negEquity, profile, company, now });
 

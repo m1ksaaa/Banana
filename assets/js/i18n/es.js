@@ -203,7 +203,7 @@ export default {
   method: {
     title: "Metodología",
     intro: "Cada empresa se integra en la misma plantilla de datos a partir de sus informes anuales auditados (10-K / 20-F) y sus últimos informes trimestrales (10-Q). Cada indicador se convierte en una puntuación de 0 a 100; cada dimensión es la media ponderada de sus indicadores. 100 es lo mejor, salvo en Riesgo, donde más bajo es mejor.",
-    scaling: "La conversión es lineal entre el valor que obtiene 0 puntos y el que obtiene 100, y se limita fuera de ese rango. Los indicadores ausentes se omiten y los pesos restantes se renormalizan; la cobertura de datos muestra la proporción de indicadores calculables.",
+    scaling: "La conversión es lineal entre el valor que obtiene 0 puntos y el que obtiene 100, y se limita fuera de ese rango. Los indicadores ausentes se omiten y los pesos restantes se renormalizan; la cobertura de datos muestra la proporción de indicadores calculables. Una dimensión solo se puntúa si hay datos de indicadores que suman al menos la mitad de su peso.",
     bands: "Niveles de calificación:",
     profiles: "Bancos, aseguradoras y brókeres (perfil financiero) y REIT (perfil inmobiliario) se puntúan con indicadores y umbrales adaptados, indicados abajo cuando difieren.",
     overall: "TeraScore (global)", overallText: "Media ponderada de las nueve dimensiones fundamentales:",
