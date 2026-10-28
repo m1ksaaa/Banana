@@ -44,10 +44,10 @@ Minden összeg a **beszámolási pénznemben** (`currency`, többnyire USD), eg�
 | `pretaxIncome` | Adózás előtti eredmény | IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest, IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments, IncomeLossFromContinuingOperationsBeforeIncomeTaxesDomestic, ProfitLossBeforeTax |
 | `incomeTaxExpense` | Társasági adó | IncomeTaxExpenseBenefit, IncomeTaxExpenseContinuingOperations |
 | `netIncome` | Nettó eredmény | NetIncomeLoss, ProfitLossAttributableToOwnersOfParent, ProfitLoss, NetIncomeLossAvailableToCommonStockholdersBasic |
-| `depreciationAndAmortization` | Értékcsökkenés és amortizáció | DepreciationDepletionAndAmortization, DepreciationAmortizationAndAccretionNet, DepreciationAndAmortization, Depreciation, DepreciationAndAmortisationExpense, DepreciationAmortisationAndImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss |
+| `depreciationAndAmortization` | Értékcsökkenés és amortizáció | DepreciationDepletionAndAmortization, DepreciationAmortizationAndAccretionNet, DepreciationAndAmortization, Depreciation, DepreciationAndAmortisationExpense, AdjustmentsForDepreciationAndAmortisationExpense, DepreciationAmortisationAndImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss, AdjustmentsForDepreciationAndAmortisationExpenseAndImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss |
 | `shareBasedCompensation` | Részvényalapú juttatás | ShareBasedCompensation, AllocatedShareBasedCompensationExpense, AdjustmentsForSharebasedPayments |
 | `operatingCashFlow` | Működési cash flow | NetCashProvidedByUsedInOperatingActivities, NetCashProvidedByUsedInOperatingActivitiesContinuingOperations, CashFlowsFromUsedInOperatingActivities |
-| `capex` | Beruházások (CapEx) | PaymentsToAcquirePropertyPlantAndEquipment, PaymentsToAcquireProductiveAssets, PaymentsForCapitalImprovements, PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities, PurchaseOfPropertyPlantAndEquipment |
+| `capex` | Beruházások (CapEx) | PaymentsToAcquirePropertyPlantAndEquipment, PaymentsToAcquireProductiveAssets, PaymentsForCapitalImprovements, PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities, PurchaseOfPropertyPlantAndEquipment, PurchaseOfPropertyPlantAndEquipmentIntangibleAssetsOtherThanGoodwillInvestmentPropertyAndOtherNoncurrentAssets |
 | `dividendsPaid` | Kifizetett osztalék | PaymentsOfDividends, PaymentsOfDividendsCommonStock, DividendsPaidClassifiedAsFinancingActivities, DividendsPaidToEquityHoldersOfParentClassifiedAsFinancingActivities |
 | `buybacks` | Részvény-visszavásárlás | PaymentsForRepurchaseOfCommonStock, PaymentsForRepurchaseOfEquity, PaymentsToAcquireOrRedeemEntitysShares |
 | `epsDiluted` | EPS, hígított ($) | EarningsPerShareDiluted, EarningsPerShareBasicAndDiluted, EarningsPerShareBasic |
@@ -65,7 +65,7 @@ Minden összeg a **beszámolási pénznemben** (`currency`, többnyire USD), eg�
 | `currentLiabilities` | Rövid lejáratú kötelezettségek | LiabilitiesCurrent, CurrentLiabilities |
 | `cash` | Pénzeszközök | CashAndCashEquivalentsAtCarryingValue, CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents, CashAndDueFromBanks, Cash, CashAndCashEquivalents |
 | `inventory` | Készletek | InventoryNet, InventoryFinishedGoodsNetOfReserves, Inventories |
-| `accountsReceivable` | Vevőkövetelések | AccountsReceivableNetCurrent, ReceivablesNetCurrent, TradeAndOtherCurrentReceivables |
+| `accountsReceivable` | Vevőkövetelések | AccountsReceivableNetCurrent, ReceivablesNetCurrent, TradeAndOtherCurrentReceivables, CurrentTradeReceivables |
 | `goodwill` | Goodwill | Goodwill |
 | `intangibleAssets` | Immateriális javak | IntangibleAssetsNetExcludingGoodwill, FiniteLivedIntangibleAssetsNet, IntangibleAssetsOtherThanGoodwill |
 | `equity` | Saját tőke | StockholdersEquity, StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest, EquityAttributableToOwnersOfParent, Equity |
