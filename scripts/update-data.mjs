@@ -19,7 +19,7 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseCompanyFacts } from "./sec-parse.mjs";
 import { sectorFromSic, sectorFromNasdaq, profileFor } from "./sectors.mjs";
-import { nasdaqScreener, priceHistory } from "./market.mjs";
+import { nasdaqScreener, priceHistory, priceBudgetLeft } from "./market.mjs";
 import { majorEvents } from "./events.mjs";
 import { analyze, ENGINE_VERSION, DIMENSIONS } from "../assets/js/scoring.js";
 
@@ -112,8 +112,9 @@ async function updateCompanies() {
       if (!parsed.annual.length) noData++; else ok++;
 
       const sector = sectorFromSic(sub?.sic) || sectorFromNasdaq(q.sector);
-      const hist = skipPrices || !parsed.annual.length ? null : await priceHistory(item.ticker);
-      if (hist) withPrices++;
+      // Price history is fetched in a second, parallel phase; until then the previous history is kept.
+      const old = existsSync(join(COMPANIES, `${item.ticker}.json`)) ? JSON.parse(readFileSync(join(COMPANIES, `${item.ticker}.json`), "utf8")) : null;
+      const hist = old?.prices?.data?.length ? { ...old.prices, price: old.prices.data.at(-1)[1] } : null;
       const price = q.price ?? hist?.price ?? null;
       const shares = parsed.sharesOutstanding ?? null;
 
@@ -156,7 +157,30 @@ async function updateCompanies() {
     for (const f of readdirSync(COMPANIES)) if (!keep.has(f)) { unlinkSync(join(COMPANIES, f)); removed++; }
     console.log(`  removed ${removed} delisted or non-share securities`);
   }
-  console.log(`Done: ${ok} with financials, ${noData} without data, ${failed} errors, ${withPrices} with price history.`);
+  if (!skipPrices) withPrices = await updatePriceHistories(list.map((x) => x.ticker));
+  console.log(`Done: ${ok} with financials, ${noData} without data, ${failed} errors, ${withPrices} price histories updated.`);
+}
+
+// Phase 2: monthly price histories, largest companies first, several requests in parallel.
+async function updatePriceHistories(tickers) {
+  const files = tickers.map((t) => join(COMPANIES, `${t}.json`)).filter(existsSync);
+  const companies = files.map((f) => ({ f, c: JSON.parse(readFileSync(f, "utf8")) })).filter(({ c }) => c.annual?.length);
+  companies.sort((a, b) => (b.c.market?.marketCap || 0) - (a.c.market?.marketCap || 0));
+  let next = 0, updated = 0;
+  const worker = async () => {
+    while (next < companies.length && priceBudgetLeft()) {
+      const { f, c } = companies[next++];
+      const hist = await priceHistory(c.ticker);
+      if (!hist) continue;
+      c.prices = { interval: "1mo", adjusted: true, source: hist.source, data: hist.data };
+      if (c.market && !c.market.price && hist.price) c.market.price = hist.price;
+      writeFileSync(f, JSON.stringify(c) + "\n");
+      if (++updated % 250 === 0) console.log(`  ${updated} price histories`);
+    }
+  };
+  await Promise.all(Array.from({ length: Number(process.env.PRICE_CONCURRENCY || 6) }, worker));
+  console.log(`  price histories: ${updated}/${companies.length} updated${priceBudgetLeft() ? "" : " (time budget reached; the rest keep their previous history)"}`);
+  return updated;
 }
 
 function writeCompany(c) {

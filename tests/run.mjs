@@ -2,7 +2,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync, readdirSync } from "node:fs";
-import { parseCompanyFacts, detectSplits } from "../scripts/sec-parse.mjs";
+import { parseCompanyFacts, normalizeShares, splitEvidence } from "../scripts/sec-parse.mjs";
 import { sectorFromSic, profileFor } from "../scripts/sectors.mjs";
 import { analyze, scale, DIMENSIONS, METRIC_FORMAT, PROFILES, FLAG_IDS, marketStats } from "../assets/js/scoring.js";
 import { LANGS } from "../assets/js/i18n/index.js";
@@ -116,21 +116,42 @@ test("8-K events: only significant items, last 12 months, flags raised", () => {
   assert.ok(a.flags.some((f) => f.id === "restatement" && f.level === "critical"));
 });
 
-test("Stock splits: pre-split share counts and EPS are restated", () => {
-  const sh = (start, end, val, filed, form = "10-K") => ({ start, end, val, filed, form });
+test("Stock splits and unit errors are normalised across years", () => {
+  // Apple-like: 4:1 split between 2019 and 2020; 2017 shares reported in thousands.
+  const annual = [
+    { year: 2017, netIncome: 48e9, epsDiluted: 9.2, sharesDiluted: 5217e3 },
+    { year: 2018, netIncome: 59e9, epsDiluted: 11.9, sharesDiluted: 5000e6 },
+    { year: 2019, netIncome: 55e9, epsDiluted: 11.89, sharesDiluted: 4648e6 },
+    { year: 2020, netIncome: 57e9, epsDiluted: 3.28, sharesDiluted: 17528e6 },
+    { year: 2021, netIncome: 94e9, epsDiluted: 5.61, sharesDiluted: 16865e6 },
+  ];
+  const splits = normalizeShares(annual, new Set(["f4"]));
+  assert.deepEqual(splits, [{ year: 2020, factor: 4 }]);
+  assert.ok(Math.abs(annual[0].sharesDiluted - 5217e6 * 4) < 1e6);
+  assert.ok(Math.abs(annual[2].epsDiluted - 11.89 / 4) < 1e-9);
+  assert.equal(annual[3].sharesDiluted, 17528e6);
+});
+
+test("Split detected from EPS when share counts are missing", () => {
+  const annual = [
+    { year: 2019, netIncome: 34.3e9, epsDiluted: 49.16 },
+    { year: 2020, netIncome: 40.3e9, epsDiluted: 2.93 },
+    { year: 2021, netIncome: 76e9, epsDiluted: 5.61 },
+  ];
+  assert.deepEqual(normalizeShares(annual, new Set(["f20"])), [{ year: 2020, factor: 20 }]);
+  assert.ok(Math.abs(annual[0].epsDiluted - 49.16 / 20) < 1e-9);
+});
+
+test("Genuine dilution is not mistaken for a split", () => {
+  const annual = [{ year: 2020, sharesDiluted: 100e6 }, { year: 2021, sharesDiluted: 150e6 }, { year: 2022, sharesDiluted: 290e6 }];
+  assert.deepEqual(normalizeShares(annual, new Set()), []);
+});
+
+test("Split evidence comes from re-reported periods", () => {
+  const sh = (val, filed) => ({ start: "2019-01-01", end: "2019-12-31", val, filed, form: "10-K" });
   const facts = { "us-gaap": {
-    Revenues: { units: { USD: [sh("2019-01-01", "2019-12-31", 100, "2020-02-01"), sh("2020-01-01", "2020-12-31", 110, "2021-02-01"), sh("2021-01-01", "2021-12-31", 120, "2022-02-01")] } },
-    WeightedAverageNumberOfDilutedSharesOutstanding: { units: { shares: [
-      sh("2019-01-01", "2019-12-31", 100, "2020-02-01"),
-      sh("2019-01-01", "2019-12-31", 100, "2021-02-01"), sh("2020-01-01", "2020-12-31", 101, "2021-02-01"),
-      sh("2020-01-01", "2020-12-31", 404, "2022-02-01"), sh("2021-01-01", "2021-12-31", 405, "2022-02-01"),
-    ] } },
-    EarningsPerShareDiluted: { units: { "USD/shares": [sh("2019-01-01", "2019-12-31", 4, "2020-02-01")] } },
+    WeightedAverageNumberOfDilutedSharesOutstanding: { units: { shares: [sh(4648e6, "2019-10-30"), sh(18596e6, "2021-10-29")] } },
+    EarningsPerShareDiluted: { units: { "USD/shares": [sh(11.89, "2019-10-30"), sh(2.97, "2021-10-29")] } },
   } };
-  const splits = detectSplits(facts);
-  assert.equal(splits.length, 1);
-  assert.equal(splits[0].factor, 4);
-  const { annual } = parseCompanyFacts({ facts });
-  assert.deepEqual(annual.map((y) => y.sharesDiluted), [400, 404, 405]);
-  assert.equal(annual[0].epsDiluted, 1);
+  assert.deepEqual([...splitEvidence(facts)], ["f4"]);
 });

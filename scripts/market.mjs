@@ -89,10 +89,12 @@ function dedupeMonths(data) {
 // Tries each source in order; a source that fails 25 times in a row is switched off for the run.
 const failures = { nasdaq: 0, yahoo: 0, stooq: 0 };
 // Price history is optional: after the time budget it is skipped so the financial data always gets saved.
-const started = Date.now();
-const BUDGET_MS = Number(process.env.PRICE_BUDGET_MIN || 90) * 60000;
+let started = null;
+const BUDGET_MS = Number(process.env.PRICE_BUDGET_MIN || 75) * 60000;
+export const priceBudgetLeft = () => started === null || Date.now() - started < BUDGET_MS;
 export async function priceHistory(ticker) {
-  if (Date.now() - started > BUDGET_MS) return null;
+  if (started === null) started = Date.now();
+  if (!priceBudgetLeft()) return null;
   for (const [name, fn] of [["nasdaq", nasdaqMonthly], ["yahoo", yahooMonthly], ["stooq", stooqMonthly]]) {
     if (failures[name] >= 25) continue;
     try {
