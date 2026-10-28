@@ -49,16 +49,16 @@ function nf(opts) {
   return cache.get(k);
 }
 
-export function money(v) {
+export function money(v, currency = "USD") {
   if (!isNum(v)) return "–";
-  return nf({ style: "currency", currency: "USD", notation: "compact", maximumFractionDigits: Math.abs(v) >= 1e9 ? 1 : 0 }).format(v);
+  return nf({ style: "currency", currency, notation: "compact", maximumFractionDigits: Math.abs(v) >= 1e9 ? 1 : 0 }).format(v);
 }
 
 export function num(v, d = 1) {
   return isNum(v) ? nf({ minimumFractionDigits: d, maximumFractionDigits: d }).format(v) : "–";
 }
 
-export function fmt(v, kind) {
+export function fmt(v, kind, currency = "USD") {
   if (v === Infinity) return kind === "mult" || kind === "xyears" ? "n/m" : "∞";
   if (v === -Infinity) return "−∞";
   if (!isNum(v)) return "–";
@@ -72,7 +72,7 @@ export function fmt(v, kind) {
     case "xyears": return `${num(v, 1)}×`;
     case "mult": return `${num(v, 1)}×`;
     case "of9": return `${v}/9`;
-    case "money": return money(v);
+    case "money": return money(v, currency);
     case "usd": return nf({ style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(v);
     case "int": return nf({ maximumFractionDigits: 0 }).format(v);
     default: return num(v, 2);

@@ -2,7 +2,7 @@
 // Generates docs/SABLON.md from the engine definitions, so the documentation always
 // matches the code exactly. Run: npm run docs
 import { writeFileSync } from "node:fs";
-import { MIN_DIMENSIONS, PROFILES, OVERALL_WEIGHTS, RISK_WEIGHTS, FLAG_PENALTY, METRIC_FORMAT, ENGINE_VERSION, FLAG_IDS } from "../assets/js/scoring.js";
+import { MIN_DIMENSIONS, RELATIVE_METRICS, MIN_SECTOR_PEERS, PROFILES, OVERALL_WEIGHTS, RISK_WEIGHTS, FLAG_PENALTY, METRIC_FORMAT, ENGINE_VERSION, FLAG_IDS } from "../assets/js/scoring.js";
 import { FLOW, INSTANT } from "./sec-parse.mjs";
 import hu from "../assets/js/i18n/hu.js";
 
@@ -42,28 +42,32 @@ const md = `# TeraStockX adatsablon és elemzési módszertan (v${ENGINE_VERSION
 
 \`\`\`
 SEC EDGAR (10-K, 10-Q, 20-F)  ─┐
-Nasdaq (lista, árfolyam)       ├─▶  sablon JSON  ─▶  elemzőmotor  ─▶  weboldal (5 nyelv)
-Yahoo / Stooq (árfolyam-előzm.)┘    data/companies/   assets/js/scoring.js
+Nasdaq Trader (tőzsdelisták)   ├─▶  sablon JSON  ─▶  elemzőmotor  ─▶  weboldal (5 nyelv)
+Nasdaq, ECB (árfolyam, deviza) ┘    data/companies/   assets/js/scoring.js
 \`\`\`
 
-## 1. A vállalat adatfájlja – \`data/companies/<TICKER>.json\` (schemaVersion 2)
+## 1. A vállalat adatfájlja – \`data/companies/<TICKER>.json\` (schemaVersion 3)
 
 | Mező | Leírás |
 |---|---|
-| \`ticker\`, \`name\`, \`exchange\`, \`cik\` | Azonosítók (CIK: SEC-azonosító, 10 jegy). |
+| \`ticker\`, \`name\`, \`exchange\`, \`cik\` | Azonosítók; \`exchange\`: NASDAQ, NYSE, NYSE American vagy Cboe BZX (CIK: SEC-azonosító, 10 jegy). |
+| \`currency\`, \`country\` | Beszámolási pénznem (USD, EUR, JPY …) és ország. |
 | \`sicCode\`, \`sicDescription\` | SEC iparági kód és leírás. |
 | \`sector\` | Szektorkulcs (technology, healthcare, financials, realEstate, …) – a SIC-kódból képezve. |
 | \`industry\` | Iparág (Nasdaq-besorolás, ennek hiányában SIC-leírás). |
 | \`profile\` | Elemzési profil: \`general\`, \`financial\` (SIC 6000–6799), \`realEstate\` (SIC 65xx, 6798). |
 | \`fiscalYearEndMonth\` | Az üzleti év zárásának hónapja. |
-| \`market\` | \`price\`, \`priceDate\`, \`marketCap\`, \`sharesOutstanding\` (fedőlapi részvényszám), forrás. |
+| \`market\` | \`price\`, \`priceDate\`, \`marketCap\` (USD), \`sharesOutstanding\` (fedőlapi részvényszám), \`fxToUsd\` (1 egység beszámolási pénznem USD-ben), forrás. |
+| \`insiders\` | Bennfentes tőzsdei ügyletek az elmúlt 12 hónapban (SEC Form 4) – lásd 6. rész. |
+| \`events\` | Jelentős 8-K események az elmúlt 12 hónapban. |
+| \`splits\` | Felismert részvényfelosztások \`[{ year, factor }]\`. |
 | \`prices\` | Havi, osztalékkal/felosztással korrigált záróárak (legfeljebb 10 év): \`[["ÉÉÉÉ-HH", ár], …]\`. |
 | \`annual[]\` | Üzleti évenkénti adatok (legfeljebb 10 év) – lásd lent. |
 | \`ttm\` | Utolsó 12 hónap (TTM) eredmény- és cash flow-adatai. |
 | \`latestBalance\` | Mérleg a legutóbbi negyedév végén. |
 | \`source\`, \`demo\` | Adatforrás és letöltés ideje; \`demo: true\` = közelítő mintaadat. |
 
-Minden összeg **USD-ben, egész dollárban**. A hiányzó adat \`null\`.
+Minden összeg a **beszámolási pénznemben** (\`currency\`, többnyire USD), egész egységben; a piaci kapitalizáció mindig USD. A hiányzó adat \`null\`.
 
 ### Eredménykimutatás és cash flow (időszaki adatok)
 
@@ -106,6 +110,14 @@ ${dims}
 - Osztalék nélkül a kifizetési arány nem pontozott; az FCF-et meghaladó osztalék 0 pont.
 - Veszteség esetén a P/E és a PEG 0 pont.
 
+## 2/b. Szektorhoz viszonyított pontozás
+
+${hu.method.relativeText}
+
+Érintett mutatók: ${[...RELATIVE_METRICS].map((k) => hu.metrics[k][0]).join(", ")}.
+
+Képlet: pontszám = 0,5 × abszolút pontszám + 0,5 × relatív pontszám, ahol a relatív pontszám a szektor 10. percentilisénél 0, a 90. percentilisénél 100 (ahol a kisebb érték a jobb, ott fordítva). Legalább ${MIN_SECTOR_PEERS} beágyazott szektortárs kell; ennél kevesebbnél csak az abszolút pontszám számít. A viszonyítási értékek: \`data/benchmarks.json\`.
+
 ## 3. Összesítés
 
 **TeraScore** – a kilenc fundamentális szempont súlyozott átlaga. Csak akkor számolódik (a kockázattal együtt), ha legalább ${MIN_DIMENSIONS} szempontra van adat; különben a vállalat „nincs minősítve”.
@@ -140,7 +152,19 @@ ${hu.method.distressText}
 |---|---|---|
 ${FLAG_IDS.map((id) => `| \`${id}\` | ${hu.flags[id][0]} | ${hu.flags[id][1].replace(/\{(\w+)\}/g, "‹$1›")} |`).join("\n")}
 
-## 6. Korlátok
+## 6. Bennfentes ügyletek
+
+${hu.method.insiderText}
+
+Mezők (\`insiders\`): \`buy\` / \`sell\` (érték USD-ben, részvényszám, ügyletek és bennfentesek száma), \`plannedSellValue\` (10b5-1 terv szerinti eladások), \`recent\` (legutóbbi 12 ügylet).
+
+## 7. Tőzsdék, külföldi vállalatok, devizák
+
+Lefedett tőzsdék: Nasdaq, NYSE, NYSE American, Cboe BZX (törzsrészvények; ETF-ek, warrantok, unitok, jogok és elsőbbségi részvények nélkül).
+
+${hu.method.currencyText}
+
+## 8. Korlátok
 
 ${hu.method.limitsText}
 `;

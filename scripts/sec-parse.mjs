@@ -9,48 +9,48 @@
 //   sharesOutstanding – latest cover-page share count (dei:EntityCommonStockSharesOutstanding)
 
 export const FLOW = {
-  revenue: ["Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax", "RevenueFromContractWithCustomerIncludingAssessedTax", "SalesRevenueNet", "SalesRevenueGoodsNet", "SalesRevenueServicesNet", "RevenuesNetOfInterestExpense", "InterestAndDividendIncomeOperating"],
-  costOfRevenue: ["CostOfRevenue", "CostOfGoodsAndServicesSold", "CostOfGoodsSold", "CostOfServices"],
+  revenue: ["Revenues", "RevenueFromContractWithCustomerExcludingAssessedTax", "RevenueFromContractWithCustomerIncludingAssessedTax", "SalesRevenueNet", "SalesRevenueGoodsNet", "SalesRevenueServicesNet", "RevenuesNetOfInterestExpense", "InterestAndDividendIncomeOperating", "Revenue", "RevenueFromContractsWithCustomers"],
+  costOfRevenue: ["CostOfRevenue", "CostOfGoodsAndServicesSold", "CostOfGoodsSold", "CostOfServices", "CostOfSales"],
   grossProfit: ["GrossProfit"],
   researchAndDevelopment: ["ResearchAndDevelopmentExpense", "ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost"],
-  operatingIncome: ["OperatingIncomeLoss"],
-  interestExpense: ["InterestExpense", "InterestExpenseNonoperating", "InterestExpenseDebt", "InterestAndDebtExpense"],
-  pretaxIncome: ["IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest", "IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments", "IncomeLossFromContinuingOperationsBeforeIncomeTaxesDomestic"],
-  incomeTaxExpense: ["IncomeTaxExpenseBenefit"],
-  netIncome: ["NetIncomeLoss", "ProfitLoss", "NetIncomeLossAvailableToCommonStockholdersBasic"],
-  depreciationAndAmortization: ["DepreciationDepletionAndAmortization", "DepreciationAmortizationAndAccretionNet", "DepreciationAndAmortization", "Depreciation"],
-  shareBasedCompensation: ["ShareBasedCompensation", "AllocatedShareBasedCompensationExpense"],
-  operatingCashFlow: ["NetCashProvidedByUsedInOperatingActivities", "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations"],
-  capex: ["PaymentsToAcquirePropertyPlantAndEquipment", "PaymentsToAcquireProductiveAssets", "PaymentsForCapitalImprovements"],
-  dividendsPaid: ["PaymentsOfDividends", "PaymentsOfDividendsCommonStock"],
-  buybacks: ["PaymentsForRepurchaseOfCommonStock", "PaymentsForRepurchaseOfEquity"],
+  operatingIncome: ["OperatingIncomeLoss", "ProfitLossFromOperatingActivities"],
+  interestExpense: ["InterestExpense", "InterestExpenseNonoperating", "InterestExpenseDebt", "InterestAndDebtExpense", "FinanceCosts", "InterestExpenseOnBorrowings"],
+  pretaxIncome: ["IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest", "IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments", "IncomeLossFromContinuingOperationsBeforeIncomeTaxesDomestic", "ProfitLossBeforeTax"],
+  incomeTaxExpense: ["IncomeTaxExpenseBenefit", "IncomeTaxExpenseContinuingOperations"],
+  netIncome: ["NetIncomeLoss", "ProfitLossAttributableToOwnersOfParent", "ProfitLoss", "NetIncomeLossAvailableToCommonStockholdersBasic"],
+  depreciationAndAmortization: ["DepreciationDepletionAndAmortization", "DepreciationAmortizationAndAccretionNet", "DepreciationAndAmortization", "Depreciation", "DepreciationAndAmortisationExpense", "DepreciationAmortisationAndImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss"],
+  shareBasedCompensation: ["ShareBasedCompensation", "AllocatedShareBasedCompensationExpense", "AdjustmentsForSharebasedPayments"],
+  operatingCashFlow: ["NetCashProvidedByUsedInOperatingActivities", "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations", "CashFlowsFromUsedInOperatingActivities"],
+  capex: ["PaymentsToAcquirePropertyPlantAndEquipment", "PaymentsToAcquireProductiveAssets", "PaymentsForCapitalImprovements", "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities", "PurchaseOfPropertyPlantAndEquipment"],
+  dividendsPaid: ["PaymentsOfDividends", "PaymentsOfDividendsCommonStock", "DividendsPaidClassifiedAsFinancingActivities", "DividendsPaidToEquityHoldersOfParentClassifiedAsFinancingActivities"],
+  buybacks: ["PaymentsForRepurchaseOfCommonStock", "PaymentsForRepurchaseOfEquity", "PaymentsToAcquireOrRedeemEntitysShares"],
 };
 
-const FLOW_PER_SHARE = { epsDiluted: ["EarningsPerShareDiluted", "EarningsPerShareBasicAndDiluted", "EarningsPerShareBasic"] };
-const FLOW_SHARES = { sharesDiluted: ["WeightedAverageNumberOfDilutedSharesOutstanding", "WeightedAverageNumberOfShareOutstandingBasicAndDiluted", "WeightedAverageNumberOfSharesOutstandingBasic"] };
+const FLOW_PER_SHARE = { epsDiluted: ["EarningsPerShareDiluted", "EarningsPerShareBasicAndDiluted", "EarningsPerShareBasic", "DilutedEarningsLossPerShare", "BasicEarningsLossPerShare"] };
+const FLOW_SHARES = { sharesDiluted: ["WeightedAverageNumberOfDilutedSharesOutstanding", "WeightedAverageNumberOfShareOutstandingBasicAndDiluted", "WeightedAverageNumberOfSharesOutstandingBasic", "AdjustedWeightedAverageShares", "WeightedAverageShares"] };
 
 export const INSTANT = {
   totalAssets: ["Assets"],
   totalLiabilities: ["Liabilities"],
-  currentAssets: ["AssetsCurrent"],
-  currentLiabilities: ["LiabilitiesCurrent"],
-  cash: ["CashAndCashEquivalentsAtCarryingValue", "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents", "CashAndDueFromBanks", "Cash"],
-  inventory: ["InventoryNet", "InventoryFinishedGoodsNetOfReserves"],
-  accountsReceivable: ["AccountsReceivableNetCurrent", "ReceivablesNetCurrent"],
+  currentAssets: ["AssetsCurrent", "CurrentAssets"],
+  currentLiabilities: ["LiabilitiesCurrent", "CurrentLiabilities"],
+  cash: ["CashAndCashEquivalentsAtCarryingValue", "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents", "CashAndDueFromBanks", "Cash", "CashAndCashEquivalents"],
+  inventory: ["InventoryNet", "InventoryFinishedGoodsNetOfReserves", "Inventories"],
+  accountsReceivable: ["AccountsReceivableNetCurrent", "ReceivablesNetCurrent", "TradeAndOtherCurrentReceivables"],
   goodwill: ["Goodwill"],
-  intangibleAssets: ["IntangibleAssetsNetExcludingGoodwill", "FiniteLivedIntangibleAssetsNet"],
-  equity: ["StockholdersEquity", "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest"],
-  retainedEarnings: ["RetainedEarningsAccumulatedDeficit"],
+  intangibleAssets: ["IntangibleAssetsNetExcludingGoodwill", "FiniteLivedIntangibleAssetsNet", "IntangibleAssetsOtherThanGoodwill"],
+  equity: ["StockholdersEquity", "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest", "EquityAttributableToOwnersOfParent", "Equity"],
+  retainedEarnings: ["RetainedEarningsAccumulatedDeficit", "RetainedEarnings"],
 };
 
 // Financial debt = sum of components; if no breakdown is reported, a total tag is used.
 const DEBT_PARTS = [
-  ["LongTermDebtNoncurrent", "LongTermDebtAndCapitalLeaseObligations", "LongTermNotesPayable", "SeniorLongTermNotes"],
-  ["LongTermDebtCurrent", "LongTermDebtAndCapitalLeaseObligationsCurrent", "DebtCurrent"],
+  ["LongTermDebtNoncurrent", "LongTermDebtAndCapitalLeaseObligations", "LongTermNotesPayable", "SeniorLongTermNotes", "NoncurrentPortionOfNoncurrentBorrowings", "LongtermBorrowings"],
+  ["LongTermDebtCurrent", "LongTermDebtAndCapitalLeaseObligationsCurrent", "DebtCurrent", "CurrentPortionOfLongtermBorrowings"],
   ["CommercialPaper"],
-  ["ShortTermBorrowings"],
+  ["ShortTermBorrowings", "ShorttermBorrowings"],
 ];
-const DEBT_TOTAL = ["LongTermDebt", "DebtInstrumentCarryingAmount", "DebtLongtermAndShorttermCombinedAmount"];
+const DEBT_TOTAL = ["LongTermDebt", "DebtInstrumentCarryingAmount", "DebtLongtermAndShorttermCombinedAmount", "Borrowings"];
 const SHARES_INSTANT = ["CommonStockSharesOutstanding"];
 
 const ANNUAL_FORMS = new Set(["10-K", "10-K/A", "20-F", "20-F/A", "40-F", "40-F/A", "10-KT"]);
@@ -146,16 +146,32 @@ function finishPeriod(y) {
   return y;
 }
 
+// Reporting currency: the monetary unit used most by the main income-statement and balance-sheet tags.
+// US filers report in USD; foreign private issuers (20-F / 40-F) often in EUR, JPY, TWD, …
+export function reportingCurrency(facts) {
+  const count = {};
+  for (const tags of [FLOW.revenue, FLOW.netIncome, INSTANT.totalAssets]) {
+    for (const tag of tags) {
+      for (const [unit, arr] of Object.entries(node(facts, tag)?.units || {})) {
+        if (/^[A-Z]{3}$/.test(unit)) count[unit] = (count[unit] || 0) + arr.filter((v) => ANNUAL_FORMS.has(v.form)).length;
+      }
+    }
+  }
+  const best = Object.entries(count).sort((a, b) => b[1] - a[1])[0];
+  return best ? best[0] : "USD";
+}
+
 export function parseCompanyFacts(cf, { maxYears = 10 } = {}) {
   const facts = cf.facts || {};
+  const currency = reportingCurrency(facts);
   const flows = {};
-  for (const [k, tags] of Object.entries(FLOW)) flows[k] = flowSeries(facts, tags, "USD");
-  for (const [k, tags] of Object.entries(FLOW_PER_SHARE)) flows[k] = flowSeries(facts, tags, "USD/shares");
+  for (const [k, tags] of Object.entries(FLOW)) flows[k] = flowSeries(facts, tags, currency);
+  for (const [k, tags] of Object.entries(FLOW_PER_SHARE)) flows[k] = flowSeries(facts, tags, `${currency}/shares`);
   for (const [k, tags] of Object.entries(FLOW_SHARES)) flows[k] = flowSeries(facts, tags, "shares");
   const inst = {};
-  for (const [k, tags] of Object.entries(INSTANT)) inst[k] = instantSeries(facts, tags);
-  const debtParts = DEBT_PARTS.map((tags) => instantSeries(facts, tags));
-  const debtTotal = instantSeries(facts, DEBT_TOTAL);
+  for (const [k, tags] of Object.entries(INSTANT)) inst[k] = instantSeries(facts, tags, currency);
+  const debtParts = DEBT_PARTS.map((tags) => instantSeries(facts, tags, currency));
+  const debtTotal = instantSeries(facts, DEBT_TOTAL, currency);
   const sharesInst = instantSeries(facts, SHARES_INSTANT, "shares");
 
   // Fiscal year ends come from the annual revenue (or net income) periods.
@@ -213,7 +229,7 @@ export function parseCompanyFacts(cf, { maxYears = 10 } = {}) {
     sharesOutstanding = sharesInst.get(sharesDate) || null;
   }
 
-  return { annual, ttm, latestBalance, sharesOutstanding, sharesOutstandingDate: sharesDate, splits };
+  return { currency, annual, ttm, latestBalance, sharesOutstanding, sharesOutstandingDate: sharesDate, splits };
 }
 
 // Stock splits, with dates. When a company splits, every later filing re-reports earlier periods with

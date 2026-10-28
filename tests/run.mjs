@@ -7,6 +7,10 @@ import { sectorFromSic, profileFor } from "../scripts/sectors.mjs";
 import { analyze, scale, DIMENSIONS, METRIC_FORMAT, PROFILES, FLAG_IDS, marketStats } from "../assets/js/scoring.js";
 import { LANGS } from "../assets/js/i18n/index.js";
 import { EVENT_SEVERITY, majorEvents } from "../scripts/events.mjs";
+import { parseNasdaqListed, parseOtherListed, cleanName } from "../scripts/listings.mjs";
+import { aggregateQuarter, finalize, isoDate, recentQuarters } from "../scripts/insider.mjs";
+import { reportingCurrency } from "../scripts/sec-parse.mjs";
+import { computeBenchmarks } from "../assets/js/scoring.js";
 
 const load = (p) => JSON.parse(readFileSync(new URL(p, import.meta.url), "utf8"));
 const fixture = () => parseCompanyFacts(load("./fixtures/companyfacts-mini.json"));
@@ -74,7 +78,9 @@ test("Sectors and profiles from SIC", () => {
 
 test("Every data file matches the template and scores are within 0–100", () => {
   const dir = new URL("../data/companies/", import.meta.url);
-  for (const f of readdirSync(dir)) {
+  let files = [];
+  try { files = readdirSync(dir); } catch { return; } // data is loaded from the data branch in CI
+  for (const f of files) {
     const c = JSON.parse(readFileSync(new URL(f, dir), "utf8"));
     assert.ok(c.ticker && c.name, f);
     const a = analyze(c);
@@ -164,4 +170,47 @@ test("Unit errors fixed; genuine dilution is not mistaken for a split", () => {
   ];
   assert.deepEqual(normalizeShares(annual, [], ["2021-01-01", "2022-01-01", "2023-01-01"]), []);
   assert.equal(annual[0].sharesDiluted, 100e6);
+});
+
+test("Listings: common stocks of Nasdaq, NYSE, NYSE American and Cboe; no ETFs, warrants or preferreds", () => {
+  const nq = parseNasdaqListed("Symbol|Security Name|Market Category|Test Issue|Financial Status|Round Lot Size|ETF|NextShares\nAAPL|Apple Inc. - Common Stock|Q|N|N|100|N|N\nQQQ|Invesco QQQ Trust|G|N|N|100|Y|N\nABCDW|ABCD Corp - Warrant|S|N|N|100|N|N\nFile Creation Time: 1|||||||");
+  assert.deepEqual(nq, [{ ticker: "AAPL", name: "Apple Inc.", exchange: "NASDAQ" }]);
+  const other = parseOtherListed("ACT Symbol|Security Name|Exchange|CQS Symbol|ETF|Round Lot Size|Test Issue|NASDAQ Symbol\nKO|Coca-Cola Company (The) Common Stock|N|KO|N|100|N|KO\nBRK.B|Berkshire Hathaway Inc. Class B Common Stock|N|BRK.B|N|100|N|BRK=B\nSPY|SPDR S&P 500|P|SPY|Y|100|N|SPY\nABR$D|Arbor Preferred|N|ABRpD|N|100|N|ABR-D\nIMO|Imperial Oil Limited Common Stock|A|IMO|N|100|N|IMO");
+  assert.deepEqual(other.map((x) => [x.ticker, x.exchange]), [["KO", "NYSE"], ["BRK.B", "NYSE"], ["IMO", "NYSE American"]]);
+  assert.equal(cleanName("Berkshire Hathaway Inc. Class B Common Stock"), "Berkshire Hathaway Inc.");
+});
+
+test("Reporting currency of foreign filers", () => {
+  const facts = { "ifrs-full": { Revenue: { units: { EUR: [{ form: "20-F", val: 1 }, { form: "20-F", val: 2 }], USD: [{ form: "20-F", val: 1 }] } } } };
+  assert.equal(reportingCurrency(facts), "EUR");
+  assert.equal(reportingCurrency({}), "USD");
+});
+
+test("Insider data sets: open-market trades of the last 12 months per issuer", async () => {
+  assert.equal(isoDate("05-MAR-2026"), "2026-03-05");
+  assert.deepEqual(recentQuarters(new Date("2026-10-28"), 3), ["2026q4", "2026q3", "2026q2"]);
+  const acc = new Map();
+  await aggregateQuarter(new URL("./fixtures/insider/", import.meta.url).pathname, acc, { since: "2025-10-28" });
+  const s = finalize(acc, { from: "2025-10-28", to: "2026-10-28" }).get("0000320193");
+  assert.deepEqual(s.buy, { value: 261500, shares: 1300, count: 2, insiders: 2 });
+  assert.deepEqual(s.sell, { value: 105000, shares: 500, count: 1, insiders: 1 });
+  assert.equal(s.plannedSellValue, 105000);
+  assert.equal(s.recent.length, 3);
+  const a = analyze({ annual: fixture().annual, insiders: s, market: { marketCap: 1e9 } }, { now: new Date("2026-10-01") });
+  assert.ok(a.flags.some((f) => f.id === "insiderBuying"));
+});
+
+test("Sector benchmarks use established peers and blend absolute with relative scores", () => {
+  const mk = (opm, mc = 1e9, rev = 1e8) => ({ sector: "technology", a: { ok: true, series: [{ revenue: rev }], metrics: { marketCap: mc, operatingMargin: opm } } });
+  const list = [...Array.from({ length: 30 }, (_, i) => mk(i / 100)), mk(-5, 1e7, 1e6)];
+  const b = computeBenchmarks(list);
+  assert.equal(b.technology.operatingMargin.n, 30);
+  assert.ok(Math.abs(b.technology.operatingMargin.p50 - 0.145) < 1e-9);
+  const company = { sector: "technology", annual: [{ year: 2025, revenue: 100, operatingIncome: 29, netIncome: 20 }] };
+  const abs = analyze(company), rel = analyze(company, { benchmarks: b });
+  const pa = abs.parts.profitability.find((p) => p.key === "operatingMargin"), pr = rel.parts.profitability.find((p) => p.key === "operatingMargin");
+  assert.equal(pa.score, 97);
+  assert.equal(pr.relScore, 100);
+  assert.equal(pr.score, Math.round(0.5 * 97 + 0.5 * 100));
+  assert.ok(Math.abs(pr.median - 0.145) < 1e-9);
 });

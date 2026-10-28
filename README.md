@@ -1,8 +1,8 @@
 # TeraStockX
 
-**Fundamental analysis of every Nasdaq-listed company — in English, Magyar, Deutsch, Français and Español.**
+**Fundamental analysis of every company listed on Nasdaq, NYSE, NYSE American and Cboe — in English, Magyar, Deutsch, Français and Español.**
 
-A Nasdaq összes vállalatának fundamentális elemzése tíz befektetési szempont szerint, auditált SEC-jelentések alapján:
+Az amerikai tőzsdék (Nasdaq, NYSE, NYSE American, Cboe) összes vállalatának fundamentális elemzése tíz befektetési szempont szerint, auditált SEC-jelentések alapján, a szektortársakhoz viszonyítva:
 
 | Szempont | Mit mér |
 |---|---|
@@ -17,7 +17,7 @@ A Nasdaq összes vállalatának fundamentális elemzése tíz befektetési szemp
 | Értékeltség | P/E, EV/EBIT, FCF-hozam, P/S, PEG (TTM-adatokon) |
 | Kockázat | fundamentális + piaci (volatilitás, max. visszaesés) + jelzések |
 
-Emellett: csődkockázat, hosszú távú trend, befektetési profil (minőségi, növekedési, érték, osztalék, spekulatív), szektoron belüli rangsor, 27-féle figyelmeztetés és erősség, vállalat-összehasonlítás, figyelőlista, nyers pénzügyi kimutatások CSV/JSON letöltéssel. Bankokra, biztosítókra és REIT-ekre külön mérce vonatkozik.
+Emellett: szektorhoz viszonyított pontozás (szektormediánnal), szűrő és rangsor, figyelőlista-riasztások, bennfentes ügyletek (SEC Form 4), külföldi cégek saját pénznemben (20-F / IFRS), csődkockázat, hosszú távú trend, befektetési profil (minőségi, növekedési, érték, osztalék, spekulatív), szektoron belüli rangsor, 34-féle figyelmeztetés és erősség, vállalat-összehasonlítás, figyelőlista, nyers pénzügyi kimutatások CSV/JSON letöltéssel. Bankokra, biztosítókra és REIT-ekre külön mérce vonatkozik.
 
 A teljes adatsablon és a pontozás minden küszöbértéke: **[`docs/SABLON.md`](docs/SABLON.md)** (a kódból generálva).
 
@@ -31,12 +31,15 @@ assets/js/app.js              felület: lista, cégoldal, összehasonlítás, m�
 assets/js/scoring.js          elemzőmotor (böngészőben és Node-ban is fut)
 assets/js/charts.js           grafikonok
 assets/js/i18n/               nyelvi fájlok: en (alapértelmezett), hu, de, fr, es
-data/index.json               kereső lista pontszámokkal
-data/companies/*.json         vállalatonként a sablonba illesztett adatok
+data/                         adatok – a data ágon tárolva (mindig csak a legfrissebb állapot):
+                              index.json, news.json, benchmarks.json, companies/*.json
 scripts/update-data.mjs       adatletöltő (SEC EDGAR + Nasdaq + árfolyam-előzmények)
 scripts/sec-parse.mjs         SEC XBRL → sablon (éves, TTM, legfrissebb mérleg)
 scripts/sectors.mjs           SIC-kód → szektor és elemzési profil
-scripts/market.mjs            árfolyam, piaci kapitalizáció, havi árfolyam-előzmények
+scripts/market.mjs            árfolyam, piaci kapitalizáció, devizaárfolyamok, havi árfolyam-előzmények
+scripts/listings.mjs          tőzsdelisták (Nasdaq, NYSE, NYSE American, Cboe)
+scripts/insider.mjs           bennfentes ügyletek (SEC Form 4 negyedéves adatbázis)
+scripts/events.mjs            jelentős 8-K események
 scripts/gen-docs.mjs          docs/SABLON.md generálása
 tests/                        tesztek (npm test)
 ```
@@ -44,6 +47,7 @@ tests/                        tesztek (npm test)
 ## Helyi futtatás
 
 ```bash
+git fetch origin data && git archive FETCH_HEAD data | tar -x    # adatok a data ágról
 npm start        # http://localhost:8000
 npm test
 npm run docs     # docs/SABLON.md újragenerálása
@@ -52,7 +56,7 @@ npm run docs     # docs/SABLON.md újragenerálása
 ## Adatfrissítés
 
 ```bash
-SEC_USER_AGENT="Név email@cim.hu" npm run update-data                 # minden Nasdaq-vállalat (~40–70 perc)
+SEC_USER_AGENT="Név email@cim.hu" npm run update-data                 # minden vállalat (~2–3 óra)
 SEC_USER_AGENT="..." node scripts/update-data.mjs --tickers AAPL,MSFT
 node scripts/update-data.mjs --skip-prices                             # árfolyam-előzmények nélkül
 npm run build-index                                                    # csak az index újraszámolása
@@ -62,7 +66,7 @@ Az árfolyam- és piaci adatok (Nasdaq, Yahoo Finance, Stooq) opcionálisak: ha 
 
 ## Online közzététel (GitHub Pages)
 
-A `.github/workflows/deploy.yml` minden `main`-re pusholáskor közzéteszi az oldalt, hétfőnként pedig frissíti az adatokat.
+A `.github/workflows/deploy.yml` minden `main`-re pusholáskor közzéteszi az oldalt, hétfőnként pedig frissíti az adatokat. Az adatok a `data` ágra kerülnek, amely mindig egyetlen commitot tartalmaz, így a repó nem nő hétről hétre.
 
 1. **Settings → Pages → Source: GitHub Actions**
 2. **Settings → Secrets and variables → Actions → New repository secret:** `SEC_USER_AGENT` = `Név email@cim.hu`

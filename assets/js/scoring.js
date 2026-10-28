@@ -315,9 +315,56 @@ export const FLAG_PENALTY = { critical: 10, warning: 4 };
 export const MIN_DIMENSIONS = 5;
 export const MIN_DIMENSION_COVERAGE = 0.5;
 
+// ---------- Sector benchmarks ----------
+
+// Metrics whose typical level depends strongly on the industry (margins, returns, capital structure,
+// liquidity, valuation multiples). Growth, consistency and risk metrics stay on absolute scales.
+export const RELATIVE_METRICS = new Set([
+  "grossMargin", "operatingMargin", "netMargin", "fcfMargin", "roic", "roe", "roa", "sbcToRevenue",
+  "currentRatio", "quickRatio", "cashRatio", "debtToEquity", "netDebtToEbitda", "equityRatio", "interestCoverage",
+  "peRatio", "evToEbit", "evToEbitda", "psRatio", "pbRatio", "pfcfRatio", "fcfYield",
+]);
+export const MIN_SECTOR_PEERS = 20;
+export const PEER_MIN_MARKET_CAP = 3e8;
+export const PEER_MIN_REVENUE = 5e7;
+
+function quantile(sorted, q) {
+  const pos = (sorted.length - 1) * q, lo = Math.floor(pos), hi = Math.ceil(pos);
+  return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+}
+
+// list: [{ sector, a }] where a = analyze(company) without benchmarks. (Revenue is compared in the reporting
+// currency; for the rare non-USD filers this threshold is approximate.)
+// Returns { sector: { metric: { p10, p25, p50, p75, p90, n } } } for sectors with enough peers.
+export function computeBenchmarks(list) {
+  const bySector = {};
+  for (const { sector, a } of list) {
+    if (!sector || !a?.ok) continue;
+    // Peers are established companies only (market cap ≥ $300M, revenue ≥ $50M); otherwise the many
+    // pre-revenue small caps would drag every sector's typical margins and multiples far below normal.
+    const rev = a.series[a.series.length - 1]?.revenue;
+    if (!(a.metrics.marketCap >= PEER_MIN_MARKET_CAP) || !(rev >= PEER_MIN_REVENUE)) continue;
+    const s = (bySector[sector] ||= {});
+    for (const k of RELATIVE_METRICS) {
+      const v = a.metrics[k];
+      if (isNum(v)) (s[k] ||= []).push(v);
+    }
+  }
+  const out = {};
+  for (const [sector, metrics] of Object.entries(bySector)) {
+    for (const [k, vals] of Object.entries(metrics)) {
+      if (vals.length < MIN_SECTOR_PEERS) continue;
+      vals.sort((x, y) => x - y);
+      const r = (q) => +quantile(vals, q).toPrecision(5);
+      (out[sector] ||= {})[k] = { p10: r(0.1), p25: r(0.25), p50: r(0.5), p75: r(0.75), p90: r(0.9), n: vals.length };
+    }
+  }
+  return out;
+}
+
 // ---------- Main analysis ----------
 
-export function analyze(company, { now = new Date() } = {}) {
+export function analyze(company, { now = new Date(), benchmarks = null } = {}) {
   const years = [...(company.annual || [])].filter((y) => isNum(y.year)).sort((a, b) => a.year - b.year);
   if (!years.length) return { ok: false, reason: "noData" };
 
@@ -345,8 +392,12 @@ export function analyze(company, { now = new Date() } = {}) {
   const bal = lb && isNum(lb.totalAssets) ? { ...L, ...Object.fromEntries(Object.entries(lb).filter(([, v]) => v !== null)) } : L;
 
   const mk = company.market || {};
-  let marketCap = isNum(mk.marketCap) && mk.marketCap > 0 ? mk.marketCap : null;
-  if (!marketCap && isNum(mk.price) && isNum(mk.sharesOutstanding)) marketCap = mk.price * mk.sharesOutstanding;
+  let marketCapUsd = isNum(mk.marketCap) && mk.marketCap > 0 ? mk.marketCap : null;
+  if (!marketCapUsd && isNum(mk.price) && isNum(mk.sharesOutstanding) && (company.currency || "USD") === "USD") marketCapUsd = mk.price * mk.sharesOutstanding;
+  // Valuation ratios compare the market cap (USD) with statements in the reporting currency,
+  // so the market cap is converted into that currency first; without a rate, valuation is skipped.
+  const fx = (company.currency || "USD") === "USD" ? 1 : isNum(mk.fxToUsd) && mk.fxToUsd > 0 ? mk.fxToUsd : null;
+  const marketCap = marketCapUsd && fx ? marketCapUsd / fx : null;
   const bFcf = freeCashFlow(basis);
   const bEbitda = ebitda(basis);
   const ev = marketCap && isNum(bal.totalDebt) && isNum(bal.cash) ? marketCap + bal.totalDebt - bal.cash : marketCap;
@@ -380,7 +431,7 @@ export function analyze(company, { now = new Date() } = {}) {
     revenueVolatility: stdev(yoys),
     marginVolatility: stdev(winM.map((y) => (profile === "financial" ? y.netMargin : y.operatingMargin))),
     shareChangeYearly: span >= 1 && isNum(shareStart) && isNum(shareEnd) && shareStart > 0 ? Math.pow(shareEnd / shareStart, 1 / span) - 1 : null,
-    marketCap,
+    marketCap: marketCapUsd,
     enterpriseValue: ev,
     peRatio: pe,
     psRatio: marketCap ? div(marketCap, basis.revenue) : null,
@@ -401,7 +452,23 @@ export function analyze(company, { now = new Date() } = {}) {
   const negEquity = isNum(bal.equity) && bal.equity <= 0;
   const parts = {};
   for (const dim of Object.keys(OVERALL_WEIGHTS).concat("marketRisk")) {
-    parts[dim] = (defs[dim] || []).map((d) => ({ ...d, value: metrics[d.key], score: partScore(d, metrics[d.key], { negEquity, L, metrics }) }));
+    parts[dim] = (defs[dim] || []).map((d) => {
+      const part = { ...d, value: metrics[d.key], score: partScore(d, metrics[d.key], { negEquity, L, metrics }) };
+      // Sector-relative scoring: half absolute thresholds, half position among sector peers (10th–90th percentile).
+      const b = benchmarks?.[company.sector]?.[d.key];
+      if (b && isNum(part.score) && RELATIVE_METRICS.has(d.key)) {
+        const v = metrics[d.key];
+        const higherBetter = d.good > d.bad;
+        const rel = v === Infinity ? (higherBetter ? 100 : 0) : scale(v, higherBetter ? b.p10 : b.p90, higherBetter ? b.p90 : b.p10);
+        if (isNum(rel) && b.p90 !== b.p10) {
+          part.absScore = part.score;
+          part.relScore = rel;
+          part.score = Math.round(0.5 * part.score + 0.5 * rel);
+        }
+        part.median = b.p50;
+      }
+      return part;
+    });
   }
 
   // A loss-making company cannot score on earnings growth from a negative base.
@@ -482,7 +549,7 @@ export const FLAG_IDS = [
   "negativeEquity", "persistentLosses", "lossLastYear", "negativeFcf", "lowCurrentRatio", "interestCoverageCritical",
   "interestCoverageWeak", "altmanDistress", "altmanGrey", "debtWithoutEbitda", "highLeverage", "revenueDecline",
   "heavyDilution", "highSbc", "lowEarningsQuality", "dividendUncovered", "goodwillHeavy", "staleData", "deepDrawdown",
-  "bankruptcyFiling", "restatement", "debtAcceleration", "delistingNotice", "auditorChange",
+  "bankruptcyFiling", "restatement", "debtAcceleration", "delistingNotice", "auditorChange", "insiderBuying", "insiderSelling",
   "netCash", "highMargin", "highRoic", "alwaysProfitable", "strongGrowth", "buybacks", "altmanSafe", "strongCashConversion",
 ];
 
@@ -530,6 +597,13 @@ function buildFlags({ L, P, m, metrics: mt, negEquity, profile, company, now }) 
     const d = lastWith(item);
     if (d) add(level, id, { value: d });
   }
+
+  // Insider open-market trades over the last 12 months (SEC Form 4).
+  const ins = company.insiders;
+  if (ins?.buy && ins.buy.insiders >= 2 && ins.buy.value >= 100000) add("positive", "insiderBuying", { value: ins.buy.value, count: ins.buy.insiders });
+  const mcUsd = mt.marketCap;
+  const discretionary = ins?.sell ? ins.sell.value - (ins.plannedSellValue || 0) : 0;
+  if (isNum(mcUsd) && mcUsd > 0 && discretionary / mcUsd > 0.01) add("warning", "insiderSelling", { value: discretionary, share: discretionary / mcUsd });
 
   // Strengths
   if (general && isNum(m.netDebt) && m.netDebt < 0) add("positive", "netCash", { value: -m.netDebt });

@@ -21,7 +21,7 @@ const RANGES = [
   [4800, 4899, "communication"],
   [4900, 4999, "utilities"],
   [5000, 5199, "industrials"],
-  [5400, 5499, "consumerStaples"], [5912, 5912, "consumerStaples"], [5200, 5999, "consumerDiscretionary"],
+  [5400, 5499, "consumerStaples"], [5912, 5912, "consumerStaples"], [5330, 5331, "consumerStaples"], [5399, 5399, "consumerStaples"], [5200, 5999, "consumerDiscretionary"],
   [6500, 6599, "realEstate"], [6798, 6798, "realEstate"], [6770, 6770, "shell"], [6000, 6799, "financials"],
   [7370, 7379, "technology"], [7800, 7999, "communication"], [7000, 7099, "consumerDiscretionary"], [7000, 7999, "industrials"],
   [8000, 8099, "healthcare"], [8200, 8299, "consumerDiscretionary"], [8700, 8799, "industrials"], [8000, 8999, "industrials"],

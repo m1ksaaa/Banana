@@ -1,7 +1,9 @@
-# Weboldal közzététele GitHub Pages-en + heti adatfrissítés a SEC EDGAR-ból.
-# - push a main ágra: tesztek, majd közzététel
-# - hétfőnként és kézi indításkor (Actions → Run workflow): előbb letölti az összes NASDAQ cég adatait,
-#   commitolja a data/ mappát, majd közzéteszi az oldalt.
+# Publishes the website on GitHub Pages and refreshes the data every Monday.
+# - push to main: tests, then publish (with the latest data from the `data` branch)
+# - Mondays and manual runs (Actions → Run workflow): download all US-listed companies, save the
+#   result to the `data` branch, then publish.
+# The `data` branch always holds a single commit with the latest snapshot, so the repository does not
+# grow with every weekly update.
 name: Adatfrissítés és közzététel
 
 on:
@@ -28,20 +30,31 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
 
+      - name: Adatok betöltése (data ág)
+        run: |
+          if git ls-remote --exit-code --heads origin data > /dev/null; then
+            git fetch -q --depth=1 origin data
+            rm -rf data
+            git archive FETCH_HEAD data | tar -x
+            echo "Data loaded from the data branch: $(ls data/companies | wc -l) companies"
+          else
+            echo "No data branch yet; using the data folder of main"
+          fi
+
       - name: Tesztek
         run: npm test
 
-      - name: Adatok frissítése (SEC EDGAR)
+      - name: Adatok frissítése (SEC EDGAR, Nasdaq, ECB)
         if: github.event_name != 'push'
         env:
-          # A SEC kéri, hogy a kérések azonosítsák a küldőt (név + e-mail). Állítsd be repository secretként.
+          # The SEC asks automated clients to identify themselves (name + e-mail). Set it as a repository secret.
           SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT }}
         run: |
           if [ -n "${{ github.event.inputs.tickers }}" ]; then
@@ -50,14 +63,21 @@ jobs:
             node scripts/update-data.mjs
           fi
 
-      - name: Frissített adatok mentése
+      - name: Adatok mentése (data ág, csak a legfrissebb állapot)
         if: github.event_name != 'push'
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          tmp=$(mktemp -d)
+          cp -r data "$tmp/"
+          cd "$tmp"
+          git init -q
+          git checkout -q -b data
           git config user.name "terastockx-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data
-          git diff --cached --quiet || git commit -m "Adatfrissítés: $(date -u +%Y-%m-%d)"
-          git push
+          git commit -qm "Adatfrissítés: $(date -u +%Y-%m-%d)"
+          git push -q -f "https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git" data
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

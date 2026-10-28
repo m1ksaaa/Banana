@@ -31,6 +31,18 @@ async function loadNews() {
   return newsCache;
 }
 
+let benchCache = null;
+async function loadBenchmarks() {
+  if (!benchCache) {
+    try {
+      const r = await fetch("data/benchmarks.json", { cache: "no-cache" });
+      benchCache = r.ok ? (await r.json()).sectors || {} : {};
+    } catch { benchCache = {}; }
+  }
+  return benchCache;
+}
+const analyzeWith = async (c) => analyze(c, { benchmarks: await loadBenchmarks() });
+
 const companyCache = new Map();
 async function loadCompany(ticker) {
   if (!companyCache.has(ticker)) {
@@ -43,11 +55,40 @@ async function loadCompany(ticker) {
 // ---------- Watchlist (per browser) ----------
 
 function getWatch() { try { return JSON.parse(localStorage.getItem("tsx-watch") || "[]"); } catch { return []; } }
-function toggleWatch(tk) {
+function getSnaps() { try { return JSON.parse(localStorage.getItem("tsx-watch-snap") || "{}"); } catch { return {}; } }
+function setSnaps(s) { try { localStorage.setItem("tsx-watch-snap", JSON.stringify(s)); } catch {} }
+// What the watchlist remembers about a company, to detect changes on later visits.
+const snapOf = (row) => ({ o: row?.sc?.overall ?? null, r: row?.sc?.risk ?? null, d: row?.d ?? null, le: row?.le ?? null, cf: row?.cf ?? [] });
+function toggleWatch(tk, row) {
   const w = new Set(getWatch());
-  w.has(tk) ? w.delete(tk) : w.add(tk);
+  const snaps = getSnaps();
+  if (w.has(tk)) { w.delete(tk); delete snaps[tk]; }
+  else { w.add(tk); if (row) snaps[tk] = snapOf(row); }
   try { localStorage.setItem("tsx-watch", JSON.stringify([...w])); } catch {}
+  setSnaps(snaps);
   return w.has(tk);
+}
+
+// Changes since the user last marked the watchlist as seen.
+const DISTRESS_ORDER = { low: 0, medium: 1, high: 2 };
+function watchAlerts(idx) {
+  const snaps = getSnaps();
+  const out = [];
+  for (const tk of getWatch()) {
+    const row = idx.companies.find((c) => c.t === tk);
+    const s = snaps[tk];
+    if (!row || !s) continue;
+    const cur = snapOf(row);
+    if (isNum(cur.o) && isNum(s.o) && Math.abs(cur.o - s.o) >= 5) out.push({ t: tk, tone: cur.o > s.o ? "good" : "critical", text: t("ui.alertScore", { t: tk, from: s.o, to: cur.o }) });
+    if (isNum(cur.r) && isNum(s.r) && cur.r - s.r >= 10) out.push({ t: tk, tone: "serious", text: t("ui.alertRisk", { t: tk, from: s.r, to: cur.r }) });
+    if (cur.d && s.d && DISTRESS_ORDER[cur.d] > DISTRESS_ORDER[s.d]) out.push({ t: tk, tone: "critical", text: t("ui.alertDistress", { t: tk, level: t(`distress.${cur.d}`) }) });
+    for (const id of cur.cf.filter((x) => !(s.cf || []).includes(x))) out.push({ t: tk, tone: "critical", text: t("ui.alertCritical", { t: tk, flag: t(`flags.${id}`)?.[0] ?? id }) });
+    if (cur.le && cur.le !== s.le) {
+      const [d, items] = cur.le.split("|");
+      out.push({ t: tk, tone: "serious", text: t("ui.alertEvent", { t: tk, event: items.split(",").map(eventName).join(", "), date: date(d) }) });
+    }
+  }
+  return out;
 }
 const starSvg = (on) => `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="${on ? "currentColor" : "none"}" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>`;
 
@@ -78,14 +119,15 @@ function scorePill(score, inverse = false) {
 const sectorName = (s) => (s && t(`sectors.${s}`) !== `sectors.${s}` ? t(`sectors.${s}`) : s || "");
 const metricLabel = (k) => t(`metrics.${k}`)?.[0] ?? k;
 const metricDesc = (k) => t(`metrics.${k}`)?.[1] ?? "";
-const fm = (metrics, k) => fmt(metrics[k], METRIC_FORMAT[k]);
+// Market cap is in US dollars; every other amount is in the company's reporting currency.
+const fm = (metrics, k, cur = "USD") => fmt(metrics[k], METRIC_FORMAT[k], k === "marketCap" ? "USD" : cur);
 
-function summaryText(dim, a) {
+function summaryText(dim, a, cur) {
   const tpl = t(`dims.${dim}.summary`);
   return tpl.replace(/\{(\w+)\}/g, (_, k) => {
     if (k === "windowYears") return a.metrics.windowYears;
     if (k === "distress") return t(`distress.${a.distress.level}`).toLowerCase();
-    return fm(a.metrics, k);
+    return fm(a.metrics, k, cur);
   });
 }
 
@@ -93,13 +135,15 @@ const FLAG_FORMAT = {
   lowCurrentRatio: "x", interestCoverageCritical: "x", interestCoverageWeak: "x", altmanDistress: "num", altmanGrey: "num", altmanSafe: "num",
   highLeverage: "xyears", revenueDecline: "spct", heavyDilution: "spct", buybacks: "spct", highSbc: "pct", lowEarningsQuality: "pct",
   dividendUncovered: "pct0", goodwillHeavy: "pct", deepDrawdown: "pct", netCash: "money", highMargin: "pct", highRoic: "pct",
-  strongGrowth: "spct", strongCashConversion: "pct0",
+  strongGrowth: "spct", strongCashConversion: "pct0", insiderBuying: "money", insiderSelling: "money",
 };
-function flagText(f) {
+const USD_FLAGS = new Set(["insiderBuying", "insiderSelling"]);
+function flagText(f, cur = "USD") {
   const [title, text] = t(`flags.${f.id}`);
   const p = { ...f.params };
   const isDate = ["staleData", "bankruptcyFiling", "restatement", "debtAcceleration", "delistingNotice", "auditorChange"].includes(f.id);
-  if ("value" in p) p.value = isDate ? date(p.value) : fmt(p.value, FLAG_FORMAT[f.id]);
+  if ("value" in p) p.value = isDate ? date(p.value) : fmt(p.value, FLAG_FORMAT[f.id], USD_FLAGS.has(f.id) ? "USD" : cur);
+  if ("share" in p) p.share = fmt(p.share, "pct");
   return { title, text: fill(text, p) };
 }
 
@@ -132,7 +176,8 @@ function markNav() {
 
 // ---------- Router ----------
 
-const listState = { q: "", sector: "", filter: "analyzed", sort: "overall", dir: -1, page: 0 };
+const listState = { q: "", sector: "", filter: "analyzed", sort: "overall", dir: -1, page: 0, ex: "", minScore: 0, maxRisk: 100, minCap: 0, minDy: 0, styles: [], noCrit: false };
+const LOWER_FIRST = new Set(["t", "risk", "pe"]);
 
 async function route(scroll = true) {
   const [page, arg] = location.hash.replace(/^#\/?/, "").split("/");
@@ -156,18 +201,24 @@ addEventListener("hashchange", () => route());
 
 const LIST_COLS = [
   { key: "overall", label: () => t("ui.overallScore") },
-  { key: "profitability", cls: "col-lg" },
-  { key: "balanceSheet", cls: "col-lg" },
-  { key: "growthLong", cls: "col-md" },
+  { key: "profitability", cls: "col-xl" },
+  { key: "balanceSheet", cls: "col-xl" },
+  { key: "growthLong", cls: "col-xl" },
   { key: "valuation", cls: "col-lg" },
   { key: "risk", inverse: true },
 ];
+const SCORE_STEPS = [0, 50, 60, 70, 80];
+const RISK_STEPS = [100, 50, 35, 20];
+const CAP_STEPS = [0, 3e8, 2e9, 1e10, 2e11];
+const DY_STEPS = [0, 0.01, 0.02, 0.04];
+const STYLE_KEYS = ["quality", "growth", "value", "income"];
 
 async function renderList() {
   app.innerHTML = `<div class="skeleton"></div>`;
   const idx = await loadIndex();
   const sectors = [...new Set(idx.companies.map((c) => c.s).filter(Boolean))].sort((a, b) => sectorName(a).localeCompare(sectorName(b), lang()));
   const analyzed = idx.companies.filter((c) => c.sc).length;
+  const exchanges = [...new Set(idx.companies.map((c) => c.ex).filter(Boolean))].sort();
 
   app.innerHTML = `
     <section class="glass hero">
@@ -183,6 +234,7 @@ async function renderList() {
       </div>
       <img class="hero-art" src="assets/img/hero.svg" alt="" width="560" height="360">
     </section>
+    <div id="alerts"></div>
     <div id="home-news"></div>
     <div class="controls">
       <label class="search">
@@ -197,12 +249,30 @@ async function renderList() {
         ${["analyzed", "all", "watch"].map((f) => `<option value="${f}" ${listState.filter === f ? "selected" : ""}>${esc(t({ analyzed: "ui.onlyAnalyzed", all: "ui.allCompanies", watch: "ui.watchlist" }[f]))}</option>`).join("")}
       </select>
     </div>
+    <details class="glass filters" id="filters" ${filtersActive() ? "open" : ""}>
+      <summary><span>${esc(t("ui.filters"))}</span> <span class="small muted" id="filters-count"></span></summary>
+      <div class="filter-grid">
+        <label>${esc(t("ui.exchange"))}<select class="select" data-f="ex"><option value="">${esc(t("ui.allExchanges"))}</option>${exchanges.map((x) => `<option ${listState.ex === x ? "selected" : ""}>${esc(x)}</option>`).join("")}</select></label>
+        <label>${esc(t("ui.minScore"))}<select class="select" data-f="minScore">${SCORE_STEPS.map((v) => `<option value="${v}" ${listState.minScore === v ? "selected" : ""}>${v ? `≥ ${v}` : esc(t("ui.anyValue"))}</option>`).join("")}</select></label>
+        <label>${esc(t("ui.maxRisk"))}<select class="select" data-f="maxRisk">${RISK_STEPS.map((v) => `<option value="${v}" ${listState.maxRisk === v ? "selected" : ""}>${v < 100 ? `≤ ${v}` : esc(t("ui.anyValue"))}</option>`).join("")}</select></label>
+        <label>${esc(t("ui.minCap"))}<select class="select" data-f="minCap">${CAP_STEPS.map((v) => `<option value="${v}" ${listState.minCap === v ? "selected" : ""}>${v ? `≥ ${money(v)}` : esc(t("ui.anyValue"))}</option>`).join("")}</select></label>
+        <label>${esc(t("ui.minDividend"))}<select class="select" data-f="minDy">${DY_STEPS.map((v) => `<option value="${v}" ${listState.minDy === v ? "selected" : ""}>${v ? `≥ ${fmt(v, "pct0")}` : esc(t("ui.anyValue"))}</option>`).join("")}</select></label>
+      </div>
+      <div class="filter-row">
+        <span class="small muted">${esc(t("ui.styleFilter"))}</span>
+        ${STYLE_KEYS.map((k) => `<button type="button" class="chip-toggle ${listState.styles.includes(k) ? "on" : ""}" data-style="${k}" aria-pressed="${listState.styles.includes(k)}">${esc(t(`styles.${k}`))}</button>`).join("")}
+        <label class="check"><input type="checkbox" id="noCrit" ${listState.noCrit ? "checked" : ""}> ${esc(t("ui.noCritical"))}</label>
+        <button type="button" class="btn" id="reset-filters">${esc(t("ui.reset"))}</button>
+      </div>
+    </details>
     <div class="list-meta"><span id="count"></span><span>${esc(t("ui.analyzedOf", { a: num(analyzed, 0), n: num(idx.count, 0) }))}</span></div>
     <div class="glass table-wrap"><table class="list">
       <thead><tr>
         <th data-sort="t">${esc(t("ui.company"))}</th>
         <th class="num col-md" data-sort="mc">${esc(t("ui.marketCap"))}</th>
         ${LIST_COLS.map((c) => `<th class="num ${c.cls || ""}" data-sort="${c.key}">${esc(c.label ? c.label() : t(`dims.${c.key}.name`))}</th>`).join("")}
+        <th class="num col-lg" data-sort="pe">${esc(t("ui.pe"))}</th>
+        <th class="num col-lg" data-sort="dy">${esc(t("ui.dividendYieldShort"))}</th>
         <th aria-label="${esc(t("ui.watchlist"))}"></th>
       </tr></thead>
       <tbody id="rows"></tbody>
@@ -214,12 +284,20 @@ async function renderList() {
   const draw = () => {
     const q = listState.q.trim().toLowerCase();
     const watch = new Set(getWatch());
+    const L = listState;
     let rows = idx.companies.filter((c) =>
-      (listState.filter !== "analyzed" || c.sc) && (listState.filter !== "watch" || watch.has(c.t)) &&
-      (!listState.sector || c.s === listState.sector) &&
+      (L.filter !== "analyzed" || c.sc) && (L.filter !== "watch" || watch.has(c.t)) &&
+      (!L.sector || c.s === L.sector) && (!L.ex || c.ex === L.ex) &&
+      (!L.minScore || (c.sc?.overall ?? -1) >= L.minScore) &&
+      (L.maxRisk >= 100 || (isNum(c.sc?.risk) && c.sc.risk <= L.maxRisk)) &&
+      (!L.minCap || (c.mc ?? 0) >= L.minCap) &&
+      (!L.minDy || (c.dy ?? 0) >= L.minDy) &&
+      (!L.styles.length || L.styles.every((st) => (c.st || []).includes(st))) &&
+      (!L.noCrit || !(c.cf || []).length) &&
       (!q || c.t.toLowerCase().startsWith(q) || c.n.toLowerCase().includes(q)));
+    document.getElementById("filters-count").textContent = filtersActive() ? t("ui.filtersActive", { n: filtersActive() }) : "";
     const k = listState.sort;
-    const val = (c) => (k === "mc" ? c.mc : c.sc?.[k]);
+    const val = (c) => (k === "mc" ? c.mc : k === "pe" ? c.pe : k === "dy" ? c.dy : c.sc?.[k]);
     rows.sort((a, b) => {
       if (k === "t") return listState.dir * a.t.localeCompare(b.t);
       const va = val(a), vb = val(b);
@@ -237,11 +315,13 @@ async function renderList() {
     document.getElementById("count").textContent = t("ui.results", { n: num(rows.length, 0) });
     document.getElementById("rows").innerHTML = slice.length ? slice.map((c) => `
       <tr data-t="${esc(c.t)}" tabindex="0">
-        <td><span class="tick">${esc(c.t)}</span>${c.demo ? `<span class="badge">${esc(t("ui.demoBadge"))}</span>` : ""}<br><span class="cname small">${esc(c.n)}</span></td>
+        <td><span class="tick">${esc(c.t)}</span>${c.demo ? `<span class="badge">${esc(t("ui.demoBadge"))}</span>` : ""}${c.ex && c.ex !== "NASDAQ" ? `<span class="badge ex">${esc(c.ex)}</span>` : ""}<br><span class="cname small">${esc(c.n)}</span></td>
         <td class="num col-md small">${isNum(c.mc) ? money(c.mc) : "–"}</td>
         ${LIST_COLS.map((col) => `<td class="num ${col.cls || ""}">${c.sc ? scorePill(c.sc[col.key], col.inverse) : `<span class="small muted">${esc(t("ui.noData"))}</span>`}</td>`).join("")}
+        <td class="num col-lg small">${isNum(c.pe) ? fmt(c.pe, "mult") : "–"}</td>
+        <td class="num col-lg small">${isNum(c.dy) && c.dy > 0 ? fmt(c.dy, "pct") : "–"}</td>
         <td><button class="star ${watch.has(c.t) ? "on" : ""}" data-star="${esc(c.t)}" aria-label="${esc(t(watch.has(c.t) ? "ui.removeWatch" : "ui.addWatch"))}">${starSvg(watch.has(c.t))}</button></td>
-      </tr>`).join("") : `<tr><td colspan="${LIST_COLS.length + 3}" class="empty">${esc(t("ui.noResults"))}</td></tr>`;
+      </tr>`).join("") : `<tr><td colspan="${LIST_COLS.length + 5}" class="empty">${esc(t("ui.noResults"))}</td></tr>`;
 
     document.querySelectorAll("th[data-sort]").forEach((th) => {
       const on = th.dataset.sort === k;
@@ -263,13 +343,13 @@ async function renderList() {
   document.querySelector("thead").addEventListener("click", (e) => {
     const th = e.target.closest("th[data-sort]"); if (!th) return;
     if (listState.sort === th.dataset.sort) listState.dir *= -1;
-    else { listState.sort = th.dataset.sort; listState.dir = th.dataset.sort === "t" || th.dataset.sort === "risk" ? 1 : -1; }
+    else { listState.sort = th.dataset.sort; listState.dir = LOWER_FIRST.has(th.dataset.sort) ? 1 : -1; }
     draw();
   });
   const rowsEl = document.getElementById("rows");
   rowsEl.addEventListener("click", (e) => {
     const star = e.target.closest("[data-star]");
-    if (star) { e.stopPropagation(); toggleWatch(star.dataset.star); draw(); return; }
+    if (star) { e.stopPropagation(); toggleWatch(star.dataset.star, idx.companies.find((c) => c.t === star.dataset.star)); draw(); drawAlerts(); return; }
     const tr = e.target.closest("tr[data-t]"); if (tr) location.hash = `#/c/${tr.dataset.t}`;
   });
   rowsEl.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.matches("tr[data-t]")) location.hash = `#/c/${e.target.dataset.t}`; });
@@ -277,14 +357,54 @@ async function renderList() {
     const b = e.target.closest("button[data-p]"); if (!b) return;
     listState.page += Number(b.dataset.p); draw(); window.scrollTo({ top: 0, behavior: "smooth" });
   });
+  const filters = document.getElementById("filters");
+  filters.addEventListener("change", (e) => {
+    const f = e.target.dataset.f;
+    if (f) listState[f] = f === "ex" ? e.target.value : Number(e.target.value);
+    if (e.target.id === "noCrit") listState.noCrit = e.target.checked;
+    listState.page = 0; draw();
+  });
+  filters.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-style]");
+    if (b) {
+      const k = b.dataset.style;
+      listState.styles = listState.styles.includes(k) ? listState.styles.filter((x) => x !== k) : [...listState.styles, k];
+      b.classList.toggle("on"); b.setAttribute("aria-pressed", String(b.classList.contains("on")));
+      listState.page = 0; draw();
+    }
+    if (e.target.closest("#reset-filters")) {
+      Object.assign(listState, { ex: "", minScore: 0, maxRisk: 100, minCap: 0, minDy: 0, styles: [], noCrit: false, page: 0 });
+      renderList();
+    }
+  });
+  const drawAlerts = () => {
+    const el = document.getElementById("alerts");
+    const alerts = watchAlerts(idx);
+    if (!el) return;
+    el.innerHTML = alerts.length ? `<div class="glass alerts pad">
+      <div class="section-title" style="margin:0 0 10px">${esc(t("ui.alertsTitle"))} <span class="pill tone-serious"><span class="dot"></span>${alerts.length}</span></div>
+      <ul>${alerts.map((x) => `<li><span class="pill tone-${x.tone}"><span class="dot"></span>${esc(x.t)}</span> <a href="#/c/${encodeURIComponent(x.t)}">${esc(x.text)}</a></li>`).join("")}</ul>
+      <button type="button" class="btn" id="alerts-seen">${esc(t("ui.alertsSeen"))}</button></div>` : "";
+    document.getElementById("alerts-seen")?.addEventListener("click", () => {
+      const snaps = {};
+      for (const tk of getWatch()) snaps[tk] = snapOf(idx.companies.find((c) => c.t === tk));
+      setSnaps(snaps); drawAlerts();
+    });
+  };
   draw();
+  drawAlerts();
   loadNews().then((n) => {
     const top = (n.events || []).filter(isTopEvent).slice(0, 4);
     const el = document.getElementById("home-news");
     if (!top.length || !el) return;
     el.innerHTML = `<div class="section-title" style="margin-top:4px">${esc(t("ui.latestEvents"))} <a class="small" href="#/news">${esc(t("ui.allNews"))} ›</a></div>
-      <div class="events" style="margin-bottom:20px">${top.map(eventCard).join("")}</div>`;
+      <div class="events" style="margin-bottom:20px">${top.map((e) => eventCard(e)).join("")}</div>`;
   }).catch(() => {});
+}
+
+function filtersActive() {
+  const L = listState;
+  return [L.ex, L.minScore, L.maxRisk < 100, L.minCap, L.minDy, L.styles.length, L.noCrit].filter(Boolean).length;
 }
 
 // ---------- Major events ----------
@@ -344,7 +464,7 @@ async function renderData(ticker) {
     ${c ? `<div class="company-head" style="margin-bottom:14px"><div><h2 style="font-size:24px">${esc(c.name)}</h2>
         <div class="sub"><span class="ticker-chip">${esc(c.ticker)}</span>${c.sector ? `<span>· ${esc(sectorName(c.sector))}</span>` : ""}</div></div>
         <a class="btn btn-primary" href="#/c/${encodeURIComponent(c.ticker)}">${esc(t("ui.openAnalysis"))} ›</a></div>
-        ${rawView(c, analyze(c), true)}`
+        ${rawView(c, await analyzeWith(c), true)}`
       : `<div class="styles">${chips.map((x) => `<a class="tag" href="#/data/${encodeURIComponent(x.t)}">${esc(x.t)}</a>`).join("")}</div>
          ${ticker ? `<div class="glass empty" style="margin-top:14px">${esc(t("ui.notFound", { t: ticker }))}</div>` : ""}`}`;
   const pick = document.getElementById("data-pick");
@@ -363,7 +483,7 @@ async function renderCompany(ticker) {
     app.innerHTML = `<a class="back" href="#/">‹ ${esc(t("ui.back"))}</a><div class="glass empty">${esc(t("ui.notFound", { t: ticker }))}</div>`;
     return;
   }
-  const a = analyze(c);
+  const a = await analyzeWith(c);
   document.title = `${c.ticker} · ${c.name} | TeraStockX`;
   const watched = getWatch().includes(c.ticker);
   const mk = c.market || {};
@@ -375,6 +495,7 @@ async function renderCompany(ticker) {
         <h1>${esc(c.name)}</h1>
         <div class="sub">
           <span class="ticker-chip">${esc(c.ticker)}</span><span>${esc(c.exchange || "NASDAQ")}</span>
+          ${c.country ? `<span>· ${esc(c.country)}</span>` : ""}
           ${c.sector ? `<span>· ${esc(sectorName(c.sector))}</span>` : ""}
           ${c.industry ? `<span>· ${esc(c.industry)}</span>` : ""}
           ${a.ok ? `<span>· ${esc(t("ui.lastFy", { y: a.latestYear }))}</span>` : ""}
@@ -401,7 +522,7 @@ async function renderCompany(ticker) {
     document.getElementById("tab-raw").classList.toggle("hidden", b.dataset.tab !== "raw");
   });
   document.getElementById("watch").addEventListener("click", (e) => {
-    const on = toggleWatch(c.ticker);
+    const on = toggleWatch(c.ticker, idx?.companies.find((x) => x.t === c.ticker));
     e.currentTarget.innerHTML = `${starSvg(on)}<span>${esc(t(on ? "ui.removeWatch" : "ui.addWatch"))}</span>`;
   });
   wireCharts(app);
@@ -427,6 +548,7 @@ const OUTLOOK_ICON = { up: "↗", flat: "→", down: "↘", unknown: "?" };
 const KEY_METRICS = ["peRatio", "evToEbit", "fcfYield", "dividendYield", "roic", "operatingMargin", "netDebtToEbitda", "revenueCagr", "epsCagr", "priceReturn1y", "volatility", "maxDrawdown"];
 
 function analysisView(c, a, idx) {
+  const cur = c.currency || "USD";
   const riskG = grade(a.scores.risk, true);
   const rankOverall = idx ? sectorRank(idx, c.sector, "overall", a.scores.overall) : null;
   const vg = gradeKey(a.scores.overall);
@@ -460,7 +582,7 @@ function analysisView(c, a, idx) {
     const detail = parts
       ? `<table class="parts-table">${parts.map((p) => `<tr>
           <td><span class="info" title="${esc(metricDesc(p.key))}">${esc(metricLabel(p.key))}</span></td>
-          <td>${fmt(p.value, METRIC_FORMAT[p.key])}</td>
+          <td>${fmt(p.value, METRIC_FORMAT[p.key], cur)}${isNum(p.median) ? `<br><span class="median">${esc(t("ui.sectorMedian"))}: ${fmt(p.median, METRIC_FORMAT[p.key], cur)}</span>` : ""}</td>
           <td class="pts">${isNum(p.score) ? `${p.score} ${esc(t("ui.points"))}` : esc(t("ui.notScored"))} · ${Math.round(p.weight * 100)}%</td>
         </tr>`).join("")}</table>`
       : `<p class="small muted">${esc(t("ui.riskExplain", { c: FLAG_PENALTY.critical, w: FLAG_PENALTY.warning }))}</p>
@@ -473,7 +595,7 @@ function analysisView(c, a, idx) {
         </div>
         <div class="bar tone-${g.tone}" role="img" aria-label="${esc(t(`dims.${d}.name`))}: ${isNum(s) ? s : "–"} – ${esc(g.label)}"><span style="width:${isNum(s) ? s : 0}%"></span></div>
         <div class="score-meta"><span class="pill tone-${g.tone}"><span class="dot"></span>${esc(g.label)}</span>${isNum(rank) ? `<span class="rank">${esc(t("ui.sectorRankShort", { p: Math.max(1, 100 - rank) }))}</span>` : ""}</div>
-        <p class="score-text">${esc(summaryText(d, a))}</p>
+        <p class="score-text">${esc(summaryText(d, a, cur))}</p>
         <details class="parts"><summary>${esc(t("ui.howCalculated"))}</summary>${detail}</details>
       </div>`;
   }).join("");
@@ -483,26 +605,27 @@ function analysisView(c, a, idx) {
   const icon = { critical: "!", warning: "!", positive: "✓" };
   const flags = [...a.flags].sort((x, y) => order[x.level] - order[y.level]);
   const flagsHtml = flags.length ? `<div class="flags">${flags.map((f) => {
-    const ft = flagText(f);
+    const ft = flagText(f, cur);
     return `<div class="glass flag flag-${f.level}"><div class="flag-icon" aria-hidden="true">${icon[f.level]}</div>
       <div><div class="flag-title">${esc(ft.title)}<span class="flag-tag">${esc(tag[f.level])}</span></div><div class="flag-text">${esc(ft.text)}</div></div></div>`;
   }).join("")}</div>` : `<div class="glass empty">${esc(t("ui.noFlags"))}</div>`;
 
   const keyGrid = `<div class="keygrid">${KEY_METRICS.filter((k) => a.metrics[k] !== null && a.metrics[k] !== undefined).map((k) => `
-    <div class="glass kv"><div class="k"><span class="info" title="${esc(metricDesc(k))}">${esc(metricLabel(k))}</span></div><div class="v">${fm(a.metrics, k)}</div></div>`).join("")}</div>`;
+    <div class="glass kv"><div class="k"><span class="info" title="${esc(metricDesc(k))}">${esc(metricLabel(k))}</span></div><div class="v">${fm(a.metrics, k, cur)}</div></div>`).join("")}</div>`;
 
   const s = a.series;
   const nfEmpty = t("ui.notEnough");
   const priceData = c.prices?.data || [];
   const charts = `<div class="charts">
     ${priceData.length ? lineChart(t("ui.chartPrice"), t("ui.chartPriceSub"), priceData, (v) => fmt(v, "usd"), nfEmpty) : ""}
-    ${barChart(t("ui.chartRevenue"), t("ui.chartRevenueSub"), s.map((y) => [y.year, y.revenue]), money, nfEmpty)}
-    ${barChart(t("ui.chartNetIncome"), t("ui.chartNetIncomeSub"), s.map((y) => [y.year, y.netIncome]), money, nfEmpty)}
-    ${barChart(t("ui.chartFcf"), t("ui.chartFcfSub"), s.map((y) => [y.year, y.freeCashFlow]), money, nfEmpty)}
+    ${barChart(t("ui.chartRevenue"), t("ui.chartRevenueSub"), s.map((y) => [y.year, y.revenue]), (v) => money(v, cur), nfEmpty)}
+    ${barChart(t("ui.chartNetIncome"), t("ui.chartNetIncomeSub"), s.map((y) => [y.year, y.netIncome]), (v) => money(v, cur), nfEmpty)}
+    ${barChart(t("ui.chartFcf"), t("ui.chartFcfSub"), s.map((y) => [y.year, y.freeCashFlow]), (v) => money(v, cur), nfEmpty)}
     ${barChart(t("ui.chartMargin"), t("ui.chartMarginSub"), s.map((y) => [y.year, y.operatingMargin]), (v) => fmt(v, "pct"), nfEmpty)}
   </div>`;
 
-  const basis = a.valuationBasis === "ttm" ? t("ui.ttmBasis", { d: date(c.ttm?.periodEnd) }) : t("ui.annualBasis");
+  let basis = a.valuationBasis === "ttm" ? t("ui.ttmBasis", { d: date(c.ttm?.periodEnd) }) : t("ui.annualBasis");
+  if (cur !== "USD") basis += ` · ${t("ui.fxNote", { cur, rate: isNum(c.market?.fxToUsd) ? num(c.market.fxToUsd, 4) : "–" })}`;
   return `
     ${summary}
     <h2 class="section-title">${esc(t("ui.sectionKey"))} <span class="small muted">${esc(basis)}</span></h2>
@@ -513,9 +636,34 @@ function analysisView(c, a, idx) {
     ${flagsHtml}
     <h2 class="section-title">${esc(t("ui.sectionEvents"))}</h2>
     ${(c.events || []).length ? `<div class="events">${c.events.map((e) => eventCard(e, false)).join("")}</div>` : `<div class="glass empty small">${esc(c.events ? t("ui.eventsNone") : t("ui.notEnough"))}</div>`}
+    <h2 class="section-title">${esc(t("ui.insiderTitle"))}</h2>
+    ${insiderView(c)}
     <h2 class="section-title">${esc(t("ui.sectionCharts"))}</h2>
     ${charts}
     <p class="small muted" style="margin-top:22px">${esc(t("ui.engine", { v: ENGINE_VERSION }))}</p>`;
+}
+
+// ---------- Insider transactions ----------
+
+function insiderView(c) {
+  const ins = c.insiders;
+  if (!ins) return `<div class="glass empty small">${esc(t(c.currency && c.currency !== "USD" ? "ui.insiderForeign" : "ui.notEnough"))}</div>`;
+  if (ins.none || (!ins.buy?.count && !ins.sell?.count)) return `<div class="glass empty small">${esc(t("ui.insiderNone"))}</div>`;
+  const side = (key, s, tone) => `<div class="fact"><div class="k">${esc(t(key))}</div><div class="v"><span class="pill tone-${tone}"><span class="dot"></span>${money(s.value)}</span>
+    <span class="small muted">${esc(t("ui.insiderCount", { n: s.count, p: s.insiders }))}</span></div></div>`;
+  const rows = (ins.recent || []).map((r) => `<tr>
+    <td>${esc(date(r.date))}</td><td>${esc(r.name)}${r.title ? `<br><span class="small muted">${esc(r.title)}</span>` : ""}</td>
+    <td><span class="pill tone-${r.code === "P" ? "good" : "serious"}"><span class="dot"></span>${esc(t(r.code === "P" ? "ui.insiderPurchase" : "ui.insiderSale"))}</span>${r.plan ? ` <span class="badge">${esc(t("ui.insiderPlanTag"))}</span>` : ""}</td>
+    <td class="num">${num(r.shares, 0)}</td><td class="num">${fmt(r.price, "usd")}</td><td class="num">${money(r.value)}</td></tr>`).join("");
+  return `<div class="glass pad">
+    <div class="facts" style="margin-top:0">
+      ${side("ui.insiderBuys", ins.buy, "good")}
+      ${side("ui.insiderSells", ins.sell, "serious")}
+      ${ins.plannedSellValue ? `<div class="fact"><div class="k">${esc(t("ui.insiderPlanned"))}</div><div class="v">${money(ins.plannedSellValue)}</div></div>` : ""}
+    </div>
+    <p class="small muted">${esc(t("ui.insiderPeriod", { from: date(ins.from), to: date(ins.to) }))}</p>
+    ${rows ? `<div class="table-wrap"><table class="cmp insider"><thead><tr><th>${esc(t("ui.insiderDate"))}</th><th>${esc(t("ui.insiderName"))}</th><th>${esc(t("ui.insiderType"))}</th><th>${esc(t("ui.insiderShares"))}</th><th>${esc(t("ui.price"))}</th><th>${esc(t("ui.insiderValue"))}</th></tr></thead><tbody>${rows}</tbody></table></div>` : ""}
+  </div>`;
 }
 
 // ---------- Financial statements ----------
@@ -532,30 +680,31 @@ function rawValue(y, k) {
   if (k === "freeCashFlow" && !isNum(y.freeCashFlow) && isNum(y.operatingCashFlow) && isNum(y.capex)) return y.operatingCashFlow - y.capex;
   return y[k];
 }
-function rawCell(v, k, cls = "") {
+function rawCell(v, k, cls = "", cur = "USD") {
   if (!isNum(v)) return `<td class="na ${cls}">–</td>`;
   if (k === "epsDiluted") return `<td class="${cls}">${num(v, 2)}</td>`;
   if (k === "sharesDiluted" || k === "sharesOutstanding") return `<td class="${cls}">${num(v / 1e6, 0)} M</td>`;
-  return `<td class="${cls}">${money(v)}</td>`;
+  return `<td class="${cls}">${money(v, cur)}</td>`;
 }
 
 function rawView(c, a, onDataPage = false) {
+  const cur = c.currency || "USD";
   const years = [...(c.annual || [])].sort((x, y) => x.year - y.year);
   if (!years.length) return `<div class="glass empty">${esc(t("ui.notEnough"))}</div>`;
   const ttm = c.ttm ? { ...c.ttm, ...(c.latestBalance || {}) } : null;
   const head = `<tr><th>${esc(t("ui.fiscalYear"))}</th>${years.map((y) => `<th>${y.year}${y.periodEnd ? `<br><span class="small">${esc(y.periodEnd)}</span>` : ""}</th>`).join("")}${ttm ? `<th class="ttm">${esc(t("ui.ttm"))}<br><span class="small">${esc(ttm.periodEnd)}</span></th>` : ""}</tr>`;
   const n = years.length + 1 + (ttm ? 1 : 0);
   let body = RAW_GROUPS.map(([g, keys]) => `<tr class="group"><td colspan="${n}">${esc(t(`raw.${g}`))}</td></tr>` +
-    keys.map((k) => `<tr><td>${esc(t(`raw.${k}`))}</td>${years.map((y) => rawCell(rawValue(y, k), k)).join("")}${ttm ? rawCell(rawValue(ttm, k), k, "ttm") : ""}</tr>`).join("")).join("");
+    keys.map((k) => `<tr><td>${esc(t(`raw.${k}`))}</td>${years.map((y) => rawCell(rawValue(y, k), k, "", cur)).join("")}${ttm ? rawCell(rawValue(ttm, k), k, "ttm", cur) : ""}</tr>`).join("")).join("");
   if (a.ok) {
     const byYear = new Map(a.series.map((s) => [s.year, s]));
     body += `<tr class="group"><td colspan="${n}">${esc(t("ui.computedRatios"))}</td></tr>` + SERIES_ROWS.map((k) =>
-      `<tr><td>${esc(metricLabel(k))}</td>${years.map((y) => { const v = byYear.get(y.year)?.[k]; return isNum(v) || v === Infinity ? `<td>${fmt(v, METRIC_FORMAT[k])}</td>` : `<td class="na">–</td>`; }).join("")}${ttm ? `<td class="ttm na"></td>` : ""}</tr>`).join("");
+      `<tr><td>${esc(metricLabel(k))}</td>${years.map((y) => { const v = byYear.get(y.year)?.[k]; return isNum(v) || v === Infinity ? `<td>${fmt(v, METRIC_FORMAT[k], cur)}</td>` : `<td class="na">–</td>`; }).join("")}${ttm ? `<td class="ttm na"></td>` : ""}</tr>`).join("");
   }
   const src = c.source ? `${esc(t("ui.source"))}: ${c.source.url ? `<a href="${esc(c.source.url)}" target="_blank" rel="noopener">${esc(c.source.name)}</a>` : esc(c.source.name)}${c.source.retrieved ? ` · ${esc(t("ui.retrieved", { d: date(c.source.retrieved) }))}` : ""}` : "";
   return `
     <div class="raw-actions">
-      <span class="small muted">${esc(t("ui.currencyNote"))} ${src}</span>
+      <span class="small muted">${esc(t("ui.currencyNote", { cur }))} ${src}</span>
       <span style="display:flex;gap:8px;flex-wrap:wrap">
         ${onDataPage ? "" : `<a class="btn" href="#/data/${encodeURIComponent(c.ticker)}">${esc(t("ui.navData"))}</a>`}
         <button class="btn" id="csv" type="button">${esc(t("ui.downloadCsv"))}</button>
@@ -586,7 +735,7 @@ async function renderCompare(tickers) {
   app.innerHTML = `<div class="skeleton"></div>`;
   const idx = await loadIndex();
   const comps = (await Promise.all(tickers.map(loadCompany))).filter(Boolean);
-  const as = comps.map((c) => analyze(c));
+  const as = await Promise.all(comps.map(analyzeWith));
   const go = (list) => { location.hash = `#/compare/${list.join(",")}`; };
 
   const best = (vals, lower) => {
@@ -609,7 +758,7 @@ async function renderCompare(tickers) {
     const mRows = CMP_METRICS.map((k) => {
       const vals = as.map((a) => (a.ok ? a.metrics[k] : null));
       if (vals.every((v) => v === null || v === undefined)) return "";
-      return row(`<span class="info" title="${esc(metricDesc(k))}">${esc(metricLabel(k))}</span>`, vals, vals.map((v) => fmt(v, METRIC_FORMAT[k])), LOWER_BETTER.has(k));
+      return row(`<span class="info" title="${esc(metricDesc(k))}">${esc(metricLabel(k))}</span>`, vals, vals.map((v, i) => fmt(v, METRIC_FORMAT[k], k === "marketCap" ? "USD" : comps[i].currency || "USD")), LOWER_BETTER.has(k));
     }).join("");
     const n = comps.length + 1;
     table = `<div class="glass table-wrap"><table class="cmp"><thead>${head}</thead><tbody>
@@ -670,7 +819,10 @@ function renderMethod() {
     <h2>${esc(t("method.distressTitle"))}</h2><p>${esc(t("method.distressText"))}</p>
     <h2>${esc(t("method.trendTitle"))}</h2><p>${esc(t("method.trendText"))}</p>
     <h2>${esc(t("method.stylesTitle"))}</h2><p>${esc(t("method.stylesText"))}</p>
+    <h2>${esc(t("method.relativeTitle"))}</h2><p>${esc(t("method.relativeText"))}</p>
     <h2>${esc(t("method.eventsTitle"))}</h2><p>${esc(t("method.eventsText"))}</p>
+    <h2>${esc(t("method.insiderTitle"))}</h2><p>${esc(t("method.insiderText"))}</p>
+    <h2>${esc(t("method.currencyTitle"))}</h2><p>${esc(t("method.currencyText"))}</p>
     <h2>${esc(t("method.sectorTitle"))}</h2><p>${esc(t("method.sectorText"))}</p>
     <h2>${esc(t("method.limitsTitle"))}</h2><p>${esc(t("method.limitsText"))}</p>
   </div>`;

@@ -1,5 +1,5 @@
-// Market data: current price / market cap for all Nasdaq stocks (one request to the Nasdaq
-// screener) and monthly price history per ticker (Nasdaq.com history; Yahoo Finance and Stooq as fallbacks).
+// Market data: current price / market cap for all US-listed stocks (Nasdaq screener, one request per
+// exchange), exchange rates, and monthly price history per ticker (Nasdaq.com history; Yahoo Finance and Stooq as fallbacks).
 // Everything here is optional: if a source is unavailable, valuation and market-risk metrics are skipped.
 
 const BROWSER_HEADERS = {
@@ -14,22 +14,48 @@ const num = (s) => {
   return Number.isFinite(n) ? n : null;
 };
 
-export async function nasdaqScreener() {
-  try {
-    const r = await fetch("https://api.nasdaq.com/api/screener/stocks?tableonly=true&download=true&exchange=nasdaq", { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(20000) });
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const j = await r.json();
-    const map = new Map();
-    for (const row of j?.data?.rows || []) {
-      map.set(String(row.symbol).trim().toUpperCase(), {
-        price: num(row.lastsale), marketCap: num(row.marketCap), sector: row.sector || null, industry: row.industry || null, country: row.country || null,
-      });
+// Current quotes for all stocks of the given exchanges (one request per exchange).
+export async function nasdaqScreener(exchanges = ["nasdaq", "nyse", "amex"]) {
+  const map = new Map();
+  for (const ex of exchanges) {
+    try {
+      const r = await fetch(`https://api.nasdaq.com/api/screener/stocks?tableonly=true&download=true&exchange=${ex}`, { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(30000) });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const j = await r.json();
+      for (const row of j?.data?.rows || []) {
+        // The screener writes class shares as "BRK/B"; listings use "BRK.B".
+        map.set(String(row.symbol).trim().toUpperCase().replace("/", "."), {
+          price: num(row.lastsale), marketCap: num(row.marketCap), sector: row.sector || null, industry: row.industry || null, country: row.country || null,
+        });
+      }
+    } catch (e) {
+      console.warn(`  Nasdaq screener (${ex}) unavailable: ${e.message}`);
     }
-    return map;
-  } catch (e) {
-    console.warn(`  Nasdaq screener unavailable: ${e.message}`);
-    return new Map();
   }
+  return map;
+}
+
+// Exchange rates: US dollars per one unit of each currency. ECB reference rates first,
+// open.er-api.com for currencies the ECB does not publish (e.g. TWD).
+export async function fxToUsd() {
+  const rates = { USD: 1 };
+  try {
+    const r = await fetch("https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml", { signal: AbortSignal.timeout(20000) });
+    const xml = await r.text();
+    const perEur = { EUR: 1 };
+    for (const m of xml.matchAll(/currency=['"]([A-Z]{3})['"]\s+rate=['"]([\d.]+)['"]/g)) perEur[m[1]] = Number(m[2]);
+    if (perEur.USD) for (const [c, v] of Object.entries(perEur)) rates[c] = perEur.USD / v;
+  } catch (e) {
+    console.warn(`  ECB rates unavailable: ${e.message}`);
+  }
+  try {
+    const r = await fetch("https://open.er-api.com/v6/latest/USD", { signal: AbortSignal.timeout(20000) });
+    const j = await r.json();
+    for (const [c, v] of Object.entries(j?.rates || {})) if (!rates[c] && v > 0) rates[c] = 1 / v;
+  } catch (e) {
+    console.warn(`  open.er-api rates unavailable: ${e.message}`);
+  }
+  return rates;
 }
 
 // Nasdaq.com daily history (split-adjusted closes), reduced to the last close of each month.
@@ -37,11 +63,16 @@ async function nasdaqMonthly(ticker) {
   const to = new Date();
   const from = new Date(to.getTime() - 6 * 365.25 * 86400000);
   const d = (x) => x.toISOString().slice(0, 10);
-  const sym = encodeURIComponent(ticker.replace(".", "^"));
-  const r = await fetch(`https://api.nasdaq.com/api/quote/${sym}/historical?assetclass=stocks&fromdate=${d(from)}&todate=${d(to)}&limit=9999`, { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(20000) });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  const j = await r.json();
-  const rows = j?.data?.tradesTable?.rows || [];
+  // Class shares ("BRK.B") are written differently across Nasdaq endpoints; try the common forms.
+  const variants = ticker.includes(".") ? [ticker.replace(".", "/"), ticker.replace(".", "^"), ticker] : [ticker];
+  let rows = [];
+  for (const v of variants) {
+    const r = await fetch(`https://api.nasdaq.com/api/quote/${encodeURIComponent(v)}/historical?assetclass=stocks&fromdate=${d(from)}&todate=${d(to)}&limit=9999`, { headers: BROWSER_HEADERS, signal: AbortSignal.timeout(20000) });
+    if (!r.ok) continue;
+    const j = await r.json();
+    rows = j?.data?.tradesTable?.rows || [];
+    if (rows.length) break;
+  }
   const months = new Map();
   for (const row of rows) {
     const [mm, dd, yyyy] = String(row.date).split("/");

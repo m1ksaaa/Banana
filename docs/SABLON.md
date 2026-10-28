@@ -4,48 +4,52 @@
 
 ```
 SEC EDGAR (10-K, 10-Q, 20-F)  ─┐
-Nasdaq (lista, árfolyam)       ├─▶  sablon JSON  ─▶  elemzőmotor  ─▶  weboldal (5 nyelv)
-Yahoo / Stooq (árfolyam-előzm.)┘    data/companies/   assets/js/scoring.js
+Nasdaq Trader (tőzsdelisták)   ├─▶  sablon JSON  ─▶  elemzőmotor  ─▶  weboldal (5 nyelv)
+Nasdaq, ECB (árfolyam, deviza) ┘    data/companies/   assets/js/scoring.js
 ```
 
-## 1. A vállalat adatfájlja – `data/companies/<TICKER>.json` (schemaVersion 2)
+## 1. A vállalat adatfájlja – `data/companies/<TICKER>.json` (schemaVersion 3)
 
 | Mező | Leírás |
 |---|---|
-| `ticker`, `name`, `exchange`, `cik` | Azonosítók (CIK: SEC-azonosító, 10 jegy). |
+| `ticker`, `name`, `exchange`, `cik` | Azonosítók; `exchange`: NASDAQ, NYSE, NYSE American vagy Cboe BZX (CIK: SEC-azonosító, 10 jegy). |
+| `currency`, `country` | Beszámolási pénznem (USD, EUR, JPY …) és ország. |
 | `sicCode`, `sicDescription` | SEC iparági kód és leírás. |
 | `sector` | Szektorkulcs (technology, healthcare, financials, realEstate, …) – a SIC-kódból képezve. |
 | `industry` | Iparág (Nasdaq-besorolás, ennek hiányában SIC-leírás). |
 | `profile` | Elemzési profil: `general`, `financial` (SIC 6000–6799), `realEstate` (SIC 65xx, 6798). |
 | `fiscalYearEndMonth` | Az üzleti év zárásának hónapja. |
-| `market` | `price`, `priceDate`, `marketCap`, `sharesOutstanding` (fedőlapi részvényszám), forrás. |
+| `market` | `price`, `priceDate`, `marketCap` (USD), `sharesOutstanding` (fedőlapi részvényszám), `fxToUsd` (1 egység beszámolási pénznem USD-ben), forrás. |
+| `insiders` | Bennfentes tőzsdei ügyletek az elmúlt 12 hónapban (SEC Form 4) – lásd 6. rész. |
+| `events` | Jelentős 8-K események az elmúlt 12 hónapban. |
+| `splits` | Felismert részvényfelosztások `[{ year, factor }]`. |
 | `prices` | Havi, osztalékkal/felosztással korrigált záróárak (legfeljebb 10 év): `[["ÉÉÉÉ-HH", ár], …]`. |
 | `annual[]` | Üzleti évenkénti adatok (legfeljebb 10 év) – lásd lent. |
 | `ttm` | Utolsó 12 hónap (TTM) eredmény- és cash flow-adatai. |
 | `latestBalance` | Mérleg a legutóbbi negyedév végén. |
 | `source`, `demo` | Adatforrás és letöltés ideje; `demo: true` = közelítő mintaadat. |
 
-Minden összeg **USD-ben, egész dollárban**. A hiányzó adat `null`.
+Minden összeg a **beszámolási pénznemben** (`currency`, többnyire USD), egész egységben; a piaci kapitalizáció mindig USD. A hiányzó adat `null`.
 
 ### Eredménykimutatás és cash flow (időszaki adatok)
 
 | Mező | Megnevezés | XBRL-címkék prioritási sorrendben |
 |---|---|---|
-| `revenue` | Árbevétel | Revenues, RevenueFromContractWithCustomerExcludingAssessedTax, RevenueFromContractWithCustomerIncludingAssessedTax, SalesRevenueNet, SalesRevenueGoodsNet, SalesRevenueServicesNet, RevenuesNetOfInterestExpense, InterestAndDividendIncomeOperating |
-| `costOfRevenue` | Közvetlen költségek | CostOfRevenue, CostOfGoodsAndServicesSold, CostOfGoodsSold, CostOfServices |
+| `revenue` | Árbevétel | Revenues, RevenueFromContractWithCustomerExcludingAssessedTax, RevenueFromContractWithCustomerIncludingAssessedTax, SalesRevenueNet, SalesRevenueGoodsNet, SalesRevenueServicesNet, RevenuesNetOfInterestExpense, InterestAndDividendIncomeOperating, Revenue, RevenueFromContractsWithCustomers |
+| `costOfRevenue` | Közvetlen költségek | CostOfRevenue, CostOfGoodsAndServicesSold, CostOfGoodsSold, CostOfServices, CostOfSales |
 | `grossProfit` | Bruttó eredmény | GrossProfit |
 | `researchAndDevelopment` | Kutatás-fejlesztés | ResearchAndDevelopmentExpense, ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost |
-| `operatingIncome` | Üzemi eredmény (EBIT) | OperatingIncomeLoss |
-| `interestExpense` | Kamatráfordítás | InterestExpense, InterestExpenseNonoperating, InterestExpenseDebt, InterestAndDebtExpense |
-| `pretaxIncome` | Adózás előtti eredmény | IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest, IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments, IncomeLossFromContinuingOperationsBeforeIncomeTaxesDomestic |
-| `incomeTaxExpense` | Társasági adó | IncomeTaxExpenseBenefit |
-| `netIncome` | Nettó eredmény | NetIncomeLoss, ProfitLoss, NetIncomeLossAvailableToCommonStockholdersBasic |
-| `depreciationAndAmortization` | Értékcsökkenés és amortizáció | DepreciationDepletionAndAmortization, DepreciationAmortizationAndAccretionNet, DepreciationAndAmortization, Depreciation |
-| `shareBasedCompensation` | Részvényalapú juttatás | ShareBasedCompensation, AllocatedShareBasedCompensationExpense |
-| `operatingCashFlow` | Működési cash flow | NetCashProvidedByUsedInOperatingActivities, NetCashProvidedByUsedInOperatingActivitiesContinuingOperations |
-| `capex` | Beruházások (CapEx) | PaymentsToAcquirePropertyPlantAndEquipment, PaymentsToAcquireProductiveAssets, PaymentsForCapitalImprovements |
-| `dividendsPaid` | Kifizetett osztalék | PaymentsOfDividends, PaymentsOfDividendsCommonStock |
-| `buybacks` | Részvény-visszavásárlás | PaymentsForRepurchaseOfCommonStock, PaymentsForRepurchaseOfEquity |
+| `operatingIncome` | Üzemi eredmény (EBIT) | OperatingIncomeLoss, ProfitLossFromOperatingActivities |
+| `interestExpense` | Kamatráfordítás | InterestExpense, InterestExpenseNonoperating, InterestExpenseDebt, InterestAndDebtExpense, FinanceCosts, InterestExpenseOnBorrowings |
+| `pretaxIncome` | Adózás előtti eredmény | IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest, IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments, IncomeLossFromContinuingOperationsBeforeIncomeTaxesDomestic, ProfitLossBeforeTax |
+| `incomeTaxExpense` | Társasági adó | IncomeTaxExpenseBenefit, IncomeTaxExpenseContinuingOperations |
+| `netIncome` | Nettó eredmény | NetIncomeLoss, ProfitLossAttributableToOwnersOfParent, ProfitLoss, NetIncomeLossAvailableToCommonStockholdersBasic |
+| `depreciationAndAmortization` | Értékcsökkenés és amortizáció | DepreciationDepletionAndAmortization, DepreciationAmortizationAndAccretionNet, DepreciationAndAmortization, Depreciation, DepreciationAndAmortisationExpense, DepreciationAmortisationAndImpairmentLossReversalOfImpairmentLossRecognisedInProfitOrLoss |
+| `shareBasedCompensation` | Részvényalapú juttatás | ShareBasedCompensation, AllocatedShareBasedCompensationExpense, AdjustmentsForSharebasedPayments |
+| `operatingCashFlow` | Működési cash flow | NetCashProvidedByUsedInOperatingActivities, NetCashProvidedByUsedInOperatingActivitiesContinuingOperations, CashFlowsFromUsedInOperatingActivities |
+| `capex` | Beruházások (CapEx) | PaymentsToAcquirePropertyPlantAndEquipment, PaymentsToAcquireProductiveAssets, PaymentsForCapitalImprovements, PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities, PurchaseOfPropertyPlantAndEquipment |
+| `dividendsPaid` | Kifizetett osztalék | PaymentsOfDividends, PaymentsOfDividendsCommonStock, DividendsPaidClassifiedAsFinancingActivities, DividendsPaidToEquityHoldersOfParentClassifiedAsFinancingActivities |
+| `buybacks` | Részvény-visszavásárlás | PaymentsForRepurchaseOfCommonStock, PaymentsForRepurchaseOfEquity, PaymentsToAcquireOrRedeemEntitysShares |
 | `epsDiluted` | EPS, hígított ($) | EarningsPerShareDiluted, EarningsPerShareBasicAndDiluted, EarningsPerShareBasic |
 | `sharesDiluted` | Hígított részvényszám (súlyozott) | WeightedAverageNumberOfDilutedSharesOutstanding, … |
 | `grossProfit` | (ha hiányzik) | árbevétel − közvetlen költségek |
@@ -57,15 +61,15 @@ Minden összeg **USD-ben, egész dollárban**. A hiányzó adat `null`.
 |---|---|---|
 | `totalAssets` | Mérlegfőösszeg | Assets |
 | `totalLiabilities` | Összes kötelezettség | Liabilities |
-| `currentAssets` | Forgóeszközök | AssetsCurrent |
-| `currentLiabilities` | Rövid lejáratú kötelezettségek | LiabilitiesCurrent |
-| `cash` | Pénzeszközök | CashAndCashEquivalentsAtCarryingValue, CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents, CashAndDueFromBanks, Cash |
-| `inventory` | Készletek | InventoryNet, InventoryFinishedGoodsNetOfReserves |
-| `accountsReceivable` | Vevőkövetelések | AccountsReceivableNetCurrent, ReceivablesNetCurrent |
+| `currentAssets` | Forgóeszközök | AssetsCurrent, CurrentAssets |
+| `currentLiabilities` | Rövid lejáratú kötelezettségek | LiabilitiesCurrent, CurrentLiabilities |
+| `cash` | Pénzeszközök | CashAndCashEquivalentsAtCarryingValue, CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents, CashAndDueFromBanks, Cash, CashAndCashEquivalents |
+| `inventory` | Készletek | InventoryNet, InventoryFinishedGoodsNetOfReserves, Inventories |
+| `accountsReceivable` | Vevőkövetelések | AccountsReceivableNetCurrent, ReceivablesNetCurrent, TradeAndOtherCurrentReceivables |
 | `goodwill` | Goodwill | Goodwill |
-| `intangibleAssets` | Immateriális javak | IntangibleAssetsNetExcludingGoodwill, FiniteLivedIntangibleAssetsNet |
-| `equity` | Saját tőke | StockholdersEquity, StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest |
-| `retainedEarnings` | Eredménytartalék | RetainedEarningsAccumulatedDeficit |
+| `intangibleAssets` | Immateriális javak | IntangibleAssetsNetExcludingGoodwill, FiniteLivedIntangibleAssetsNet, IntangibleAssetsOtherThanGoodwill |
+| `equity` | Saját tőke | StockholdersEquity, StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest, EquityAttributableToOwnersOfParent, Equity |
+| `retainedEarnings` | Eredménytartalék | RetainedEarningsAccumulatedDeficit, RetainedEarnings |
 | `totalDebt` | Pénzügyi adósság | LongTermDebtNoncurrent + LongTermDebtCurrent + CommercialPaper + ShortTermBorrowings; bontás hiányában LongTermDebt |
 | `sharesOutstanding` | Forgalomban lévő részvények | CommonStockSharesOutstanding |
 
@@ -281,6 +285,14 @@ Mennyire drága a részvény a fundamentumokhoz képest?
 - Osztalék nélkül a kifizetési arány nem pontozott; az FCF-et meghaladó osztalék 0 pont.
 - Veszteség esetén a P/E és a PEG 0 pont.
 
+## 2/b. Szektorhoz viszonyított pontozás
+
+Az árrések, a megtérülés, a tőkeszerkezet, a likviditás és az értékeltségi szorzók erősen iparágfüggők. Ezeknél a pontszám 50%-ban abszolút (a fenti küszöbök), 50%-ban relatív: a vállalat helye a beágyazott szektortársak (piaci kapitalizáció ≥ 300 M $, árbevétel ≥ 50 M $, legalább 20 cég) 10. és 90. percentilise között. Minden mutató mellett látszik a szektormedián. A növekedési, kiszámíthatósági és kockázati mutatók csak abszolút küszöböt használnak.
+
+Érintett mutatók: Bruttó árrés, Üzemi árrés, Nettó árrés, FCF-árrés, Befektetett tőke megtérülése (ROIC), Sajáttőke-arányos megtérülés (ROE), Eszközarányos megtérülés (ROA), Részvényalapú juttatás / árbevétel, Likviditási ráta, Gyorsráta, Pénzeszköz-ráta, Adósság / saját tőke, Nettó adósság / EBITDA, Sajáttőke-arány, Kamatfedezet, Árfolyam / nyereség (P/E), EV / EBIT, EV / EBITDA, Árfolyam / árbevétel (P/S), Árfolyam / könyv szerinti érték (P/B), Árfolyam / FCF, FCF-hozam.
+
+Képlet: pontszám = 0,5 × abszolút pontszám + 0,5 × relatív pontszám, ahol a relatív pontszám a szektor 10. percentilisénél 0, a 90. percentilisénél 100 (ahol a kisebb érték a jobb, ott fordítva). Legalább 20 beágyazott szektortárs kell; ennél kevesebbnél csak az abszolút pontszám számít. A viszonyítási értékek: `data/benchmarks.json`.
+
 ## 3. Összesítés
 
 **TeraScore** – a kilenc fundamentális szempont súlyozott átlaga. Csak akkor számolódik (a kockázattal együtt), ha legalább 5 szempontra van adat; különben a vállalat „nincs minősítve”.
@@ -317,7 +329,7 @@ Pontok: Altman Z'' veszélyzóna +3 / szürke zóna +1; negatív saját tőke po
 
 **Szektor-összehasonlítás:** Minden pontszám a szektor összes elemzett vállalatához viszonyított rangsorban (percentilis) is megjelenik.
 
-## 5. Jelzések (32)
+## 5. Jelzések (34)
 
 | Azonosító | Jelzés | Leírás |
 |---|---|---|
@@ -345,6 +357,8 @@ Pontok: Altman Z'' veszélyzóna +3 / szürke zóna +1; negatív saját tőke po
 | `debtAcceleration` | Adósság lejáratának előrehozása | 8-K bejelentés 2.04-es pontja (pénzügyi kötelezettség esedékessé válása), benyújtva: ‹value›. |
 | `delistingNotice` | Tőzsdei kivezetési figyelmeztetés | 8-K bejelentés 3.01-es pontja (tőzsdei szabály megsértése), benyújtva: ‹value›. |
 | `auditorChange` | Könyvvizsgáló-váltás | 8-K bejelentés 4.01-es pontja, benyújtva: ‹value›. |
+| `insiderBuying` | Bennfentes vásárlás | ‹count› bennfentes összesen ‹value› értékben vásárolt részvényt a tőzsdén az elmúlt 12 hónapban. |
+| `insiderSelling` | Jelentős bennfentes eladás | A bennfentesek előre rögzített kereskedési terven kívül ‹value› értékben adtak el az elmúlt 12 hónapban (a piaci kapitalizáció ‹share›-a). |
 | `netCash` | Nettó készpénz-pozíció | A pénzeszközök a pénzügyi adósságot ‹value› összeggel haladják meg. |
 | `highMargin` | Magas üzemi árrés | Az üzemi árrés ‹value›. |
 | `highRoic` | Magas befektetett tőke megtérülés | A ROIC ‹value›, jóval a szokásos tőkeköltség felett. |
@@ -354,6 +368,18 @@ Pontok: Altman Z'' veszélyzóna +3 / szürke zóna +1; negatív saját tőke po
 | `altmanSafe` | Altman Z'' biztonságos zónában | Z''-pontszám: ‹value›. |
 | `strongCashConversion` | Erős cash-konverzió | FCF-konverzió (szabad cash flow / nettó eredmény): ‹value›. |
 
-## 6. Korlátok
+## 6. Bennfentes ügyletek
+
+A SEC negyedéves Form 4 adatbázisából, az elmúlt 12 hónapra. Csak a tőzsdei vásárlások és eladások számítanak. Ha legalább két bennfentes összesen legalább 100 000 $ értékben vásárol, az erősség; ha a 10b5-1 terven kívüli eladások meghaladják a piaci kapitalizáció 1%-át, az figyelmeztetés.
+
+Mezők (`insiders`): `buy` / `sell` (érték USD-ben, részvényszám, ügyletek és bennfentesek száma), `plannedSellValue` (10b5-1 terv szerinti eladások), `recent` (legutóbbi 12 ügylet).
+
+## 7. Tőzsdék, külföldi vállalatok, devizák
+
+Lefedett tőzsdék: Nasdaq, NYSE, NYSE American, Cboe BZX (törzsrészvények; ETF-ek, warrantok, unitok, jogok és elsőbbségi részvények nélkül).
+
+Az Egyesült Államokban jegyzett külföldi vállalatokat (20-F / 40-F, IFRS) a saját beszámolási devizájukban elemezzük; az arányszámok devizafüggetlenek. Az értékeltséghez a dolláros piaci kapitalizációt az EKB referencia-árfolyamán váltjuk át (az EKB által nem jegyzett devizáknál más forrásból). A külföldi kibocsátók nem adnak negyedéves XBRL-jelentést, ezért értékeltségük az utolsó üzleti éven alapul.
+
+## 8. Korlátok
 
 A pontszámok kizárólag a közzétett pénzügyi adatokon és a piaci árfolyamokon alapulnak. Nem veszik figyelembe a menedzsment minőségét, a versenyhelyzetet, a híreket és a vállalati előrejelzéseket. Nem befektetési tanács.
