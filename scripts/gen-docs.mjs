@@ -164,7 +164,13 @@ Lefedett tőzsdék: Nasdaq, NYSE, NYSE American, Cboe BZX (törzsrészvények; E
 
 ${hu.method.currencyText}
 
-## 8. Korlátok
+## 8. TeraScore Trend
+
+${hu.method.historyText}
+
+Mezők: \`scoreHistory.weekly\` a vállalat adatfájljában (\`{ date, overall }\`, legfeljebb 110 hét); az indexben \`ch\` / \`chy\` (változás az előző üzleti évhez képest és annak éve), \`c4\` / \`c13\` (4 és 13 hetes változás).
+
+## 9. Korlátok
 
 ${hu.method.limitsText}
 `;

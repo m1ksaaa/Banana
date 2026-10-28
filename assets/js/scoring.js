@@ -521,6 +521,53 @@ export function analyze(company, { now = new Date(), benchmarks = null } = {}) {
   };
 }
 
+// ---------- TeraScore Trend: point-in-time history ----------
+
+// Scores the company as of the end of each fiscal year, using only what was known then: the annual
+// reports up to that year, 8-K events of the preceding 12 months and the share price at that date.
+// Valuation needs a historical price; earlier years without one are scored on the other dimensions.
+// TTM figures, insider data and today's market data are not used. Current sector benchmarks are
+// applied to every year (an approximation: historical sector distributions are not stored).
+export function scoreHistory(company, { benchmarks = null, minYears = 3 } = {}) {
+  const years = [...(company.annual || [])].filter((y) => isNum(y.year)).sort((a, b) => a.year - b.year);
+  const prices = company.prices?.data || [];
+  const lastPrice = prices.length ? prices[prices.length - 1][1] : null;
+  const mcNow = company.market?.marketCap;
+  const sharesNow = years.length ? years[years.length - 1].sharesDiluted : null;
+  const out = [];
+  for (let i = minYears - 1; i < years.length; i++) {
+    const y = years[i];
+    const end = y.periodEnd || `${y.year}-12-31`;
+    const month = end.slice(0, 7);
+    const px = prices.filter((p) => p[0] <= month);
+    const priceThen = px.length && px[px.length - 1][0] >= addMonths(month, -1) ? px[px.length - 1][1] : null;
+    // Market cap then ≈ market cap now × price change × share-count change (handles ADR ratios too).
+    let mc = null;
+    if (isNum(mcNow) && isNum(priceThen) && isNum(lastPrice) && lastPrice > 0) {
+      mc = mcNow * (priceThen / lastPrice);
+      if (isNum(y.sharesDiluted) && isNum(sharesNow) && sharesNow > 0) mc *= y.sharesDiluted / sharesNow;
+    }
+    const asOf = {
+      ...company,
+      annual: years.slice(0, i + 1),
+      ttm: null,
+      latestBalance: null,
+      insiders: null,
+      prices: px.length ? { ...company.prices, data: px } : null,
+      market: { ...company.market, marketCap: mc, price: priceThen, sharesOutstanding: null },
+    };
+    const a = analyze(asOf, { now: new Date(end), benchmarks });
+    if (a.ok && isNum(a.scores.overall)) out.push({ date: end, year: y.year, overall: a.scores.overall, risk: a.scores.risk });
+  }
+  return out;
+}
+
+function addMonths(ym, n) {
+  const [y, m] = ym.split("-").map(Number);
+  const d = new Date(Date.UTC(y, m - 1 + n, 1));
+  return d.toISOString().slice(0, 7);
+}
+
 function pick(o, keys) {
   return Object.fromEntries(keys.map((k) => [k, o[k] ?? null]));
 }
@@ -591,7 +638,7 @@ function buildFlags({ L, P, m, metrics: mt, negEquity, profile, company, now }) 
   if (isNum(mt.maxDrawdown) && mt.maxDrawdown < -0.6) add("warning", "deepDrawdown", { value: mt.maxDrawdown });
 
   // Material events reported on Form 8-K within the last 12 months.
-  const recent = (company.events || []).filter((e) => (now - new Date(e.date)) / 86400000 <= 365);
+  const recent = (company.events || []).filter((e) => { const age = (now - new Date(e.date)) / 86400000; return age >= 0 && age <= 365; });
   const lastWith = (item) => recent.filter((e) => e.items.includes(item)).map((e) => e.date).sort().pop();
   for (const [item, level, id] of [["1.03", "critical", "bankruptcyFiling"], ["4.02", "critical", "restatement"], ["2.04", "warning", "debtAcceleration"], ["3.01", "warning", "delistingNotice"], ["4.01", "warning", "auditorChange"]]) {
     const d = lastWith(item);

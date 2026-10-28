@@ -351,3 +351,7 @@ table.cmp td.best { color: var(--good-ink); font-weight: 700; }
 /* ---------- Insider table ---------- */
 table.insider td, table.insider th { text-align: left; }
 table.insider td.num, table.insider th:nth-child(n+4) { text-align: right; }
+
+/* ---------- TeraScore Trend ---------- */
+.trend-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
+.trend-cols .section-title { margin-top: 8px; }

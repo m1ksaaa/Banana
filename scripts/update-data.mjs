@@ -25,7 +25,7 @@ import { nasdaqScreener, priceHistory, priceBudgetLeft, fxToUsd } from "./market
 import { majorEvents } from "./events.mjs";
 import { parseNasdaqListed, parseOtherListed } from "./listings.mjs";
 import { insiderActivity } from "./insider.mjs";
-import { analyze, computeBenchmarks, ENGINE_VERSION, DIMENSIONS } from "../assets/js/scoring.js";
+import { analyze, computeBenchmarks, scoreHistory, ENGINE_VERSION, DIMENSIONS } from "../assets/js/scoring.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DATA = join(ROOT, "data");
@@ -142,6 +142,7 @@ async function updateCompanies() {
         },
         events: majorEvents(sub),
         insiders: old?.insiders ?? null,
+        scoreHistory: old?.scoreHistory ?? undefined,
         prices: hist,
         splits: parsed.splits?.length ? parsed.splits : undefined,
         ttm: parsed.ttm,
@@ -216,9 +217,20 @@ function writeCompany(c) {
   writeFileSync(file, JSON.stringify(c) + "\n");
 }
 
-function buildIndex() {
+// Weekly TeraScore snapshots kept per company (about two years).
+const MAX_WEEKLY = 110;
+const DAY = 86400000;
+// Score change against the latest snapshot that is at least `days` old.
+function changeSince(weekly, current, days, now) {
+  const old = [...weekly].reverse().find(([d]) => (now - new Date(d)) / DAY >= days);
+  return old && Number.isFinite(current) ? current - old[1] : null;
+}
+
+function buildIndex({ snapshot = false } = {}) {
   const files = readdirSync(COMPANIES).filter((f) => f.endsWith(".json"));
   const all = files.map((f) => readJson(join(COMPANIES, f)));
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
 
   // Pass 1: absolute metrics -> sector benchmarks (percentiles). Pass 2: scores relative to the sector.
   const benchmarks = computeBenchmarks(all.map((c) => ({ sector: c.sector, a: analyze(c) })));
@@ -244,6 +256,22 @@ function buildIndex() {
       const crit = a.flags.filter((f) => f.level === "critical").map((f) => f.id);
       if (crit.length) row.cf = crit;
     }
+    // TeraScore Trend: change against the previous fiscal year (point-in-time) and against weekly snapshots.
+    const hist = a.ok ? scoreHistory(c, { benchmarks }) : [];
+    if (hist.length >= 2) {
+      row.ch = hist[hist.length - 1].overall - hist[hist.length - 2].overall;
+      row.chy = hist[hist.length - 2].year;
+    }
+    const weekly = c.scoreHistory?.weekly || [];
+    const cur = a.ok ? a.scores.overall : null;
+    if (snapshot && Number.isFinite(cur) && weekly.at(-1)?.[0] !== today) {
+      weekly.push([today, cur, a.scores.risk ?? null]);
+      c.scoreHistory = { weekly: weekly.slice(-MAX_WEEKLY) };
+      writeFileSync(join(COMPANIES, `${c.ticker}.json`), JSON.stringify(c) + "\n");
+    }
+    const c4 = changeSince(weekly, cur, 28, now), c13 = changeSince(weekly, cur, 91, now);
+    if (c4 !== null) row.c4 = c4;
+    if (c13 !== null) row.c13 = c13;
     const major = (c.events || []).filter((e) => e.severity >= 4).sort((x, y) => (x.date < y.date ? 1 : -1))[0];
     if (major) row.le = `${major.date}|${major.items.join(",")}`;
     for (const e of c.events || []) if (e.severity >= 3) news.push({ t: c.ticker, n: c.name, mc: row.mc ?? null, ...e });
@@ -262,4 +290,5 @@ function buildIndex() {
 }
 
 if (!indexOnly) await updateCompanies();
-buildIndex();
+// Weekly snapshots are recorded only by full data updates, not by index rebuilds.
+buildIndex({ snapshot: !indexOnly && !onlyTickers && limit === Infinity });

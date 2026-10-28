@@ -380,6 +380,12 @@ Lefedett tőzsdék: Nasdaq, NYSE, NYSE American, Cboe BZX (törzsrészvények; E
 
 Az Egyesült Államokban jegyzett külföldi vállalatokat (20-F / 40-F, IFRS) a saját beszámolási devizájukban elemezzük; az arányszámok devizafüggetlenek. Az értékeltséghez a dolláros piaci kapitalizációt az EKB referencia-árfolyamán váltjuk át (az EKB által nem jegyzett devizáknál más forrásból). A külföldi kibocsátók nem adnak negyedéves XBRL-jelentést, ezért értékeltségük az utolsó üzleti éven alapul.
 
-## 8. Korlátok
+## 8. TeraScore Trend
+
+A TeraScore Trend minden vállalatot minden üzleti év végére pontoz, kizárólag az akkor elérhető információkból: az addigi éves beszámolók, az előző 12 hónap 8-K eseményei és az akkori árfolyam (a piaci kapitalizációt a mai értékből, az árfolyam- és a részvényszám-változásból becsüljük). A korábbi évekhez nem használunk TTM-adatot, bennfentes adatot és mai piaci adatot, a szektormércék pedig a maiak. Emellett minden hétfői frissítés elmenti az aktuális TeraScore-t; a 4 és 13 hetes változás a legutóbbi, legalább ennyi idős pillanatképhez viszonyít.
+
+Mezők: `scoreHistory.weekly` a vállalat adatfájljában (`{ date, overall }`, legfeljebb 110 hét); az indexben `ch` / `chy` (változás az előző üzleti évhez képest és annak éve), `c4` / `c13` (4 és 13 hetes változás).
+
+## 9. Korlátok
 
 A pontszámok kizárólag a közzétett pénzügyi adatokon és a piaci árfolyamokon alapulnak. Nem veszik figyelembe a menedzsment minőségét, a versenyhelyzetet, a híreket és a vállalati előrejelzéseket. Nem befektetési tanács.

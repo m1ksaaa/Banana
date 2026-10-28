@@ -10,7 +10,7 @@ import { EVENT_SEVERITY, majorEvents } from "../scripts/events.mjs";
 import { parseNasdaqListed, parseOtherListed, cleanName } from "../scripts/listings.mjs";
 import { aggregateQuarter, finalize, isoDate, recentQuarters } from "../scripts/insider.mjs";
 import { reportingCurrency } from "../scripts/sec-parse.mjs";
-import { computeBenchmarks } from "../assets/js/scoring.js";
+import { computeBenchmarks, scoreHistory } from "../assets/js/scoring.js";
 
 const load = (p) => JSON.parse(readFileSync(new URL(p, import.meta.url), "utf8"));
 const fixture = () => parseCompanyFacts(load("./fixtures/companyfacts-mini.json"));
@@ -213,4 +213,17 @@ test("Sector benchmarks use established peers and blend absolute with relative s
   assert.equal(pr.relScore, 100);
   assert.equal(pr.score, Math.round(0.5 * 97 + 0.5 * 100));
   assert.ok(Math.abs(pr.median - 0.145) < 1e-9);
+});
+
+test("TeraScore Trend: point-in-time history uses only data known at each fiscal year end", () => {
+  const y = (year, rev, ni) => ({ year, periodEnd: `${year}-12-31`, revenue: rev, operatingIncome: ni * 1.2, netIncome: ni, operatingCashFlow: ni * 1.1, capex: ni * 0.2,
+    totalAssets: rev * 2, totalLiabilities: rev, currentAssets: rev, currentLiabilities: rev / 2, cash: rev / 4, totalDebt: rev / 5, equity: rev, retainedEarnings: rev / 2, sharesDiluted: 100, epsDiluted: ni / 100 });
+  const company = { sector: "technology", annual: [y(2020, 100, 10), y(2021, 110, 12), y(2022, 120, 13), y(2023, 90, -5), y(2024, 95, -8)],
+    events: [{ date: "2024-06-01", items: ["4.02"], severity: 5 }] };
+  const h = scoreHistory(company);
+  assert.deepEqual(h.map((x) => x.year), [2022, 2023, 2024]);
+  assert.ok(h[0].overall > h[2].overall, "losses lower the score");
+  // The 2024 restatement is unknown at the end of 2022 and 2023, known at the end of 2024.
+  const a23 = analyze({ ...company, annual: company.annual.slice(0, 4) }, { now: new Date("2023-12-31") });
+  assert.ok(!a23.flags.some((f) => f.id === "restatement"));
 });

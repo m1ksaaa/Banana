@@ -1,4 +1,4 @@
-import { analyze, gradeKey, GRADE_TONE, DIMENSIONS, METRIC_FORMAT, ENGINE_VERSION, PROFILES, OVERALL_WEIGHTS, FLAG_PENALTY } from "./scoring.js";
+import { analyze, scoreHistory, gradeKey, GRADE_TONE, DIMENSIONS, METRIC_FORMAT, ENGINE_VERSION, PROFILES, OVERALL_WEIGHTS, FLAG_PENALTY } from "./scoring.js";
 import { LANGS, lang, setLang, t, fill, fmt, money, date, num, dict } from "./i18n/index.js";
 import { barChart, lineChart, wireCharts } from "./charts.js";
 
@@ -153,6 +153,7 @@ function renderChrome() {
   const icon = (d) => `<svg class="nav-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="${d}"/></svg>`;
 const links = (short) => `
     <a href="#/" data-nav="list" title="${esc(t("ui.navCompanies"))}">${icon("M4 6h16M4 12h16M4 18h10")}<span class="nav-label">${esc(t(short ? "ui.tabCompanies" : "ui.navCompanies"))}</span></a>
+    <a href="#/trend" data-nav="trend" title="${esc(t("ui.navTrend"))}">${icon("M3 17l6-6 4 4 8-8M15 7h6v6")}<span class="nav-label">${esc(t(short ? "ui.tabTrend" : "ui.navTrend"))}</span></a>
     <a href="#/news" data-nav="news" title="${esc(t("ui.navNews"))}">${icon("M5 4h11v16H5zM16 8h3v10a2 2 0 0 1-2 2M8 8h5M8 12h5M8 16h3")}<span class="nav-label">${esc(t(short ? "ui.tabNews" : "ui.navNews"))}</span></a>
     <a href="#/data" data-nav="data" title="${esc(t("ui.navData"))}">${icon("M4 5h16v14H4zM4 10h16M10 10v9")}<span class="nav-label">${esc(t(short ? "ui.tabData" : "ui.navData"))}</span></a>
     <a href="#/compare" data-nav="compare" title="${esc(t("ui.navCompare"))}">${icon("M8 4v16M16 4v16M4 8h8M12 16h8")}<span class="nav-label">${esc(t(short ? "ui.tabCompare" : "ui.navCompare"))}</span></a>
@@ -171,7 +172,7 @@ const links = (short) => `
 function markNav() {
   const page = location.hash.replace(/^#\/?/, "").split("/")[0];
   document.querySelectorAll("[data-nav]").forEach((a) => a.classList.toggle("active",
-    (a.dataset.nav === "list" && (page === "" || page === "c")) || (a.dataset.nav === "compare" && page === "compare") || (a.dataset.nav === "news" && page === "news") || (a.dataset.nav === "data" && page === "data") || (a.dataset.nav === "method" && page === "methodology")));
+    (a.dataset.nav === "list" && (page === "" || page === "c")) || (a.dataset.nav === "compare" && page === "compare") || (a.dataset.nav === "news" && page === "news") || (a.dataset.nav === "trend" && page === "trend") || (a.dataset.nav === "data" && page === "data") || (a.dataset.nav === "method" && page === "methodology")));
 }
 
 // ---------- Router ----------
@@ -189,6 +190,7 @@ async function route(scroll = true) {
     else if (page === "compare") await renderCompare(arg ? decodeURIComponent(arg).toUpperCase().split(",").filter(Boolean).slice(0, 3) : []);
     else if (page === "methodology") renderMethod();
     else if (page === "news") await renderNews();
+    else if (page === "trend") await renderTrend();
     else if (page === "data") await renderData(arg ? decodeURIComponent(arg).toUpperCase() : null);
     else await renderList();
   } catch (e) {
@@ -407,6 +409,61 @@ function filtersActive() {
   return [L.ex, L.minScore, L.maxRisk < 100, L.minCap, L.minDy, L.styles.length, L.noCrit].filter(Boolean).length;
 }
 
+// ---------- TeraScore Trend ----------
+
+const changePill = (v) => (isNum(v) ? `<span class="pill tone-${v > 0 ? "good" : v < 0 ? "critical" : "none"}"><span class="dot"></span>${v > 0 ? "+" : ""}${v}</span>` : "–");
+const TREND_PERIODS = { ch: "ui.trendPeriodFy", c4: "ui.trendPeriod4w", c13: "ui.trendPeriod13w" };
+const trendState = { period: "ch", sector: "", minCap: 2e9 };
+
+async function renderTrend() {
+  document.title = `TeraScore Trend | TeraStockX`;
+  app.innerHTML = `<div class="skeleton"></div>`;
+  const idx = await loadIndex();
+  const sectors = [...new Set(idx.companies.map((c) => c.s).filter(Boolean))].sort((a, b) => sectorName(a).localeCompare(sectorName(b), lang()));
+  app.innerHTML = `
+    <div class="prose" style="max-width:none;margin-top:8px"><h1>TeraScore Trend</h1><p style="max-width:860px">${esc(t("ui.trendIntro"))}</p></div>
+    <div class="controls">
+      <select class="select" id="tr-period" aria-label="${esc(t("ui.trendPeriod"))}">${Object.entries(TREND_PERIODS).map(([k, l]) => `<option value="${k}" ${trendState.period === k ? "selected" : ""}>${esc(t(l))}</option>`).join("")}</select>
+      <select class="select" id="tr-sector" aria-label="${esc(t("ui.sector"))}"><option value="">${esc(t("ui.allSectors"))}</option>${sectors.map((x) => `<option value="${esc(x)}" ${trendState.sector === x ? "selected" : ""}>${esc(sectorName(x))}</option>`).join("")}</select>
+      <select class="select" id="tr-cap" aria-label="${esc(t("ui.minCap"))}">${CAP_STEPS.map((v) => `<option value="${v}" ${trendState.minCap === v ? "selected" : ""}>${v ? `${esc(t("ui.minCap"))}: ≥ ${money(v)}` : `${esc(t("ui.minCap"))}: ${esc(t("ui.anyValue"))}`}</option>`).join("")}</select>
+    </div>
+    <div id="tr-body"></div>`;
+  const draw = () => {
+    const k = trendState.period;
+    const rows = idx.companies.filter((c) => isNum(c[k]) && isNum(c.sc?.overall) && (!trendState.sector || c.s === trendState.sector) && (c.mc ?? 0) >= trendState.minCap);
+    const body = document.getElementById("tr-body");
+    if (!rows.length) { body.innerHTML = `<div class="glass empty">${esc(t(k === "ch" ? "ui.noResults" : "ui.trendWeeklyEmpty"))}</div>`; return; }
+    const list = (items) => `<div class="glass table-wrap"><table class="list"><thead><tr><th>${esc(t("ui.company"))}</th><th class="num">${esc(t("ui.overallScore"))}</th><th class="num">${esc(t("ui.trendChange"))}</th></tr></thead><tbody>
+      ${items.map((c) => `<tr data-t="${esc(c.t)}" tabindex="0"><td><span class="tick">${esc(c.t)}</span><br><span class="cname small">${esc(c.n)}</span></td>
+        <td class="num">${scorePill(c.sc.overall)}<br><span class="small muted">${esc(t("ui.trendFrom", { v: c.sc.overall - c[k] }))}</span></td><td class="num">${changePill(c[k])}</td></tr>`).join("")}</tbody></table></div>`;
+    const up = [...rows].sort((a, b) => b[k] - a[k]).filter((c) => c[k] > 0).slice(0, 25);
+    const down = [...rows].sort((a, b) => a[k] - b[k]).filter((c) => c[k] < 0).slice(0, 25);
+    body.innerHTML = `<div class="trend-cols">
+      <section><h2 class="section-title">↗ ${esc(t("ui.trendUp"))}</h2>${up.length ? list(up) : `<div class="glass empty">–</div>`}</section>
+      <section><h2 class="section-title">↘ ${esc(t("ui.trendDown"))}</h2>${down.length ? list(down) : `<div class="glass empty">–</div>`}</section>
+    </div>
+    <p class="small muted" style="margin-top:16px">${esc(t("ui.trendNote"))}</p>`;
+  };
+  document.getElementById("tr-period").addEventListener("change", (e) => { trendState.period = e.target.value; draw(); });
+  document.getElementById("tr-sector").addEventListener("change", (e) => { trendState.sector = e.target.value; draw(); });
+  document.getElementById("tr-cap").addEventListener("change", (e) => { trendState.minCap = Number(e.target.value); draw(); });
+  document.getElementById("tr-body").addEventListener("click", (e) => { const tr = e.target.closest("tr[data-t]"); if (tr) location.hash = `#/c/${tr.dataset.t}`; });
+  draw();
+}
+
+// Company page section: point-in-time score per fiscal year plus weekly snapshots.
+function trendView(c, history, row) {
+  if (!history.length && !(c.scoreHistory?.weekly || []).length) return `<div class="glass empty small">${esc(t("ui.notEnough"))}</div>`;
+  const weekly = (c.scoreHistory?.weekly || []).map(([d, v]) => [d, v]);
+  const chips = [["ui.trendPeriodFy", row?.ch], ["ui.trendPeriod4w", row?.c4], ["ui.trendPeriod13w", row?.c13]]
+    .filter(([, v]) => isNum(v)).map(([l, v]) => `<div class="fact"><div class="k">${esc(t(l))}</div><div class="v">${changePill(v)}</div></div>`).join("");
+  return `${chips ? `<div class="facts" style="margin:0 0 12px">${chips}</div>` : ""}
+    <div class="charts">
+      ${barChart(t("ui.trendAnnualChart"), t("ui.trendAnnualSub"), history.map((h) => [h.year, h.overall]), (v) => `${v}`, t("ui.notEnough"))}
+      ${weekly.length >= 3 ? barChart(t("ui.trendWeeklyChart"), t("ui.trendWeeklySub"), weekly.map(([d, v]) => [d.slice(5), v]), (v) => `${v}`, t("ui.notEnough")) : ""}
+    </div>`;
+}
+
 // ---------- Major events ----------
 
 // Event item codes contain a dot ("3.01"), so they are looked up directly rather than via a t() path.
@@ -484,6 +541,7 @@ async function renderCompany(ticker) {
     return;
   }
   const a = await analyzeWith(c);
+  const history = a.ok ? scoreHistory(c, { benchmarks: await loadBenchmarks() }) : [];
   document.title = `${c.ticker} · ${c.name} | TeraStockX`;
   const watched = getWatch().includes(c.ticker);
   const mk = c.market || {};
@@ -512,7 +570,7 @@ async function renderCompany(ticker) {
       <button class="tab" role="tab" aria-selected="false" data-tab="raw">${esc(t("ui.tabRaw"))}</button>
     </div>
     ${c.demo ? `<div class="notice"><span>ℹ️</span><span>${esc(t("ui.demoNotice"))}</span></div>` : ""}
-    <div id="tab-analysis">${a.ok ? analysisView(c, a, idx) : `<div class="glass empty">${esc(t("ui.notEnough"))}</div>`}</div>
+    <div id="tab-analysis">${a.ok ? analysisView(c, a, idx, history) : `<div class="glass empty">${esc(t("ui.notEnough"))}</div>`}</div>
     <div id="tab-raw" class="hidden">${rawView(c, a)}</div>`;
 
   app.querySelector(".tabs").addEventListener("click", (e) => {
@@ -547,7 +605,7 @@ const OUTLOOK_TONE = { up: "good", flat: "warning", down: "critical", unknown: "
 const OUTLOOK_ICON = { up: "↗", flat: "→", down: "↘", unknown: "?" };
 const KEY_METRICS = ["peRatio", "evToEbit", "fcfYield", "dividendYield", "roic", "operatingMargin", "netDebtToEbitda", "revenueCagr", "epsCagr", "priceReturn1y", "volatility", "maxDrawdown"];
 
-function analysisView(c, a, idx) {
+function analysisView(c, a, idx, history = []) {
   const cur = c.currency || "USD";
   const riskG = grade(a.scores.risk, true);
   const rankOverall = idx ? sectorRank(idx, c.sector, "overall", a.scores.overall) : null;
@@ -632,6 +690,8 @@ function analysisView(c, a, idx) {
     ${keyGrid}
     <h2 class="section-title">${esc(t("ui.sectionScores"))}</h2>
     <div class="score-grid">${cards}</div>
+    <h2 class="section-title">TeraScore Trend <a class="small" href="#/trend">${esc(t("ui.trendAll"))} ›</a></h2>
+    ${trendView(c, history, idx?.companies.find((x) => x.t === c.ticker))}
     <h2 class="section-title">${esc(t("ui.sectionFlags"))}</h2>
     ${flagsHtml}
     <h2 class="section-title">${esc(t("ui.sectionEvents"))}</h2>
@@ -819,6 +879,7 @@ function renderMethod() {
     <h2>${esc(t("method.distressTitle"))}</h2><p>${esc(t("method.distressText"))}</p>
     <h2>${esc(t("method.trendTitle"))}</h2><p>${esc(t("method.trendText"))}</p>
     <h2>${esc(t("method.stylesTitle"))}</h2><p>${esc(t("method.stylesText"))}</p>
+    <h2>TeraScore Trend</h2><p>${esc(t("method.historyText"))}</p>
     <h2>${esc(t("method.relativeTitle"))}</h2><p>${esc(t("method.relativeText"))}</p>
     <h2>${esc(t("method.eventsTitle"))}</h2><p>${esc(t("method.eventsText"))}</p>
     <h2>${esc(t("method.insiderTitle"))}</h2><p>${esc(t("method.insiderText"))}</p>

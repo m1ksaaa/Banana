@@ -51,6 +51,10 @@ jobs:
       - name: Tesztek
         run: npm test
 
+      - name: Index újraépítése (kódváltozás esetén)
+        if: github.event_name == 'push'
+        run: node scripts/update-data.mjs --index-only
+
       - name: Adatok frissítése (SEC EDGAR, Nasdaq, ECB)
         if: github.event_name != 'push'
         env:
