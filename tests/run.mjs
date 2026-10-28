@@ -116,20 +116,33 @@ test("8-K events: only significant items, last 12 months, flags raised", () => {
   assert.ok(a.flags.some((f) => f.id === "restatement" && f.level === "critical"));
 });
 
-test("Stock splits and unit errors are normalised across years", () => {
-  // Apple-like: 4:1 split between 2019 and 2020; 2017 shares reported in thousands.
+const sh = (start, end, val, filed) => ({ start, end, val, filed, form: "10-K" });
+
+test("Split dates come from re-reported periods", () => {
+  const facts = { "us-gaap": {
+    WeightedAverageNumberOfDilutedSharesOutstanding: { units: { shares: [
+      sh("2019-01-01", "2019-12-31", 177e6, "2020-02-13"), sh("2019-01-01", "2019-12-31", 887e6, "2021-02-08"),
+      sh("2020-01-01", "2020-12-31", 1083e6, "2021-02-08"), sh("2020-01-01", "2020-12-31", 3249e6, "2023-01-31"),
+    ] } },
+  } };
+  assert.deepEqual(splitEvidence(facts), [{ factor: 5, date: "2021-02-08" }, { factor: 3, date: "2023-01-31" }]);
+});
+
+test("Tesla-like history: 5:1 then 3:1 with real issuance in between", () => {
+  // Each year as last reported: 2018 in the 2020 10-K (pre 5:1), 2019 in the 2021 10-K (post 5:1),
+  // 2020–2022 in the 2023 10-K (post 3:1 as well).
   const annual = [
-    { year: 2017, netIncome: 48e9, epsDiluted: 9.2, sharesDiluted: 5217e3 },
-    { year: 2018, netIncome: 59e9, epsDiluted: 11.9, sharesDiluted: 5000e6 },
-    { year: 2019, netIncome: 55e9, epsDiluted: 11.89, sharesDiluted: 4648e6 },
-    { year: 2020, netIncome: 57e9, epsDiluted: 3.28, sharesDiluted: 17528e6 },
-    { year: 2021, netIncome: 94e9, epsDiluted: 5.61, sharesDiluted: 16865e6 },
+    { year: 2018, sharesDiluted: 171e6, epsDiluted: -5.72, netIncome: -976e6 },
+    { year: 2019, sharesDiluted: 887e6, epsDiluted: -0.98, netIncome: -862e6 },
+    { year: 2020, sharesDiluted: 3249e6, epsDiluted: 0.21, netIncome: 690e6 },
+    { year: 2021, sharesDiluted: 3386e6, epsDiluted: 1.63, netIncome: 5519e6 },
   ];
-  const splits = normalizeShares(annual, new Set(["f4"]));
-  assert.deepEqual(splits, [{ year: 2020, factor: 4 }]);
-  assert.ok(Math.abs(annual[0].sharesDiluted - 5217e6 * 4) < 1e6);
-  assert.ok(Math.abs(annual[2].epsDiluted - 11.89 / 4) < 1e-9);
-  assert.equal(annual[3].sharesDiluted, 17528e6);
+  const events = [{ factor: 5, date: "2020-10-26" }, { factor: 3, date: "2022-10-24" }];
+  const filed = ["2020-02-13", "2021-02-08", "2023-01-31", "2023-01-31"];
+  assert.deepEqual(normalizeShares(annual, events, filed), [{ year: 2019, factor: 5 }, { year: 2020, factor: 3 }]);
+  assert.equal(annual[0].sharesDiluted, 171e6 * 15);
+  assert.equal(annual[1].sharesDiluted, 887e6 * 3);
+  assert.ok(Math.abs(annual[1].epsDiluted - -0.98 / 3) < 1e-9);
 });
 
 test("Split detected from EPS when share counts are missing", () => {
@@ -138,20 +151,17 @@ test("Split detected from EPS when share counts are missing", () => {
     { year: 2020, netIncome: 40.3e9, epsDiluted: 2.93 },
     { year: 2021, netIncome: 76e9, epsDiluted: 5.61 },
   ];
-  assert.deepEqual(normalizeShares(annual, new Set(["f20"])), [{ year: 2020, factor: 20 }]);
+  const events = [{ factor: 20, date: "2022-07-18" }];
+  assert.deepEqual(normalizeShares(annual, events, ["2021-02-03", "2023-02-03", "2023-02-03"]), [{ year: 2020, factor: 20 }]);
   assert.ok(Math.abs(annual[0].epsDiluted - 49.16 / 20) < 1e-9);
 });
 
-test("Genuine dilution is not mistaken for a split", () => {
-  const annual = [{ year: 2020, sharesDiluted: 100e6 }, { year: 2021, sharesDiluted: 150e6 }, { year: 2022, sharesDiluted: 290e6 }];
-  assert.deepEqual(normalizeShares(annual, new Set()), []);
-});
-
-test("Split evidence comes from re-reported periods", () => {
-  const sh = (val, filed) => ({ start: "2019-01-01", end: "2019-12-31", val, filed, form: "10-K" });
-  const facts = { "us-gaap": {
-    WeightedAverageNumberOfDilutedSharesOutstanding: { units: { shares: [sh(4648e6, "2019-10-30"), sh(18596e6, "2021-10-29")] } },
-    EarningsPerShareDiluted: { units: { "USD/shares": [sh(11.89, "2019-10-30"), sh(2.97, "2021-10-29")] } },
-  } };
-  assert.deepEqual([...splitEvidence(facts)], ["f4"]);
+test("Unit errors fixed; genuine dilution is not mistaken for a split", () => {
+  const annual = [
+    { year: 2020, sharesDiluted: 100e3, netIncome: 1e8, epsDiluted: 1 },
+    { year: 2021, sharesDiluted: 150e6 },
+    { year: 2022, sharesDiluted: 300e6 },
+  ];
+  assert.deepEqual(normalizeShares(annual, [], ["2021-01-01", "2022-01-01", "2023-01-01"]), []);
+  assert.equal(annual[0].sharesDiluted, 100e6);
 });

@@ -90,10 +90,10 @@ const ALL_FORMS = new Set([...ANNUAL_FORMS, ...QUARTER_FORMS]);
 
 function flowSeries(facts, tags, unit) {
   const all = entries(facts, tags, unit, ALL_FORMS).filter((v) => v.start && v.end);
-  const annual = new Map();
-  for (const [, v] of dedupe(all.filter((v) => { const d = days(v.start, v.end); return d >= 340 && d <= 390; }), (v) => v.end)) annual.set(v.end, v.val);
+  const annual = new Map(), filed = new Map();
+  for (const [, v] of dedupe(all.filter((v) => { const d = days(v.start, v.end); return d >= 340 && d <= 390; }), (v) => v.end)) { annual.set(v.end, v.val); filed.set(v.end, v.filed); }
   const durations = [...dedupe(all, (v) => `${v.start}|${v.end}`).values()];
-  return { annual, durations };
+  return { annual, filed, durations };
 }
 
 function instantSeries(facts, tags, unit = "USD") {
@@ -178,7 +178,9 @@ export function parseCompanyFacts(cf, { maxYears = 10 } = {}) {
     byYear.set(y.year, finishPeriod(y)); // a fiscal-year change keeps the later period
   }
   const annual = [...byYear.values()].sort((a, b) => a.year - b.year);
-  const splits = normalizeShares(annual, splitEvidence(facts));
+  // Filing date of each year's per-share figures: tells which splits that year's numbers already include.
+  const filedDates = annual.map((y) => flows.sharesDiluted.filed.get(y.periodEnd) ?? flows.epsDiluted.filed.get(y.periodEnd) ?? null);
+  const splits = normalizeShares(annual, splitEvidence(facts), filedDates);
 
   // ---- TTM and latest balance sheet ----
   let ttm = null, latestBalance = null;
@@ -214,12 +216,13 @@ export function parseCompanyFacts(cf, { maxYears = 10 } = {}) {
   return { annual, ttm, latestBalance, sharesOutstanding, sharesOutstandingDate: sharesDate, splits };
 }
 
-// Evidence of stock splits: when a company splits, later filings re-report earlier periods with the
-// share count multiplied (and EPS divided) by an exact integer. Returns the set of such factors,
-// keyed "f<n>" for forward splits and "r<n>" for reverse splits. Genuine share issuance never
-// produces re-reported figures, so it is not mistaken for a split.
+// Stock splits, with dates. When a company splits, every later filing re-reports earlier periods with
+// the share count multiplied (and EPS divided) by an exact integer. Each such change between two
+// consecutive filings of the same period is one observation; observations of the same factor within
+// 400 days are one split, dated by the earliest filing that shows post-split figures.
+// Genuine share issuance never changes figures that were already reported, so it is never taken for a split.
 export function splitEvidence(facts) {
-  const ev = new Set();
+  const obs = [];
   const scan = (tags, unit, sharesLike) => {
     for (const tag of tags) {
       const groups = new Map();
@@ -231,30 +234,38 @@ export function splitEvidence(facts) {
       }
       for (const list of groups.values()) {
         list.sort((a, b) => (a.filed < b.filed ? -1 : 1));
-        const first = list[0].val, last = list[list.length - 1].val;
-        if (Math.sign(first) !== Math.sign(last)) continue;
-        let r = last / first;
-        if (!sharesLike) r = 1 / r;
-        const n = r >= 1 ? Math.round(r) : Math.round(1 / r);
-        const exact = (r >= 1 ? r : 1 / r) / n;
-        if (n >= 2 && Math.abs(exact - 1) < 0.03 && (n < 900 || n > 1100)) ev.add(`${r >= 1 ? "f" : "r"}${n}`);
+        for (let i = 1; i < list.length; i++) {
+          const before = list[i - 1].val, after = list[i].val;
+          if (Math.sign(before) !== Math.sign(after)) continue;
+          const r = sharesLike ? after / before : before / after;
+          const n = r >= 1 ? Math.round(r) : Math.round(1 / r);
+          const exact = (r >= 1 ? r : 1 / r) / n;
+          if (n >= 2 && Math.abs(exact - 1) < 0.03 && (n < 900 || n > 1100)) obs.push({ factor: r >= 1 ? n : 1 / n, date: list[i].filed });
+        }
       }
     }
   };
   scan(FLOW_SHARES.sharesDiluted, "shares", true);
   scan(FLOW_PER_SHARE.epsDiluted, "USD/shares", false);
-  return ev;
+  obs.sort((a, b) => (a.date < b.date ? -1 : 1));
+  const events = [];
+  for (const o of obs) {
+    if (!events.some((e) => e.factor === o.factor && Math.abs(days(e.date, o.date)) < 400)) events.push({ ...o });
+  }
+  return events;
 }
 
 // Share counts across years must be on the same basis. Two problems occur in XBRL data:
 // 1) unit errors (a filing reports shares in thousands): detected against the share count implied by
 //    net income / EPS and corrected by a factor of 1,000;
-// 2) stock splits: older years keep pre-split figures when they are no longer re-reported. A jump between
-//    consecutive years close to a split factor confirmed by splitEvidence (within 12%, which leaves room
-//    for the ordinary year-over-year change in share count) is treated as that split; all earlier share
-//    counts are multiplied and EPS divided by the factor.
-// Returns the detected splits as [{ year, factor }] (factor < 1 = reverse split).
-export function normalizeShares(annual, evidence = new Set()) {
+// 2) stock splits: each year's figures come from the latest filing that reported that year, so older
+//    years can predate a split. Between two consecutive years, the splits dated after the older year's
+//    filing and up to the newer year's filing are the ones missing from the older year. These are
+//    applied (shares multiplied, EPS divided) when the actual jump in share count is consistent with
+//    them (within −40% / +70%, which leaves room for real issuance or buybacks).
+//    Without filing dates, a jump close to a confirmed split factor (within 12%) is used instead.
+// Returns the applied splits as [{ year, factor }] (factor < 1 = reverse split).
+export function normalizeShares(annual, events = [], filed = []) {
   const implied = (y) => (y.netIncome && y.epsDiluted && Math.sign(y.netIncome) === Math.sign(y.epsDiluted) ? y.netIncome / y.epsDiluted : null);
   for (const y of annual) {
     const imp = implied(y);
@@ -271,10 +282,19 @@ export function normalizeShares(annual, evidence = new Set()) {
     const a = basis[i], b = basis[i + 1];
     if (a > 0 && b > 0) {
       const r = b / a;
-      const n = r >= 1 ? Math.round(r) : Math.round(1 / r);
-      const exact = (r >= 1 ? r : 1 / r) / n;
-      if (n >= 2 && Math.abs(exact - 1) <= 0.12 && evidence.has(`${r >= 1 ? "f" : "r"}${n}`)) {
-        const f = r >= 1 ? n : 1 / n;
+      let f = 1;
+      if (filed[i] && filed[i + 1]) {
+        if (filed[i] < filed[i + 1]) for (const e of events) if (e.date > filed[i] && e.date <= filed[i + 1]) f *= e.factor;
+        if (f !== 1 && !(r / f > 0.6 && r / f < 1.7)) f = 1;
+      } else {
+        let best = null;
+        for (const e of events) {
+          const dev = Math.abs(r / e.factor - 1);
+          if (dev <= 0.12 && (!best || dev < best.dev)) best = { f: e.factor, dev };
+        }
+        if (best) f = best.f;
+      }
+      if (f !== 1) {
         factor *= f;
         splits.push({ year: annual[i + 1].year, factor: f });
       }

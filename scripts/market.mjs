@@ -99,7 +99,7 @@ export async function priceHistory(ticker) {
     if (failures[name] >= 25) continue;
     try {
       const h = await fn(ticker);
-      if (h.data.length >= 13) { failures[name] = 0; return h; }
+      if (h.data.length >= 2) { failures[name] = 0; return h; } // recent listings have a short history
     } catch { /* try next source */ }
     failures[name]++;
   }
