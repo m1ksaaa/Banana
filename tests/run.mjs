@@ -227,3 +227,23 @@ test("TeraScore Trend: point-in-time history uses only data known at each fiscal
   const a23 = analyze({ ...company, annual: company.annual.slice(0, 4) }, { now: new Date("2023-12-31") });
   assert.ok(!a23.flags.some((f) => f.id === "restatement"));
 });
+
+test("Filings missing from companyfacts are read from the XBRL instance", async () => {
+  const { parseInstance, mergeInstance, missingFilings, instanceFile } = await import("../scripts/xbrl-instance.mjs");
+  const facts = parseInstance(readFileSync(new URL("./fixtures/xbrl/instance.xml", import.meta.url), "utf8"));
+  const rev = facts.filter((f) => f.tag === "Revenue");
+  assert.equal(rev.length, 2, "duplicates and dimensional facts are skipped");
+  assert.ok(facts.every((f) => f.ns === "ifrs-full"), "only standard taxonomies, no cover page text or custom tags");
+  assert.equal(facts.find((f) => f.tag === "DilutedEarningsLossPerShare").unit, "TWD/shares");
+  assert.deepEqual(facts.find((f) => f.tag === "Assets"), { ns: "ifrs-full", tag: "Assets", unit: "TWD", end: "2025-12-31", val: 8e12 });
+  assert.ok(!facts.some((f) => f.tag === "Equity"));
+
+  const cf = { facts: { "ifrs-full": { Revenue: { units: { TWD: [{ start: "2024-01-01", end: "2024-12-31", val: 2894307700000, accn: "A1", form: "20-F", filed: "2025-04-17" }] } } } } };
+  const sub = { filings: { recent: { accessionNumber: ["A3", "A2", "A1"], form: ["6-K", "20-F", "20-F"], filingDate: ["2026-07-16", "2026-04-16", "2025-04-17"], isXBRL: [0, 1, 1], primaryDocument: ["x.htm", "tsm-20251231.htm", "y.htm"] } } };
+  const missing = missingFilings(cf, sub);
+  assert.deepEqual(missing.map((m) => m.accn), ["A2"]);
+  mergeInstance(cf, facts, missing[0]);
+  assert.equal(cf.facts["ifrs-full"].Revenue.units.TWD.length, 3);
+  assert.deepEqual(missingFilings(cf, sub), [], "a filing is not fetched again once its facts are present");
+  assert.equal(instanceFile(["FilingSummary.xml", "tsm-20251231_cal.xml", "tsm-20251231_htm.xml", "R2.htm"], "tsm-20251231.htm"), "tsm-20251231_htm.xml");
+});

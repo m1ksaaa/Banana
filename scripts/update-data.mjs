@@ -23,6 +23,7 @@ import { parseCompanyFacts } from "./sec-parse.mjs";
 import { sectorFromSic, sectorFromNasdaq, profileFor } from "./sectors.mjs";
 import { nasdaqScreener, priceHistory, priceBudgetLeft, fxToUsd } from "./market.mjs";
 import { majorEvents } from "./events.mjs";
+import { fillMissingFilings } from "./xbrl-instance.mjs";
 import { parseNasdaqListed, parseOtherListed } from "./listings.mjs";
 import { insiderActivity } from "./insider.mjs";
 import { analyze, computeBenchmarks, scoreHistory, ENGINE_VERSION, DIMENSIONS } from "../assets/js/scoring.js";
@@ -89,7 +90,7 @@ async function updateCompanies() {
   if (onlyTickers) list = list.filter((x) => onlyTickers.has(x.ticker));
   list = list.slice(0, limit);
 
-  let ok = 0, noData = 0, failed = 0;
+  let ok = 0, noData = 0, failed = 0, gapFilled = 0;
   for (const [i, item] of list.entries()) {
     const sec = ciks.get(item.ticker.replace(".", "-")) || ciks.get(item.ticker);
     const q = screener.get(item.ticker) || {};
@@ -104,6 +105,10 @@ async function updateCompanies() {
       await sleep(110); // SEC fair-access limit: max 10 requests / second
       const sub = await get(`https://data.sec.gov/submissions/CIK${sec.cik}.json`);
       await sleep(110);
+      if (cf && sub) {
+        const added = await fillMissingFilings(cf, sub, sec.cik, async (url, type) => { const r = await get(url, type); await sleep(110); return r; });
+        if (added.length) { gapFilled++; console.log(`  ${item.ticker}: read from the filing, missing in companyfacts: ${added.join(", ")}`); }
+      }
       const parsed = cf ? parseCompanyFacts(cf) : { annual: [], currency: "USD" };
       if (!parsed.annual.length) noData++; else ok++;
 
@@ -165,7 +170,7 @@ async function updateCompanies() {
   const tickers = list.map((x) => x.ticker);
   if (!skipInsiders) await updateInsiders(tickers);
   const withPrices = skipPrices ? 0 : await updatePriceHistories(tickers);
-  console.log(`Done: ${ok} with financials, ${noData} without data, ${failed} errors, ${withPrices} price histories updated.`);
+  console.log(`Done: ${ok} with financials, ${noData} without data, ${failed} errors, ${gapFilled} filled from filings missing in companyfacts, ${withPrices} price histories updated.`);
 }
 
 // Phase 2: insider transactions for every company from the SEC Form 4 data sets.

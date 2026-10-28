@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xbrli:xbrl xmlns:xbrli="http://www.xbrl.org/2003/instance" xmlns:ifrs-full="https://xbrl.ifrs.org/taxonomy/2025-03-27/ifrs-full" xmlns:dei="http://xbrl.sec.gov/dei/2025" xmlns:iso4217="http://www.xbrl.org/2003/iso4217" xmlns:xbrldi="http://xbrl.org/2006/xbrldi" xmlns:tsm="http://www.tsmc.com/20251231">
+  <xbrli:context id="FY2025"><xbrli:entity><xbrli:identifier scheme="http://www.sec.gov/CIK">0001046179</xbrli:identifier></xbrli:entity><xbrli:period><xbrli:startDate>2025-01-01</xbrli:startDate><xbrli:endDate>2025-12-31</xbrli:endDate></xbrli:period></xbrli:context>
+  <xbrli:context id="FY2024"><xbrli:entity><xbrli:identifier scheme="http://www.sec.gov/CIK">0001046179</xbrli:identifier></xbrli:entity><xbrli:period><xbrli:startDate>2024-01-01</xbrli:startDate><xbrli:endDate>2024-12-31</xbrli:endDate></xbrli:period></xbrli:context>
+  <xbrli:context id="I2025"><xbrli:entity><xbrli:identifier scheme="http://www.sec.gov/CIK">0001046179</xbrli:identifier></xbrli:entity><xbrli:period><xbrli:instant>2025-12-31</xbrli:instant></xbrli:period></xbrli:context>
+  <xbrli:context id="FY2025_seg"><xbrli:entity><xbrli:identifier scheme="http://www.sec.gov/CIK">0001046179</xbrli:identifier><xbrli:segment><xbrldi:explicitMember dimension="ifrs-full:SegmentsAxis">tsm:WaferMember</xbrldi:explicitMember></xbrli:segment></xbrli:entity><xbrli:period><xbrli:startDate>2025-01-01</xbrli:startDate><xbrli:endDate>2025-12-31</xbrli:endDate></xbrli:period></xbrli:context>
+  <xbrli:unit id="TWD"><xbrli:measure>iso4217:TWD</xbrli:measure></xbrli:unit>
+  <xbrli:unit id="TWDPerShare"><xbrli:divide><xbrli:unitNumerator><xbrli:measure>iso4217:TWD</xbrli:measure></xbrli:unitNumerator><xbrli:unitDenominator><xbrli:measure>xbrli:shares</xbrli:measure></xbrli:unitDenominator></xbrli:divide></xbrli:unit>
+  <dei:DocumentType contextRef="FY2025">20-F</dei:DocumentType>
+  <ifrs-full:Revenue contextRef="FY2025" unitRef="TWD" decimals="-6">3809054000000</ifrs-full:Revenue>
+  <ifrs-full:Revenue contextRef="FY2025" unitRef="TWD" decimals="-6">3809054000000</ifrs-full:Revenue>
+  <ifrs-full:Revenue contextRef="FY2024" unitRef="TWD" decimals="-6">2894307700000</ifrs-full:Revenue>
+  <ifrs-full:Revenue contextRef="FY2025_seg" unitRef="TWD" decimals="-6">3000000000000</ifrs-full:Revenue>
+  <ifrs-full:ProfitLoss contextRef="FY2025" unitRef="TWD" decimals="-6">1717000000000</ifrs-full:ProfitLoss>
+  <ifrs-full:DilutedEarningsLossPerShare contextRef="FY2025" unitRef="TWDPerShare" decimals="2">66.25</ifrs-full:DilutedEarningsLossPerShare>
+  <ifrs-full:Assets contextRef="I2025" unitRef="TWD" decimals="-6">8000000000000</ifrs-full:Assets>
+  <ifrs-full:Equity contextRef="I2025" unitRef="TWD" xsi:nil="true"/>
+  <tsm:CustomThing contextRef="FY2025" unitRef="TWD">5</tsm:CustomThing>
+</xbrli:xbrl>
