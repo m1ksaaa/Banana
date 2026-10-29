@@ -1,6 +1,6 @@
-# Publishes the website on GitHub Pages and refreshes the data every Monday.
+# Publishes the website on GitHub Pages and refreshes the data every Monday and Thursday.
 # - push to main: tests, then publish (with the latest data from the `data` branch)
-# - Mondays and manual runs (Actions → Run workflow): download all US-listed companies, save the
+# - Mondays, Thursdays and manual runs (Actions → Run workflow): download all US-listed companies, save the
 #   result to the `data` branch, then publish.
 # The `data` branch always holds a single commit with the latest snapshot, so the repository does not
 # grow with every weekly update.
@@ -10,7 +10,7 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: "17 4 * * 1"
+    - cron: "17 4 * * 1,4"
   workflow_dispatch:
     inputs:
       tickers:

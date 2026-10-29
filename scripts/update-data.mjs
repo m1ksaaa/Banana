@@ -274,7 +274,9 @@ function buildIndex({ snapshot = false } = {}) {
     }
     const weekly = c.scoreHistory?.weekly || [];
     const cur = a.ok ? a.scores.overall : null;
-    if (snapshot && Number.isFinite(cur) && weekly.at(-1)?.[0] !== today) {
+    // Data is refreshed twice a week, but the trend keeps one snapshot per week (at least 6 days apart).
+    const last = weekly.at(-1)?.[0];
+    if (snapshot && Number.isFinite(cur) && (!last || (Date.parse(today) - Date.parse(last)) / 86400000 >= 6)) {
       weekly.push([today, cur, a.scores.risk ?? null]);
       c.scoreHistory = { weekly: weekly.slice(-MAX_WEEKLY) };
       writeFileSync(join(COMPANIES, `${c.ticker}.json`), JSON.stringify(c) + "\n");

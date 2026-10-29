@@ -68,7 +68,7 @@ Az árfolyam- és piaci adatok (Nasdaq, Yahoo Finance, Stooq) opcionálisak: ha 
 
 ## Online közzététel (GitHub Pages)
 
-A `.github/workflows/deploy.yml` minden `main`-re pusholáskor közzéteszi az oldalt, hétfőnként pedig frissíti az adatokat. Az adatok a `data` ágra kerülnek, amely mindig egyetlen commitot tartalmaz, így a repó nem nő hétről hétre.
+A `.github/workflows/deploy.yml` minden `main`-re pusholáskor közzéteszi az oldalt, hétfőn és csütörtökön pedig frissíti az adatokat. Az adatok a `data` ágra kerülnek, amely mindig egyetlen commitot tartalmaz, így a repó nem nő hétről hétre.
 
 1. **Settings → Pages → Source: GitHub Actions**
 2. **Settings → Secrets and variables → Actions → New repository secret:** `SEC_USER_AGENT` = `Név email@cim.hu`
