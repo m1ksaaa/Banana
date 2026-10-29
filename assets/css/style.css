@@ -310,9 +310,13 @@ table.cmp td.best { color: var(--good-ink); font-weight: 700; }
 .event-co .muted { font-size: 13px; }
 .event-items { display: flex; flex-direction: column; gap: 2px; font-weight: 600; font-size: 14px; }
 
-/* Phones: navigation moves to a bottom tab bar (outside the blurred header, so "fixed" is relative to the viewport). */
+/* Phones and tablets: navigation moves to a bottom tab bar with labels (outside the blurred header,
+   so "fixed" is relative to the viewport). On phones seven tabs do not fit: the methodology is
+   linked from the footer there. */
 .tabbar { display: none; }
-@media (max-width: 640px) {
+@media (max-width: 640px) { .tabbar a[data-nav="method"] { display: none !important; } }
+@media (min-width: 641px) and (max-width: 1060px) { .tabbar a { font-size: 12px !important; } .tabbar { padding-left: 12px !important; padding-right: 12px !important; } }
+@media (max-width: 1060px) {
   .topbar .nav { display: none; }
   .tabbar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; justify-content: space-around;
     padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); background: rgba(5, 9, 18, .86); border-top: 1px solid var(--border);

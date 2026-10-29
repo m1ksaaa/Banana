@@ -167,8 +167,7 @@ const links = (short) => `
     <a href="#/methodology" data-nav="method" title="${esc(t("ui.navMethod"))}">${icon("M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 11v5M12 8h.01")}<span class="nav-label">${esc(t(short ? "ui.tabMethod" : "ui.navMethod"))}</span></a>
 `;
   document.getElementById("nav").innerHTML = links(false);
-  // Seven tabs do not fit a phone's width: the methodology is linked from the footer there.
-  document.getElementById("tabbar").innerHTML = links(true).replace(/\s*<a href="#\/methodology"[^]*?<\/a>/, "");
+  document.getElementById("tabbar").innerHTML = links(true);
   document.getElementById("lang-wrap").innerHTML = `<select class="lang-select" id="lang" aria-label="${esc(t("ui.language"))}">
       ${Object.entries(LANGS).map(([code, d]) => `<option value="${code}" ${code === lang() ? "selected" : ""}>${d.meta.short}</option>`).join("")}
     </select>`;
@@ -240,7 +239,7 @@ async function renderList() {
         <div class="tagline">${esc(t("ui.tagline"))}</div>
         <p>${esc(t("ui.heroText"))}</p>
         <div class="hero-stats">
-          <div class="hero-stat"><div class="v">${num(analyzed, 0)}</div><div class="k">${esc(t("ui.onlyAnalyzed"))}</div></div>
+          <div class="hero-stat"><div class="v">${num(idx.companies.filter((c) => isNum(c.sc?.overall)).length, 0)}</div><div class="k">${esc(t("ui.ratedCompanies"))}</div></div>
           <div class="hero-stat"><div class="v">10</div><div class="k">${esc(t("ui.sectionScores"))}</div></div>
           <div class="hero-stat"><div class="v">${esc(date(idx.generated))}</div><div class="k">${esc(t("ui.updated", { d: "" }).replace(/[:\s]+$/, ""))}</div></div>
         </div>
