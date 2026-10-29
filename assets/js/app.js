@@ -237,7 +237,6 @@ async function renderList() {
       <img class="hero-art" src="assets/img/hero.svg" alt="" width="560" height="360">
     </section>
     <div id="alerts"></div>
-    <div id="home-news"></div>
     <div class="controls">
       <label class="search">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"/></svg>
@@ -280,6 +279,7 @@ async function renderList() {
       <tbody id="rows"></tbody>
     </table></div>
     <div class="pager" id="pager"></div>
+    <div id="home-news"></div>
     ${idx.companies.some((c) => c.demo) ? `<p class="small muted" style="margin-top:16px">${esc(t("ui.demoNote"))}</p>` : ""}
   `;
 
@@ -399,7 +399,7 @@ async function renderList() {
     const top = (n.events || []).filter(isTopEvent).slice(0, 4);
     const el = document.getElementById("home-news");
     if (!top.length || !el) return;
-    el.innerHTML = `<div class="section-title" style="margin-top:4px">${esc(t("ui.latestEvents"))} <a class="small" href="#/news">${esc(t("ui.allNews"))} ›</a></div>
+    el.innerHTML = `<div class="section-title" style="margin-top:28px">${esc(t("ui.latestEvents"))} <a class="small" href="#/news">${esc(t("ui.allNews"))} ›</a></div>
       <div class="events" style="margin-bottom:20px">${top.map((e) => eventCard(e)).join("")}</div>`;
   }).catch(() => {});
 }

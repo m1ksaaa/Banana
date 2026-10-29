@@ -355,3 +355,15 @@ table.insider td.num, table.insider th:nth-child(n+4) { text-align: right; }
 /* ---------- TeraScore Trend ---------- */
 .trend-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
 .trend-cols .section-title { margin-top: 8px; }
+
+/* Phones: the company list comes right after a compact intro */
+@media (max-width: 640px) {
+  .hero { padding: 20px; }
+  .hero .hero-art { display: none; }
+  .hero p { display: none; }
+  .hero .tagline { margin-bottom: 12px; }
+  .hero-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .hero-stat { padding: 10px; min-width: 0; }
+  .hero-stat .v { font-size: 1rem; line-height: 1.25; }
+  .hero-stat .k { font-size: .72rem; }
+}
