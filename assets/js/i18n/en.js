@@ -54,7 +54,7 @@ export default {
     allSeverities: "All event types",
     onlyCritical: "Critical and major only",
     openAnalysis: "Open analysis",
-    tabCompanies: "Companies",
+    tabCompanies: "Stocks",
     tabNews: "Events",
     tabData: "Data",
     tabCompare: "Compare",

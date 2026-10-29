@@ -314,7 +314,7 @@ table.cmp td.best { color: var(--good-ink); font-weight: 700; }
    so "fixed" is relative to the viewport). On phones seven tabs do not fit: the methodology is
    linked from the footer there. */
 .tabbar { display: none; }
-@media (max-width: 640px) { .tabbar a[data-nav="method"] { display: none !important; } }
+@media (max-width: 640px) { .tabbar { padding-left: 2px !important; padding-right: 2px !important; } .tabbar a { padding: 6px 0 !important; font-size: 9.5px !important; letter-spacing: -.01em; } }
 @media (min-width: 641px) and (max-width: 1199px) { .tabbar a { font-size: 12px !important; } .tabbar { padding-left: 12px !important; padding-right: 12px !important; } }
 @media (max-width: 1199px) {
   .topbar .nav { display: none; }
@@ -475,3 +475,15 @@ table.cmp thead th .small { display: block; white-space: normal; max-width: 150p
 .install-card-head h2 { font-size: 18px; margin: 0; }
 .install-icon { font-size: 22px; }
 .install-steps { margin: 0; padding-left: 20px; display: grid; gap: 8px; color: var(--text-2); }
+@media (max-width: 380px) { .tabbar a { font-size: 9px !important; letter-spacing: -.02em; } }
+
+/* Narrow screens: calculation details wrap instead of overflowing the card; report tables scroll inside their section */
+.parts-table td:nth-child(2) { white-space: normal; overflow-wrap: anywhere; }
+.parts-table td:first-child { overflow-wrap: anywhere; }
+@media screen { .report section, .report-summary { overflow-x: auto; } }
+@media screen and (max-width: 640px) {
+  .report { font-size: 12.5px; }
+  .report-table th, .report-table td { padding: 5px 5px; }
+  .report-summary { gap: 14px; padding: 12px; }
+}
+h1, h2, h3 { overflow-wrap: break-word; hyphens: auto; }
