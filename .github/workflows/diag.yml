@@ -1,0 +1,29 @@
+name: diag
+on:
+  push:
+    branches: [diag]
+jobs:
+  d:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - env:
+          UA: ${{ secrets.SEC_USER_AGENT }}
+        run: |
+          cat > d.mjs <<'JS'
+          import { parseCompanyFacts } from "./scripts/sec-parse.mjs";
+          const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+          for (const [t, cik] of [["AAPL","0000320193"],["MSFT","0000789019"],["NVDA","0001045810"],["WMT","0000104169"],["KO","0000021344"],["JPM","0000019617"],["TSM","0001046179"]]) {
+            const cf = await (await fetch(`https://data.sec.gov/api/xbrl/companyfacts/CIK${cik}.json`, { headers: { "User-Agent": process.env.UA } })).json(); await sleep(200);
+            const p = parseCompanyFacts(cf);
+            const f = (x) => x == null ? "-" : (x / 1e9).toFixed(2);
+            console.log(`== ${t} quarters=${p.quarterly.length}`);
+            for (const q of p.quarterly) console.log(`  ${q.periodEnd} rev=${f(q.revenue)} ni=${f(q.netIncome)} eps=${q.epsDiluted ?? "-"} sh=${f(q.sharesDiluted)} ocf=${f(q.operatingCashFlow)} capex=${f(q.capex)} div=${f(q.dividendsPaid)} assets=${f(q.totalAssets)}`);
+            const sum = p.quarterly.slice(-4).reduce((s, q) => s + (q.revenue ?? NaN), 0);
+            console.log(`  last4 revenue=${f(sum)} ttm=${f(p.ttm?.revenue)} fy=${f(p.annual.at(-1).revenue)} ${p.ttm?.periodEnd}`);
+          }
+          JS
+          node d.mjs
