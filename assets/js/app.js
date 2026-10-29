@@ -421,19 +421,19 @@ function filtersActive() {
   return [L.ex, L.minScore, L.maxRisk < 100, L.minCap, L.minDy, L.minDs, L.styles.length, L.noCrit].filter(Boolean).length;
 }
 
-// ---------- TeraScore Trend ----------
+// ---------- TeraScore Changes ----------
 
 const changePill = (v) => (isNum(v) ? `<span class="pill tone-${v > 0 ? "good" : v < 0 ? "critical" : "none"}"><span class="dot"></span>${v > 0 ? "+" : ""}${v}</span>` : "–");
 const TREND_PERIODS = { ch: "ui.trendPeriodFy", c4: "ui.trendPeriod4w", c13: "ui.trendPeriod13w" };
 const trendState = { period: "ch", sector: "", minCap: 2e9 };
 
 async function renderTrend() {
-  document.title = `TeraScore Trend | TeraStockX`;
+  document.title = `${t("ui.navTrend")} | TeraStockX`;
   app.innerHTML = `<div class="skeleton"></div>`;
   const idx = await loadIndex();
   const sectors = [...new Set(idx.companies.map((c) => c.s).filter(Boolean))].sort((a, b) => sectorName(a).localeCompare(sectorName(b), lang()));
   app.innerHTML = `
-    <div class="prose" style="max-width:none;margin-top:8px"><h1>TeraScore Trend</h1><p style="max-width:860px">${esc(t("ui.trendIntro"))}</p></div>
+    <div class="prose" style="max-width:none;margin-top:8px"><h1>${esc(t("ui.navTrend"))}</h1><p style="max-width:860px">${esc(t("ui.trendIntro"))}</p></div>
     <div class="controls">
       <select class="select" id="tr-period" aria-label="${esc(t("ui.trendPeriod"))}">${Object.entries(TREND_PERIODS).map(([k, l]) => `<option value="${k}" ${trendState.period === k ? "selected" : ""}>${esc(t(l))}</option>`).join("")}</select>
       <select class="select" id="tr-sector" aria-label="${esc(t("ui.sector"))}"><option value="">${esc(t("ui.allSectors"))}</option>${sectors.map((x) => `<option value="${esc(x)}" ${trendState.sector === x ? "selected" : ""}>${esc(sectorName(x))}</option>`).join("")}</select>
@@ -707,7 +707,7 @@ function analysisView(c, a, idx, history = []) {
     <div class="score-grid">${cards}</div>
     <h2 class="section-title">${esc(t("ui.peersTitle"))}</h2>
     ${peersView(c, idx)}
-    <h2 class="section-title">TeraScore Trend <a class="small" href="#/trend">${esc(t("ui.trendAll"))} ›</a></h2>
+    <h2 class="section-title">${esc(t("ui.navTrend"))} <a class="small" href="#/trend">${esc(t("ui.trendAll"))} ›</a></h2>
     ${trendView(c, history, idx?.companies.find((x) => x.t === c.ticker))}
     <h2 class="section-title">${esc(t("ui.sectionFlags"))}</h2>
     ${flagsHtml}
@@ -1210,7 +1210,7 @@ function renderMethod() {
     <h2>${esc(t("method.distressTitle"))}</h2><p>${esc(t("method.distressText"))}</p>
     <h2>${esc(t("method.trendTitle"))}</h2><p>${esc(t("method.trendText"))}</p>
     <h2>${esc(t("method.stylesTitle"))}</h2><p>${esc(t("method.stylesText"))}</p>
-    <h2>TeraScore Trend</h2><p>${esc(t("method.historyText"))}</p>
+    <h2>${esc(t("ui.navTrend"))}</h2><p>${esc(t("method.historyText"))}</p>
     <h2>${esc(t("method.relativeTitle"))}</h2><p>${esc(t("method.relativeText"))}</p>
     <h2>${esc(t("method.eventsTitle"))}</h2><p>${esc(t("method.eventsText"))}</p>
     <h2>${esc(t("ui.insiderTitle"))}</h2><p>${esc(t("method.insiderText"))}</p>

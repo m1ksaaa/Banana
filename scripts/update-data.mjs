@@ -266,7 +266,7 @@ function buildIndex({ snapshot = false } = {}) {
       if (dv.payer && Number.isFinite(dv.score)) row.ds = dv.score;
     }
     if (Number.isFinite(c.market?.price)) row.px = c.market.price;
-    // TeraScore Trend: change against the previous fiscal year (point-in-time) and against weekly snapshots.
+    // TeraScore Changes: change against the previous fiscal year (point-in-time) and against weekly snapshots.
     const hist = a.ok ? scoreHistory(c, { benchmarks }) : [];
     if (hist.length >= 2) {
       row.ch = hist[hist.length - 1].overall - hist[hist.length - 2].overall;

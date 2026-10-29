@@ -17,7 +17,7 @@ Az amerikai tőzsdék (Nasdaq, NYSE, NYSE American, Cboe) összes vállalatának
 | Értékeltség | P/E, EV/EBIT, FCF-hozam, P/S, PEG (TTM-adatokon) |
 | Kockázat | fundamentális + piaci (volatilitás, max. visszaesés) + jelzések |
 
-Emellett: hasonló vállalatok összevetése a cégoldalon, osztalékbiztonság, portfólió-elemzés, negyedéves adatok, nyomtatható PDF-jelentés, szektorhoz viszonyított pontozás (szektormediánnal), szűrő és rangsor, TeraScore Trend (a pontszám változása üzleti évenként és hetente), figyelőlista-riasztások, bennfentes ügyletek (SEC Form 4), külföldi cégek saját pénznemben (20-F / IFRS), csődkockázat, hosszú távú trend, befektetési profil (minőségi, növekedési, érték, osztalék, spekulatív), szektoron belüli rangsor, 34-féle figyelmeztetés és erősség, vállalat-összehasonlítás, figyelőlista, nyers pénzügyi kimutatások CSV/JSON letöltéssel. Bankokra, biztosítókra és REIT-ekre külön mérce vonatkozik.
+Emellett: hasonló vállalatok összevetése a cégoldalon, osztalékbiztonság, portfólió-elemzés, negyedéves adatok, nyomtatható PDF-jelentés, szektorhoz viszonyított pontozás (szektormediánnal), szűrő és rangsor, TeraScore-változások (a pontszám változása üzleti évenként és hetente), figyelőlista-riasztások, bennfentes ügyletek (SEC Form 4), külföldi cégek saját pénznemben (20-F / IFRS), csődkockázat, hosszú távú trend, befektetési profil (minőségi, növekedési, érték, osztalék, spekulatív), szektoron belüli rangsor, 34-féle figyelmeztetés és erősség, vállalat-összehasonlítás, figyelőlista, nyers pénzügyi kimutatások CSV/JSON letöltéssel. Bankokra, biztosítókra és REIT-ekre külön mérce vonatkozik.
 
 A teljes adatsablon és a pontozás minden küszöbértéke: **[`docs/SABLON.md`](docs/SABLON.md)** (a kódból generálva).
 

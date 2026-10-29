@@ -167,7 +167,7 @@ Lefedett tőzsdék: Nasdaq, NYSE, NYSE American, Cboe BZX (törzsrészvények; E
 
 ${hu.method.currencyText}
 
-## 8. TeraScore Trend
+## 8. TeraScore-változások
 
 ${hu.method.historyText}
 

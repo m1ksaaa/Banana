@@ -521,7 +521,7 @@ export function analyze(company, { now = new Date(), benchmarks = null } = {}) {
   };
 }
 
-// ---------- TeraScore Trend: point-in-time history ----------
+// ---------- TeraScore Changes: point-in-time history ----------
 
 // Scores the company as of the end of each fiscal year, using only what was known then: the annual
 // reports up to that year, 8-K events of the preceding 12 months and the share price at that date.

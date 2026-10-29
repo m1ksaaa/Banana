@@ -85,7 +85,7 @@ button, input, select { font: inherit; color: inherit; }
 .lang-select { appearance: none; -webkit-appearance: none; background: var(--glass) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23b4c0d8' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") no-repeat right 10px center / 10px; border: 1px solid var(--border); border-radius: 10px; padding: 7px 28px 7px 10px; font-size: 13px; font-weight: 600; cursor: pointer; margin-left: 6px; }
 .lang-select option { background: #0b1324; color: var(--text); }
 .nav-icon { display: none; }
-@media (max-width: 1060px) {
+@media (max-width: 1199px) {
   .nav a .nav-label { display: none; }
   .nav-icon { display: inline-flex; }
   .nav a { padding: 8px 10px; }
@@ -315,8 +315,8 @@ table.cmp td.best { color: var(--good-ink); font-weight: 700; }
    linked from the footer there. */
 .tabbar { display: none; }
 @media (max-width: 640px) { .tabbar a[data-nav="method"] { display: none !important; } }
-@media (min-width: 641px) and (max-width: 1060px) { .tabbar a { font-size: 12px !important; } .tabbar { padding-left: 12px !important; padding-right: 12px !important; } }
-@media (max-width: 1060px) {
+@media (min-width: 641px) and (max-width: 1199px) { .tabbar a { font-size: 12px !important; } .tabbar { padding-left: 12px !important; padding-right: 12px !important; } }
+@media (max-width: 1199px) {
   .topbar .nav { display: none; }
   .tabbar { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; justify-content: space-around;
     padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); background: rgba(5, 9, 18, .86); border-top: 1px solid var(--border);
@@ -356,7 +356,7 @@ table.cmp td.best { color: var(--good-ink); font-weight: 700; }
 table.insider td, table.insider th { text-align: left; }
 table.insider td.num, table.insider th:nth-child(n+4) { text-align: right; }
 
-/* ---------- TeraScore Trend ---------- */
+/* ---------- TeraScore Changes ---------- */
 .trend-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; }
 .trend-cols .section-title { margin-top: 8px; }
 
