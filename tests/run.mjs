@@ -272,3 +272,68 @@ test("Reporting currency follows the latest annual report (RUB → USD)", async 
   const tsm = { "ifrs-full": { Revenue: { units: { TWD: [2023, 2024].map((y) => fy(y, 2.8e12)).concat([fy(2022, 2.2e12)]), USD: [fy(2023, 9e10), fy(2024, 9e10)] } } } };
   assert.equal(reportingCurrency(tsm), "TWD");
 });
+
+test("Quarterly figures: three-month periods, YTD differences and Q4 = FY − 9M", () => {
+  const d = (start, end, val, form, filed) => ({ start, end, val, form, filed });
+  const cf = { facts: { "us-gaap": {
+    Revenues: { units: { USD: [
+      d("2024-01-01", "2024-12-31", 400, "10-K", "2025-02-10"),
+      d("2025-01-01", "2025-03-31", 100, "10-Q", "2025-05-01"),
+      d("2025-04-01", "2025-06-30", 110, "10-Q", "2025-08-01"), d("2025-01-01", "2025-06-30", 210, "10-Q", "2025-08-01"),
+      d("2025-01-01", "2025-09-30", 330, "10-Q", "2025-11-01"),
+      d("2025-01-01", "2025-12-31", 450, "10-K", "2026-02-10"),
+    ] } },
+    NetIncomeLoss: { units: { USD: [d("2025-01-01", "2025-03-31", 10, "10-Q", "2025-05-01"), d("2025-01-01", "2025-12-31", 50, "10-K", "2026-02-10"), d("2024-01-01", "2024-12-31", 40, "10-K", "2025-02-10")] } },
+    EarningsPerShareDiluted: { units: { "USD/shares": [d("2025-01-01", "2025-03-31", 0.5, "10-Q", "2025-05-01"), d("2025-01-01", "2025-12-31", 2.5, "10-K", "2026-02-10")] } },
+    Assets: { units: { USD: [{ end: "2025-06-30", val: 900, form: "10-Q", filed: "2025-08-01" }] } },
+  } } };
+  const q = parseCompanyFacts(cf).quarterly;
+  assert.deepEqual(q.map((x) => x.periodEnd), ["2025-03-31", "2025-06-30", "2025-09-30", "2025-12-31"]);
+  assert.deepEqual(q.map((x) => x.revenue), [100, 110, 120, 120]);
+  assert.equal(q[0].netIncome, 10);
+  assert.equal(q[0].epsDiluted, 0.5);
+  assert.equal(q[3].epsDiluted, null, "per-share figures are never derived by subtraction");
+  assert.equal(q[1].totalAssets, 900);
+});
+
+test("Dividend safety: covered, growing dividend scores high; a cut and uncovered payout score low", async () => {
+  const { dividendProfile, dividendLevel } = await import("../assets/js/scoring.js");
+  const yr = (year, ni, fcf, paid, shares = 100) => ({ year, periodEnd: `${year}-12-31`, revenue: 1000, operatingIncome: ni * 1.3, netIncome: ni,
+    operatingCashFlow: fcf + 20, capex: 20, dividendsPaid: paid, sharesDiluted: shares, totalDebt: 100, cash: 50, depreciationAndAmortization: 30, equity: 500, totalAssets: 1000 });
+  const good = { annual: [2019, 2020, 2021, 2022, 2023, 2024, 2025].map((y, i) => yr(y, 200 + i * 10, 220 + i * 10, 60 + i * 5)) };
+  const g = dividendProfile(good);
+  assert.ok(g.payer && g.score >= 75 && g.level === "safe", JSON.stringify(g.parts));
+  assert.equal(g.growthYears, 6);
+  assert.equal(g.cuts, 0);
+  const bad = { annual: [yr(2021, 100, 90, 100), yr(2022, 60, 40, 100), yr(2023, -20, 10, 100), yr(2024, -30, -5, 50), yr(2025, 10, 20, 50)] };
+  const b = dividendProfile(bad);
+  assert.equal(b.cuts, 1);
+  assert.ok(b.score < 35, `score ${b.score}`);
+  assert.equal(dividendProfile({ annual: [yr(2025, 100, 100, 0)] }).payer, false);
+  assert.equal(dividendLevel(60), "moderate");
+});
+
+test("Similar companies: same sector, closest size, own industry first, one share class", async () => {
+  const { findPeers } = await import("../assets/js/scoring.js");
+  const r = (t, mc, i, s = "technology", n = t) => ({ t, n, s, i, mc, sc: { overall: 60 } });
+  const rows = [r("A", 1e12, "x"), r("B", 9e11, "x"), r("C", 1.1e12, "y"), r("D", 1e9, "x"), r("E", 1e12, "x", "energy"), r("G1", 8e11, "x", "technology", "G"), r("G2", 8e11, "x", "technology", "G")];
+  const p = findPeers(rows, rows[0], 3).map((x) => x.t);
+  assert.deepEqual(p, ["B", "G1", "C"]);
+});
+
+test("Portfolio: weights, weighted TeraScore, income and concentration warnings", async () => {
+  const { portfolioSummary } = await import("../assets/js/portfolio.js");
+  const row = (t, px, overall, s, extra = {}) => ({ t, px, s, sc: { overall, risk: 30 }, ...extra });
+  const p = portfolioSummary([
+    { t: "A", shares: 10, row: row("A", 100, 80, "technology", { dy: 0.02, pe: 20 }) },
+    { t: "B", shares: 10, row: row("B", 50, 40, "technology", { pe: 10 }) },
+    { t: "C", shares: 5, row: row("C", 50, 30, "energy", { cf: ["goingConcern"], d: "high" }) },
+  ]);
+  assert.equal(p.total, 1750);
+  assert.equal(Math.round(p.positions[0].weight * 100), 57);
+  assert.equal(p.score, Math.round((80 * 1000 + 40 * 500 + 30 * 250) / 1750));
+  assert.equal(p.income, 20);
+  const ids = p.warnings.map((w) => w.id);
+  for (const id of ["position", "sector", "few", "critical", "distress", "weak"]) assert.ok(ids.includes(id), id);
+  assert.ok(Math.abs(p.pe - (1500 / 1750) / ((1000 / 1750) / 20 + (500 / 1750) / 10)) < 1e-9);
+});

@@ -6,6 +6,7 @@
 //   annual[]       – fiscal-year figures from annual reports (10-K / 20-F / 40-F)
 //   ttm            – trailing-twelve-month flows from the latest quarterly report (FY + YTD − prior YTD)
 //   latestBalance  – balance sheet at the latest reported quarter end
+//   quarterly[]    – the last 12 fiscal quarters (three-month flows, balance sheet at quarter end)
 //   sharesOutstanding – latest cover-page share count (dei:EntityCommonStockSharesOutstanding)
 
 export const FLOW = {
@@ -247,7 +248,58 @@ export function parseCompanyFacts(cf, { maxYears = 10 } = {}) {
     sharesOutstanding = sharesInst.get(sharesDate) || null;
   }
 
-  return { currency, annual, ttm, latestBalance, sharesOutstanding, sharesOutstandingDate: sharesDate, splits };
+  const quarterly = quarterlyPeriods(flows, anchor, balanceAt, splitEvidence(facts));
+
+  return { currency, annual, quarterly, ttm, latestBalance, sharesOutstanding, sharesOutstandingDate: sharesDate, splits };
+}
+
+// ---- Quarterly figures ----
+// Companies report a quarter either directly (a three-month period) or only as year-to-date figures
+// (the fourth quarter is never filed on its own: it is the annual figure minus nine months).
+// A three-month value is therefore: the reported three-month period, else YTD(E) − YTD(previous
+// quarter end) with the same start date. Per-share figures and share counts cannot be subtracted,
+// so only reported three-month values are used for them.
+const isQuarter = (v) => { const d = days(v.start, v.end); return d >= 80 && d <= 100; };
+
+function threeMonth(series, end, additive) {
+  const near = (a, b, tol = 7) => Math.abs(days(a, b)) <= tol;
+  let best = null;
+  for (const v of series.durations) if (near(v.end, end) && isQuarter(v) && (!best || (v.filed || "") > (best.filed || ""))) best = v;
+  if (best) return { val: best.val, filed: best.filed };
+  if (!additive) return null;
+  for (const ytd of series.durations) {
+    if (!near(ytd.end, end) || days(ytd.start, ytd.end) <= 100 || days(ytd.start, ytd.end) > 390) continue;
+    const prior = series.durations.find((p) => near(p.start, ytd.start) && !near(p.end, end) && days(p.end, end) >= 80 && days(p.end, end) <= 100);
+    if (prior) return { val: ytd.val - prior.val, filed: ytd.filed };
+  }
+  return null;
+}
+
+export function quarterlyPeriods(flows, anchor, balanceAt, splitEvents = [], maxQuarters = 12) {
+  const ends = [];
+  for (const e of [...new Set(anchor.durations.map((v) => v.end))].sort().reverse()) {
+    if (ends.length >= maxQuarters) break;
+    if (ends.some((x) => Math.abs(days(x, e)) <= 20)) continue;
+    if (threeMonth(anchor, e, true)) ends.push(e);
+  }
+  const PER_SHARE = new Set(Object.keys(FLOW_PER_SHARE)), SHARES = new Set(Object.keys(FLOW_SHARES));
+  return ends.reverse().map((end) => {
+    const q = { periodEnd: end };
+    let filed = null;
+    for (const k of Object.keys(flows)) {
+      const r = threeMonth(flows[k], end, !PER_SHARE.has(k) && !SHARES.has(k));
+      q[k] = r ? r.val : null;
+      if (r && (PER_SHARE.has(k) || SHARES.has(k))) filed = filed && filed > r.filed ? filed : r.filed;
+    }
+    // Splits announced after the filing that reported this quarter's per-share figures.
+    const factor = filed ? splitEvents.filter((e) => e.date > filed).reduce((f, e) => f * e.factor, 1) : 1;
+    if (factor !== 1) {
+      if (q.sharesDiluted) q.sharesDiluted *= factor;
+      if (q.epsDiluted) q.epsDiluted /= factor;
+    }
+    Object.assign(q, balanceAt(end));
+    return finishPeriod(q);
+  });
 }
 
 // Stock splits, with dates. When a company splits, every later filing re-reports earlier periods with

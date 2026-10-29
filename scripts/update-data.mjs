@@ -26,7 +26,7 @@ import { majorEvents } from "./events.mjs";
 import { fillMissingFilings } from "./xbrl-instance.mjs";
 import { parseNasdaqListed, parseOtherListed } from "./listings.mjs";
 import { insiderActivity } from "./insider.mjs";
-import { analyze, computeBenchmarks, scoreHistory, ENGINE_VERSION, DIMENSIONS } from "../assets/js/scoring.js";
+import { analyze, computeBenchmarks, scoreHistory, ENGINE_VERSION, DIMENSIONS, dividendProfile } from "../assets/js/scoring.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const DATA = join(ROOT, "data");
@@ -154,6 +154,7 @@ async function updateCompanies() {
         ttm: parsed.ttm,
         latestBalance: parsed.latestBalance,
         annual: parsed.annual,
+        quarterly: parsed.quarterly?.length ? parsed.quarterly : undefined,
       });
     } catch (e) {
       failed++;
@@ -261,7 +262,10 @@ function buildIndex({ snapshot = false } = {}) {
       if (Number.isFinite(a.metrics.dividendYield)) row.dy = +a.metrics.dividendYield.toFixed(4);
       const crit = a.flags.filter((f) => f.level === "critical").map((f) => f.id);
       if (crit.length) row.cf = crit;
+      const dv = dividendProfile(c, a);
+      if (dv.payer && Number.isFinite(dv.score)) row.ds = dv.score;
     }
+    if (Number.isFinite(c.market?.price)) row.px = c.market.price;
     // TeraScore Trend: change against the previous fiscal year (point-in-time) and against weekly snapshots.
     const hist = a.ok ? scoreHistory(c, { benchmarks }) : [];
     if (hist.length >= 2) {

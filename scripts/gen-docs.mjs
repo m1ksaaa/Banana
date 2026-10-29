@@ -2,9 +2,10 @@
 // Generates docs/SABLON.md from the engine definitions, so the documentation always
 // matches the code exactly. Run: npm run docs
 import { writeFileSync } from "node:fs";
-import { MIN_DIMENSIONS, RELATIVE_METRICS, MIN_SECTOR_PEERS, PROFILES, OVERALL_WEIGHTS, RISK_WEIGHTS, FLAG_PENALTY, METRIC_FORMAT, ENGINE_VERSION, FLAG_IDS } from "../assets/js/scoring.js";
+import { MIN_DIMENSIONS, RELATIVE_METRICS, MIN_SECTOR_PEERS, PROFILES, OVERALL_WEIGHTS, RISK_WEIGHTS, FLAG_PENALTY, METRIC_FORMAT, ENGINE_VERSION, FLAG_IDS, DIVIDEND_WEIGHTS } from "../assets/js/scoring.js";
 import { FLOW, INSTANT } from "./sec-parse.mjs";
 import hu from "../assets/js/i18n/hu.js";
+const fill = (s, v) => s.replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m));
 
 const pctf = (v, d = 0) => `${(v * 100).toFixed(d).replace(".", ",")}%`;
 function f(v, kind) {
@@ -65,6 +66,8 @@ Nasdaq, ECB (árfolyam, deviza) ┘    data/companies/   assets/js/scoring.js
 | \`annual[]\` | Üzleti évenkénti adatok (legfeljebb 10 év) – lásd lent. |
 | \`ttm\` | Utolsó 12 hónap (TTM) eredmény- és cash flow-adatai. |
 | \`latestBalance\` | Mérleg a legutóbbi negyedév végén. |
+| \`quarterly[]\` | Az utolsó 12 negyedév: háromhavi eredmény- és cash flow-adatok, mérleg a negyedév végén (\`periodEnd\`) – lásd 10. rész. |
+| \`foreignPrivateIssuer\` | \`true\`, ha a vállalat 20-F / 40-F jelentést ad be (mentes a Form 4 bejelentés alól). |
 | \`source\`, \`demo\` | Adatforrás és letöltés ideje; \`demo: true\` = közelítő mintaadat. |
 
 Minden összeg a **beszámolási pénznemben** (\`currency\`, többnyire USD), egész egységben; a piaci kapitalizáció mindig USD. A hiányzó adat \`null\`.
@@ -170,7 +173,29 @@ ${hu.method.historyText}
 
 Mezők: \`scoreHistory.weekly\` a vállalat adatfájljában (\`{ date, overall }\`, legfeljebb 110 hét); az indexben \`ch\` / \`chy\` (változás az előző üzleti évhez képest és annak éve), \`c4\` / \`c13\` (4 és 13 hetes változás).
 
-## 9. Korlátok
+## 9. Hasonló vállalatok
+
+${hu.method.peersText}
+
+## 10. Negyedéves adatok
+
+${hu.method.quarterlyText}
+
+## 11. Osztalékbiztonság
+
+${hu.method.dividendText}
+
+| Összetevő | Súly | Számítás |
+|---|---|---|
+${Object.entries(DIVIDEND_WEIGHTS).map(([k, w]) => `| ${hu.dividend.parts[k]} | ${Math.round(w * 100)}% | ${hu.dividend.partsText[k]} |`).join("\n")}
+
+## 12. Portfólió
+
+${fill(hu.method.portfolioText, { p: "25%", s: "40%", n: 5 })} A portfólió csak a böngészőben tárolódik (\`localStorage\`), a szerverre nem kerül.
+
+Index-mezők: \`px\` (árfolyam, USD), \`ds\` (osztalékbiztonság, 0–100).
+
+## 13. Korlátok
 
 ${hu.method.limitsText}
 `;

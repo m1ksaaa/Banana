@@ -1,4 +1,5 @@
-import { analyze, scoreHistory, gradeKey, GRADE_TONE, DIMENSIONS, METRIC_FORMAT, ENGINE_VERSION, PROFILES, OVERALL_WEIGHTS, FLAG_PENALTY } from "./scoring.js";
+import { analyze, scoreHistory, gradeKey, GRADE_TONE, DIMENSIONS, METRIC_FORMAT, ENGINE_VERSION, PROFILES, OVERALL_WEIGHTS, FLAG_PENALTY, dividendProfile, DIVIDEND_TONE, DIVIDEND_WEIGHTS, findPeers } from "./scoring.js";
+import { portfolioSummary, PORTFOLIO_LIMITS } from "./portfolio.js";
 import { LANGS, lang, setLang, t, fill, fmt, money, date, num, dict } from "./i18n/index.js";
 import { barChart, lineChart, wireCharts } from "./charts.js";
 
@@ -92,6 +93,11 @@ function watchAlerts(idx) {
 }
 const starSvg = (on) => `<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="${on ? "currentColor" : "none"}" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></svg>`;
 
+// ---------- Portfolio (per browser) ----------
+
+function getPortfolio() { try { return JSON.parse(localStorage.getItem("tsx-portfolio") || "[]").filter((h) => h && h.t); } catch { return []; } }
+function setPortfolio(list) { try { localStorage.setItem("tsx-portfolio", JSON.stringify(list)); } catch {} }
+
 // ---------- Sector percentile ----------
 
 function sectorRank(idx, sector, key, value) {
@@ -154,30 +160,32 @@ function renderChrome() {
 const links = (short) => `
     <a href="#/" data-nav="list" title="${esc(t("ui.navCompanies"))}">${icon("M4 6h16M4 12h16M4 18h10")}<span class="nav-label">${esc(t(short ? "ui.tabCompanies" : "ui.navCompanies"))}</span></a>
     <a href="#/trend" data-nav="trend" title="${esc(t("ui.navTrend"))}">${icon("M3 17l6-6 4 4 8-8M15 7h6v6")}<span class="nav-label">${esc(t(short ? "ui.tabTrend" : "ui.navTrend"))}</span></a>
+    <a href="#/portfolio" data-nav="portfolio" title="${esc(t("ui.navPortfolio"))}">${icon("M12 3v9h9M12 3a9 9 0 1 0 9 9")}<span class="nav-label">${esc(t(short ? "ui.tabPortfolio" : "ui.navPortfolio"))}</span></a>
     <a href="#/news" data-nav="news" title="${esc(t("ui.navNews"))}">${icon("M5 4h11v16H5zM16 8h3v10a2 2 0 0 1-2 2M8 8h5M8 12h5M8 16h3")}<span class="nav-label">${esc(t(short ? "ui.tabNews" : "ui.navNews"))}</span></a>
     <a href="#/data" data-nav="data" title="${esc(t("ui.navData"))}">${icon("M4 5h16v14H4zM4 10h16M10 10v9")}<span class="nav-label">${esc(t(short ? "ui.tabData" : "ui.navData"))}</span></a>
     <a href="#/compare" data-nav="compare" title="${esc(t("ui.navCompare"))}">${icon("M8 4v16M16 4v16M4 8h8M12 16h8")}<span class="nav-label">${esc(t(short ? "ui.tabCompare" : "ui.navCompare"))}</span></a>
     <a href="#/methodology" data-nav="method" title="${esc(t("ui.navMethod"))}">${icon("M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM12 11v5M12 8h.01")}<span class="nav-label">${esc(t(short ? "ui.tabMethod" : "ui.navMethod"))}</span></a>
 `;
   document.getElementById("nav").innerHTML = links(false);
-  document.getElementById("tabbar").innerHTML = links(true);
+  // Seven tabs do not fit a phone's width: the methodology is linked from the footer there.
+  document.getElementById("tabbar").innerHTML = links(true).replace(/\s*<a href="#\/methodology"[^]*?<\/a>/, "");
   document.getElementById("lang-wrap").innerHTML = `<select class="lang-select" id="lang" aria-label="${esc(t("ui.language"))}">
       ${Object.entries(LANGS).map(([code, d]) => `<option value="${code}" ${code === lang() ? "selected" : ""}>${d.meta.short}</option>`).join("")}
     </select>`;
   document.getElementById("lang").addEventListener("change", (e) => { setLang(e.target.value); renderChrome(); route(false); });
-  document.getElementById("footer-text").textContent = t("ui.footer");
+  document.getElementById("footer-text").innerHTML = `${esc(t("ui.footer"))} <a href="#/methodology">${esc(t("ui.navMethod"))} ›</a>`;
   markNav();
 }
 
 function markNav() {
   const page = location.hash.replace(/^#\/?/, "").split("/")[0];
   document.querySelectorAll("[data-nav]").forEach((a) => a.classList.toggle("active",
-    (a.dataset.nav === "list" && (page === "" || page === "c")) || (a.dataset.nav === "compare" && page === "compare") || (a.dataset.nav === "news" && page === "news") || (a.dataset.nav === "trend" && page === "trend") || (a.dataset.nav === "data" && page === "data") || (a.dataset.nav === "method" && page === "methodology")));
+    (a.dataset.nav === "list" && (page === "" || page === "c")) || (a.dataset.nav === "compare" && page === "compare") || (a.dataset.nav === "news" && page === "news") || (a.dataset.nav === "trend" && page === "trend") || (a.dataset.nav === "data" && page === "data") || (a.dataset.nav === "portfolio" && page === "portfolio") || (a.dataset.nav === "method" && page === "methodology")));
 }
 
 // ---------- Router ----------
 
-const listState = { q: "", sector: "", filter: "analyzed", sort: "overall", dir: -1, page: 0, ex: "", minScore: 0, maxRisk: 100, minCap: 0, minDy: 0, styles: [], noCrit: false };
+const listState = { q: "", sector: "", filter: "analyzed", sort: "overall", dir: -1, page: 0, ex: "", minScore: 0, maxRisk: 100, minCap: 0, minDy: 0, minDs: 0, styles: [], noCrit: false };
 const LOWER_FIRST = new Set(["t", "risk", "pe"]);
 
 async function route(scroll = true) {
@@ -187,7 +195,9 @@ async function route(scroll = true) {
   document.title = "TeraStockX";
   try {
     if (page === "c" && arg) await renderCompany(decodeURIComponent(arg).toUpperCase());
-    else if (page === "compare") await renderCompare(arg ? decodeURIComponent(arg).toUpperCase().split(",").filter(Boolean).slice(0, 3) : []);
+    else if (page === "compare") await renderCompare(arg ? decodeURIComponent(arg).toUpperCase().split(",").filter(Boolean).slice(0, MAX_COMPARE) : []);
+    else if (page === "portfolio") await renderPortfolio(arg ? decodeURIComponent(arg).toUpperCase() : "");
+    else if (page === "report" && arg) await renderReport(decodeURIComponent(arg).toUpperCase());
     else if (page === "methodology") renderMethod();
     else if (page === "news") await renderNews();
     else if (page === "trend") await renderTrend();
@@ -213,6 +223,7 @@ const SCORE_STEPS = [0, 50, 60, 70, 80];
 const RISK_STEPS = [100, 50, 35, 20];
 const CAP_STEPS = [0, 3e8, 2e9, 1e10, 2e11];
 const DY_STEPS = [0, 0.01, 0.02, 0.04];
+const DS_STEPS = [0, 55, 75];
 const STYLE_KEYS = ["quality", "growth", "value", "income"];
 
 async function renderList() {
@@ -258,6 +269,7 @@ async function renderList() {
         <label>${esc(t("ui.maxRisk"))}<select class="select" data-f="maxRisk">${RISK_STEPS.map((v) => `<option value="${v}" ${listState.maxRisk === v ? "selected" : ""}>${v < 100 ? `≤ ${v}` : esc(t("ui.anyValue"))}</option>`).join("")}</select></label>
         <label>${esc(t("ui.minCap"))}<select class="select" data-f="minCap">${CAP_STEPS.map((v) => `<option value="${v}" ${listState.minCap === v ? "selected" : ""}>${v ? `≥ ${money(v)}` : esc(t("ui.anyValue"))}</option>`).join("")}</select></label>
         <label>${esc(t("ui.minDividend"))}<select class="select" data-f="minDy">${DY_STEPS.map((v) => `<option value="${v}" ${listState.minDy === v ? "selected" : ""}>${v ? `≥ ${fmt(v, "pct0")}` : esc(t("ui.anyValue"))}</option>`).join("")}</select></label>
+        <label>${esc(t("ui.minDivSafety"))}<select class="select" data-f="minDs">${DS_STEPS.map((v) => `<option value="${v}" ${listState.minDs === v ? "selected" : ""}>${v ? `≥ ${v} · ${esc(t(`dividend.${v >= 75 ? "safe" : "moderate"}`))}` : esc(t("ui.anyValue"))}</option>`).join("")}</select></label>
       </div>
       <div class="filter-row">
         <span class="small muted">${esc(t("ui.styleFilter"))}</span>
@@ -294,6 +306,7 @@ async function renderList() {
       (L.maxRisk >= 100 || (isNum(c.sc?.risk) && c.sc.risk <= L.maxRisk)) &&
       (!L.minCap || (c.mc ?? 0) >= L.minCap) &&
       (!L.minDy || (c.dy ?? 0) >= L.minDy) &&
+      (!L.minDs || (c.ds ?? -1) >= L.minDs) &&
       (!L.styles.length || L.styles.every((st) => (c.st || []).includes(st))) &&
       (!L.noCrit || !(c.cf || []).length) &&
       (!q || c.t.toLowerCase().startsWith(q) || c.n.toLowerCase().includes(q)));
@@ -375,7 +388,7 @@ async function renderList() {
       listState.page = 0; draw();
     }
     if (e.target.closest("#reset-filters")) {
-      Object.assign(listState, { ex: "", minScore: 0, maxRisk: 100, minCap: 0, minDy: 0, styles: [], noCrit: false, page: 0 });
+      Object.assign(listState, { ex: "", minScore: 0, maxRisk: 100, minCap: 0, minDy: 0, minDs: 0, styles: [], noCrit: false, page: 0 });
       renderList();
     }
   });
@@ -406,7 +419,7 @@ async function renderList() {
 
 function filtersActive() {
   const L = listState;
-  return [L.ex, L.minScore, L.maxRisk < 100, L.minCap, L.minDy, L.styles.length, L.noCrit].filter(Boolean).length;
+  return [L.ex, L.minScore, L.maxRisk < 100, L.minCap, L.minDy, L.minDs, L.styles.length, L.noCrit].filter(Boolean).length;
 }
 
 // ---------- TeraScore Trend ----------
@@ -528,7 +541,7 @@ async function renderData(ticker) {
   const go = () => { const v = pick.value.trim().toUpperCase(); if (v && idx.companies.some((x) => x.t === v)) location.hash = `#/data/${encodeURIComponent(v)}`; };
   pick.addEventListener("change", go);
   pick.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
-  if (c) document.getElementById("csv")?.addEventListener("click", () => downloadCsv(c));
+  if (c) wireRaw(app, c);
 }
 
 // ---------- Company page ----------
@@ -563,6 +576,8 @@ async function renderCompany(ticker) {
         ${isNum(mk.price) ? `<div class="quote"><div class="px">${fmt(mk.price, "usd")}</div><div class="mc">${esc(t("ui.marketCap"))}: ${a.ok ? money(a.metrics.marketCap) : "–"}</div></div>` : ""}
         <button class="btn" id="watch">${starSvg(watched)}<span>${esc(t(watched ? "ui.removeWatch" : "ui.addWatch"))}</span></button>
         <a class="btn" href="#/compare/${encodeURIComponent(c.ticker)}">${esc(t("ui.compareWith"))}</a>
+        <a class="btn" href="#/portfolio/${encodeURIComponent(c.ticker)}">${esc(t(getPortfolio().some((h) => h.t === c.ticker) ? "ui.inPortfolio" : "ui.addPortfolio"))}</a>
+        ${a.ok ? `<a class="btn" href="#/report/${encodeURIComponent(c.ticker)}">${esc(t("ui.pdfReport"))}</a>` : ""}
       </div>
     </div>
     <div class="glass tabs" role="tablist">
@@ -584,7 +599,8 @@ async function renderCompany(ticker) {
     e.currentTarget.innerHTML = `${starSvg(on)}<span>${esc(t(on ? "ui.removeWatch" : "ui.addWatch"))}</span>`;
   });
   wireCharts(app);
-  document.getElementById("csv")?.addEventListener("click", () => downloadCsv(c));
+  wirePeers(app);
+  wireRaw(app, c);
 }
 
 function ring(score) {
@@ -690,17 +706,93 @@ function analysisView(c, a, idx, history = []) {
     ${keyGrid}
     <h2 class="section-title">${esc(t("ui.sectionScores"))}</h2>
     <div class="score-grid">${cards}</div>
+    <h2 class="section-title">${esc(t("ui.peersTitle"))}</h2>
+    ${peersView(c, idx)}
     <h2 class="section-title">TeraScore Trend <a class="small" href="#/trend">${esc(t("ui.trendAll"))} ›</a></h2>
     ${trendView(c, history, idx?.companies.find((x) => x.t === c.ticker))}
     <h2 class="section-title">${esc(t("ui.sectionFlags"))}</h2>
     ${flagsHtml}
     <h2 class="section-title">${esc(t("ui.sectionEvents"))}</h2>
     ${(c.events || []).length ? `<div class="events">${c.events.map((e) => eventCard(e, false)).join("")}</div>` : `<div class="glass empty small">${esc(c.events ? t("ui.eventsNone") : t("ui.notEnough"))}</div>`}
+    <h2 class="section-title">${esc(t("ui.dividendTitle"))}</h2>
+    ${dividendView(c, a)}
     <h2 class="section-title">${esc(t("ui.insiderTitle"))}</h2>
     ${insiderView(c)}
     <h2 class="section-title">${esc(t("ui.sectionCharts"))}</h2>
     ${charts}
     <p class="small muted" style="margin-top:22px">${esc(t("ui.engine", { v: ENGINE_VERSION }))}</p>`;
+}
+
+// ---------- Similar companies ----------
+
+const PEER_COLS = [["overall", ""], ["profitability", "col-lg"], ["balanceSheet", "col-xl"], ["growthLong", "col-xl"], ["valuation", "col-md"], ["risk", ""]];
+const median = (xs) => { const v = xs.filter(isNum).sort((a, b) => a - b); if (!v.length) return null; const m = Math.floor(v.length / 2); return v.length % 2 ? v[m] : (v[m - 1] + v[m]) / 2; };
+
+function peersView(c, idx) {
+  const self = idx?.companies.find((x) => x.t === c.ticker);
+  if (!self || !isNum(self.sc?.overall)) return `<div class="glass empty small">${esc(t("ui.peersNone"))}</div>`;
+  const peers = findPeers(idx.companies, self, 5);
+  if (!peers.length) return `<div class="glass empty small">${esc(t("ui.peersNone"))}</div>`;
+  const rank = 1 + peers.filter((p) => p.sc.overall > self.sc.overall).length;
+  const pe = (v) => (isNum(v) ? `${num(v, 1)}×` : "–");
+  const row = (r, cls) => `<tr class="${cls}" ${r === self ? "" : `data-t="${esc(r.t)}"`}>
+    <td><div class="tick">${esc(r.t)}</div><div class="cname">${esc(r.n)}</div></td>
+    <td class="num col-md">${isNum(r.mc) ? money(r.mc) : "–"}</td>
+    ${PEER_COLS.map(([k, cl]) => `<td class="num ${cl}">${scorePill(r.sc?.[k], k === "risk")}</td>`).join("")}
+    <td class="num col-lg">${pe(r.pe)}</td><td class="num col-lg">${isNum(r.dy) ? fmt(r.dy, "pct") : "–"}</td></tr>`;
+  const med = (get) => median(peers.map(get));
+  const mRow = `<tr class="peer-median"><td>${esc(t("ui.peerMedian"))}</td>
+    <td class="num col-md">${isNum(med((r) => r.mc)) ? money(med((r) => r.mc)) : "–"}</td>
+    ${PEER_COLS.map(([k, cl]) => { const v = med((r) => r.sc?.[k]); return `<td class="num ${cl}">${scorePill(isNum(v) ? Math.round(v) : null, k === "risk")}</td>`; }).join("")}
+    <td class="num col-lg">${pe(med((r) => r.pe))}</td><td class="num col-lg">${isNum(med((r) => r.dy)) ? fmt(med((r) => r.dy), "pct") : "–"}</td></tr>`;
+  const all = [self, ...peers].map((r) => r.t);
+  return `<p class="small muted" style="margin:-4px 0 12px">${esc(t("ui.peersSub", { s: sectorName(c.sector) }))} ${esc(t("ui.peersRank", { t: c.ticker, r: rank, n: all.length }))}</p>
+    <div class="glass table-wrap"><table class="list peers">
+      <thead><tr><th>${esc(t("ui.company"))}</th><th class="num col-md">${esc(t("ui.marketCap"))}</th>
+        ${PEER_COLS.map(([k, cl]) => `<th class="num ${cl}">${esc(k === "overall" ? t("ui.overallScore") : t(`dims.${k}.name`))}</th>`).join("")}
+        <th class="num col-lg">${esc(t("ui.pe"))}</th><th class="num col-lg">${esc(t("ui.dividendYieldShort"))}</th></tr></thead>
+      <tbody>${row(self, "self")}${peers.map((r) => row(r, "")).join("")}${mRow}</tbody>
+    </table></div>
+    <div style="margin-top:12px"><a class="btn" href="#/compare/${all.map(encodeURIComponent).join(",")}">${esc(t("ui.peersCompare"))} ›</a></div>`;
+}
+
+function wirePeers(root) {
+  root.querySelector("table.peers")?.addEventListener("click", (e) => { const tr = e.target.closest("tr[data-t]"); if (tr) location.hash = `#/c/${tr.dataset.t}`; });
+}
+
+// ---------- Dividend safety ----------
+
+const payout = (v) => (v === Infinity ? t("ui.payoutUncovered") : isNum(v) ? fmt(v, "pct0") : "–");
+
+function dividendView(c, a) {
+  const d = dividendProfile(c, a);
+  if (!d.payer) return `<div class="glass empty small">${esc(t(d.reason === "noDividend" ? "ui.dividendNone" : "ui.notEnough"))}</div>`;
+  const cur = c.currency || "USD";
+  const tone = DIVIDEND_TONE[d.level];
+  const full = d.paidYears >= (c.annual || []).length;
+  const fact = (k, v) => `<div class="fact"><div class="k">${esc(t(k))}</div><div class="v">${v}</div></div>`;
+  const parts = Object.entries(DIVIDEND_WEIGHTS).map(([k, w]) => `<tr><td>${esc(t(`dividend.parts.${k}`))}</td><td class="pts">${isNum(d.parts[k]) ? `${d.parts[k]} ${esc(t("ui.points"))}` : esc(t("ui.notScored"))} · ${Math.round(w * 100)}%</td></tr>`).join("");
+  return `<div class="div-grid">
+    <div class="glass pad">
+      <div class="score-top"><div><div class="score-name">${esc(t("ui.dividendSafety"))}</div><div class="score-q">${esc(t(`dividend.${d.level}Text`))}</div></div>
+        <div class="score-val">${isNum(d.score) ? d.score : "–"}<small>/100</small></div></div>
+      <div class="bar tone-${tone}"><span style="width:${isNum(d.score) ? d.score : 0}%"></span></div>
+      <div class="score-meta"><span class="pill tone-${tone}"><span class="dot"></span>${esc(t(`dividend.${d.level}`))}</span></div>
+      <div class="facts" style="margin-top:14px">
+        ${fact("ui.dividendYield", isNum(d.yield) ? fmt(d.yield, "pct") : "–")}
+        ${fact("ui.dps", isNum(d.dps) ? `${num(d.dps, 2)} ${esc(cur)}` : "–")}
+        ${fact("ui.dpsCagr", isNum(d.dpsCagr) ? fmt(d.dpsCagr, "pct") : "–")}
+        ${fact("ui.yearsPaid", esc(t("ui.yearsN", { n: full ? `${d.paidYears}+` : d.paidYears })))}
+        ${fact("ui.yearsRaised", esc(t("ui.yearsN", { n: d.growthYears })))}
+        ${fact("ui.dividendCuts", String(d.cuts))}
+        ${fact("ui.earningsPayout", `${payout(d.earningsPayout)} <span class="small muted">${esc(d.basis === "ttm" ? t("ui.ttm") : t("ui.lastFy", { y: a.latestYear }))}</span>`)}
+        ${fact("ui.fcfPayout", `${payout(d.fcfPayout)} <span class="small muted">${esc(d.basis === "ttm" ? t("ui.ttm") : t("ui.lastFy", { y: a.latestYear }))}</span>`)}
+      </div>
+      <details class="parts"><summary>${esc(t("ui.howCalculated"))}</summary><table class="parts-table">${parts}</table>
+        <p class="small muted">${esc(t("ui.dividendNote"))}</p></details>
+    </div>
+    ${barChart(t("ui.chartDps"), t("ui.chartDpsSub"), d.history.map((h) => [h.year, h.dps]), (v) => `${num(v, 2)} ${cur}`, t("ui.notEnough"))}
+  </div>`;
 }
 
 // ---------- Insider transactions ----------
@@ -751,6 +843,22 @@ function rawCell(v, k, cls = "", cur = "USD") {
   return `<td class="${cls}">${money(v, cur)}</td>`;
 }
 
+const QUARTER_RATIOS = [["grossMargin", (q) => (isNum(q.grossProfit) ? q.grossProfit : isNum(q.costOfRevenue) && isNum(q.revenue) ? q.revenue - q.costOfRevenue : null)], ["operatingMargin", (q) => q.operatingIncome], ["netMargin", (q) => q.netIncome], ["fcfMargin", (q) => rawValue(q, "freeCashFlow")]];
+
+function quarterTable(c) {
+  const cur = c.currency || "USD";
+  const qs = [...(c.quarterly || [])].sort((x, y) => (x.periodEnd < y.periodEnd ? -1 : 1));
+  if (!qs.length) return `<div class="glass empty small">${esc(t(c.foreignPrivateIssuer ? "ui.quarterlyForeign" : "ui.quarterlyNone"))}</div>`;
+  const n = qs.length + 1;
+  const head = `<tr><th>${esc(t("ui.quarterEnd"))}</th>${qs.map((q) => `<th>${esc(date(q.periodEnd))}</th>`).join("")}</tr>`;
+  let body = RAW_GROUPS.map(([g, keys]) => `<tr class="group"><td colspan="${n}">${esc(t(`raw.${g}`))}</td></tr>` +
+    keys.map((k) => `<tr><td>${esc(t(`raw.${k}`))}</td>${qs.map((q) => rawCell(rawValue(q, k), k, "", cur)).join("")}</tr>`).join("")).join("");
+  body += `<tr class="group"><td colspan="${n}">${esc(t("ui.computedRatios"))}</td></tr>` + QUARTER_RATIOS.map(([k, f]) =>
+    `<tr><td>${esc(metricLabel(k))}</td>${qs.map((q) => { const v = isNum(f(q)) && isNum(q.revenue) && q.revenue > 0 ? f(q) / q.revenue : null; return isNum(v) ? `<td>${fmt(v, "pct")}</td>` : `<td class="na">–</td>`; }).join("")}</tr>`).join("");
+  return `<p class="small muted" style="margin:0 0 10px">${esc(t("ui.quarterlyNote"))}</p>
+    <div class="glass table-wrap"><table class="raw"><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
+}
+
 function rawView(c, a, onDataPage = false) {
   const cur = c.currency || "USD";
   const years = [...(c.annual || [])].sort((x, y) => x.year - y.year);
@@ -775,22 +883,48 @@ function rawView(c, a, onDataPage = false) {
         <a class="btn" href="data/companies/${encodeURIComponent(c.ticker)}.json" download>${esc(t("ui.downloadJson"))}</a>
       </span>
     </div>
-    <div class="glass table-wrap"><table class="raw"><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
+    <div class="seg" role="group" aria-label="${esc(t("ui.period"))}">
+      <button type="button" data-period="annual" aria-pressed="true">${esc(t("ui.periodAnnual"))}</button>
+      <button type="button" data-period="quarterly" aria-pressed="false">${esc(t("ui.periodQuarterly"))}</button>
+    </div>
+    <div data-pane="annual"><div class="glass table-wrap"><table class="raw"><thead>${head}</thead><tbody>${body}</tbody></table></div></div>
+    <div data-pane="quarterly" class="hidden">${quarterTable(c)}</div>`;
 }
 
-function downloadCsv(c) {
-  const years = [...c.annual].sort((x, y) => x.year - y.year);
+function wireRaw(root, c) {
+  let period = "annual";
+  root.querySelectorAll(".seg [data-period]").forEach((b) => b.addEventListener("click", () => {
+    period = b.dataset.period;
+    root.querySelectorAll(".seg [data-period]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    root.querySelectorAll("[data-pane]").forEach((x) => x.classList.toggle("hidden", x.dataset.pane !== period));
+  }));
+  root.querySelector("#csv")?.addEventListener("click", () => downloadCsv(c, period));
+}
+
+function downloadCsv(c, period = "annual") {
   const keys = RAW_GROUPS.flatMap(([, k]) => k);
+  if (period === "quarterly") {
+    const qs = [...(c.quarterly || [])].sort((x, y) => (x.periodEnd < y.periodEnd ? -1 : 1));
+    const rows = [["field", ...qs.map((q) => q.periodEnd)].join(";"), ...keys.map((k) => [k, ...qs.map((q) => (isNum(rawValue(q, k)) ? rawValue(q, k) : ""))].join(";"))];
+    return saveFile(rows.join("\n"), `${c.ticker}_quarterly.csv`);
+  }
+  const years = [...c.annual].sort((x, y) => x.year - y.year);
   const ttm = c.ttm ? { ...c.ttm, ...(c.latestBalance || {}) } : null;
   const lines = [["field", ...years.map((y) => y.year), ...(ttm ? ["TTM"] : [])].join(";")];
   for (const k of keys) lines.push([k, ...years.map((y) => (isNum(rawValue(y, k)) ? rawValue(y, k) : "")), ...(ttm ? [isNum(rawValue(ttm, k)) ? rawValue(ttm, k) : ""] : [])].join(";"));
-  const blob = new Blob(["﻿" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
+  saveFile(lines.join("\n"), `${c.ticker}_financials.csv`);
+}
+
+function saveFile(text, name) {
+  const blob = new Blob(["﻿" + text], { type: "text/csv;charset=utf-8" });
   const url = URL.createObjectURL(blob);
-  Object.assign(document.createElement("a"), { href: url, download: `${c.ticker}_financials.csv` }).click();
+  Object.assign(document.createElement("a"), { href: url, download: name }).click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 // ---------- Compare ----------
+
+const MAX_COMPARE = 6;
 
 const CMP_METRICS = ["marketCap", "peRatio", "evToEbit", "fcfYield", "dividendYield", "grossMargin", "operatingMargin", "roic", "fcfMargin", "netDebtToEbitda", "currentRatio", "revenueYoY", "revenueCagr", "epsCagr", "shareChangeYearly", "volatility", "maxDrawdown"];
 const LOWER_BETTER = new Set(["peRatio", "evToEbit", "netDebtToEbitda", "volatility", "shareChangeYearly"]);
@@ -838,7 +972,7 @@ async function renderCompare(tickers) {
     </div>
     <div class="compare-pick">
       ${comps.map((c) => `<span class="glass chip">${esc(c.ticker)}<button data-rm="${esc(c.ticker)}" aria-label="${esc(t("ui.remove"))}">×</button></span>`).join("")}
-      ${comps.length < 3 ? `<input id="cmp-add" list="cmp-list" placeholder="${esc(t("ui.addCompany"))}" autocomplete="off">
+      ${comps.length < MAX_COMPARE ? `<input id="cmp-add" list="cmp-list" placeholder="${esc(t("ui.addCompany"))}" autocomplete="off">
         <datalist id="cmp-list">${idx.companies.filter((c) => c.sc).map((c) => `<option value="${esc(c.t)}">${esc(c.n)}</option>`).join("")}</datalist>` : ""}
     </div>
     ${table}`;
@@ -853,6 +987,195 @@ async function renderCompare(tickers) {
     add.addEventListener("change", commit);
     add.addEventListener("keydown", (e) => { if (e.key === "Enter") commit(); });
   }
+}
+
+// ---------- Portfolio ----------
+
+const PW_TEXT = {
+  position: (w) => t("pw.position", { t: w.t, w: fmt(w.weight, "pct0"), l: fmt(PORTFOLIO_LIMITS.position, "pct0") }),
+  sector: (w) => t("pw.sector", { s: sectorName(w.s), w: fmt(w.weight, "pct0"), l: fmt(PORTFOLIO_LIMITS.sector, "pct0") }),
+  few: (w) => t("pw.few", { n: w.n, m: PORTFOLIO_LIMITS.minHoldings }),
+  critical: (w) => t("pw.critical", { list: w.list.join(", ") }),
+  distress: (w) => t("pw.distress", { list: w.list.join(", ") }),
+  weak: (w) => t("pw.weak", { list: w.list.join(", "), s: PORTFOLIO_LIMITS.lowScore }),
+  unscored: (w) => t("pw.unscored", { list: w.list.join(", ") }),
+};
+
+async function renderPortfolio(prefill = "") {
+  document.title = `${t("ui.navPortfolio")} | TeraStockX`;
+  app.innerHTML = `<div class="skeleton"></div>`;
+  const idx = await loadIndex();
+  const rows = new Map(idx.companies.map((c) => [c.t, c]));
+  const list = getPortfolio();
+  const p = portfolioSummary(list.map((h) => ({ ...h, row: rows.get(h.t) })));
+  const stat = (k, v, sub = "") => `<div class="hero-stat"><div class="v">${v}</div><div class="k">${esc(t(k))}${sub ? ` <span class="muted">${sub}</span>` : ""}</div></div>`;
+  const tone = { critical: "critical", warning: "warning", info: "none" };
+
+  const summary = list.length ? `
+    <div class="glass pad pf-summary">
+      <div class="hero-stats">
+        ${stat("ui.pfValue", p.total ? money(p.total) : "–")}
+        ${stat("ui.pfScore", scorePill(p.score))}
+        ${stat("ui.risk", scorePill(p.risk, true))}
+        ${stat("ui.pfIncome", p.income ? money(p.income) : "–", isNum(p.yield) && p.yield > 0 ? `(${fmt(p.yield, "pct")})` : "")}
+        ${stat("ui.pfPe", isNum(p.pe) ? `${num(p.pe, 1)}×` : "–")}
+        ${stat("ui.pfHoldings", String(list.length))}
+      </div>
+    </div>
+    <div class="pf-grid">
+      <div class="glass pad">
+        <div class="score-name" style="margin-bottom:12px">${esc(t("ui.pfSectors"))}</div>
+        ${p.sectors.map((x) => `<div class="pf-bar"><span>${esc(x.s === "other" ? t("ui.pfOther") : sectorName(x.s))}</span><span class="num">${fmt(x.weight, "pct")}</span>
+          <div class="bar"><span style="width:${Math.round(x.weight * 100)}%"></span></div></div>`).join("") || `<p class="small muted">${esc(t("ui.notEnough"))}</p>`}
+      </div>
+      <div class="glass pad">
+        <div class="score-name" style="margin-bottom:12px">${esc(t("ui.pfChecks"))}</div>
+        ${p.warnings.length ? `<ul class="pf-warn">${p.warnings.map((w) => `<li><span class="pill tone-${tone[w.level]}"><span class="dot"></span>${esc(t(w.level === "critical" ? "ui.critical" : w.level === "warning" ? "ui.warningTag" : "ui.pfInfo"))}</span> ${esc(PW_TEXT[w.id](w))}</li>`).join("")}</ul>`
+          : `<p class="small"><span class="pill tone-good"><span class="dot"></span>${esc(t("ui.pfOk"))}</span></p>`}
+      </div>
+    </div>
+    <div class="glass table-wrap"><table class="list pf-table">
+      <thead><tr><th>${esc(t("ui.company"))}</th><th class="num">${esc(t("ui.pfShares"))}</th><th class="num col-md">${esc(t("ui.pfPrice"))}</th><th class="num">${esc(t("ui.pfValueCol"))}</th>
+        <th class="num col-md">${esc(t("ui.pfWeight"))}</th><th class="num">${esc(t("ui.overallScore"))}</th><th class="num col-lg">${esc(t("ui.risk"))}</th>
+        <th class="num col-lg">${esc(t("ui.dividendYieldShort"))}</th><th class="num col-xl">${esc(t("ui.dividendSafety"))}</th><th></th></tr></thead>
+      <tbody>${p.positions.map((h) => `<tr>
+        <td><a href="#/c/${encodeURIComponent(h.t)}"><div class="tick">${esc(h.t)}</div><div class="cname">${esc(h.row?.n || t("ui.notFound", { t: h.t }))}</div></a></td>
+        <td class="num"><input class="pf-shares" type="number" min="0" step="any" inputmode="decimal" value="${esc(h.shares)}" data-t="${esc(h.t)}" aria-label="${esc(t("ui.pfShares"))} ${esc(h.t)}"></td>
+        <td class="num col-md">${isNum(h.price) ? fmt(h.price, "usd") : "–"}</td>
+        <td class="num">${isNum(h.value) ? money(h.value) : "–"}</td>
+        <td class="num col-md">${isNum(h.weight) ? fmt(h.weight, "pct") : "–"}</td>
+        <td class="num">${scorePill(h.row?.sc?.overall)}</td>
+        <td class="num col-lg">${scorePill(h.row?.sc?.risk, true)}</td>
+        <td class="num col-lg">${isNum(h.row?.dy) ? fmt(h.row.dy, "pct") : "–"}</td>
+        <td class="num col-xl">${isNum(h.row?.ds) ? `<span class="pill tone-${DIVIDEND_TONE[dividendLevelOf(h.row.ds)]}"><span class="dot"></span>${h.row.ds}</span>` : "–"}</td>
+        <td><button class="icon-btn" data-rm="${esc(h.t)}" aria-label="${esc(t("ui.remove"))} ${esc(h.t)}">×</button></td></tr>`).join("")}</tbody>
+    </table></div>
+    <p class="small muted" style="margin-top:12px">${esc(t("ui.pfNote", { d: date(idx.generated) }))}</p>` : `<div class="glass empty">${esc(t("ui.pfEmpty"))}</div>`;
+
+  app.innerHTML = `
+    <div class="prose" style="max-width:none;margin-top:8px"><h1>${esc(t("ui.navPortfolio"))}</h1><p style="max-width:820px">${esc(t("ui.pfIntro"))}</p></div>
+    <form class="glass pad pf-add" id="pf-add">
+      <input id="pf-t" list="pf-list" placeholder="${esc(t("ui.addCompany"))}" autocomplete="off" value="${esc(prefill)}" aria-label="${esc(t("ui.company"))}">
+      <datalist id="pf-list">${idx.companies.filter((c) => isNum(c.px)).map((c) => `<option value="${esc(c.t)}">${esc(c.n)}</option>`).join("")}</datalist>
+      <input id="pf-n" type="number" min="0" step="any" inputmode="decimal" placeholder="${esc(t("ui.pfShares"))}" aria-label="${esc(t("ui.pfShares"))}">
+      <button class="btn btn-primary" type="submit">${esc(t("ui.pfAdd"))}</button>
+      ${getWatch().length ? `<button class="btn" type="button" id="pf-watch">${esc(t("ui.pfFromWatch"))}</button>` : ""}
+      <span class="small muted" id="pf-msg"></span>
+    </form>
+    ${summary}`;
+
+  if (prefill) document.getElementById("pf-n").focus();
+  const save = (next) => { setPortfolio(next); renderPortfolio(); };
+  document.getElementById("pf-add").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const tk = document.getElementById("pf-t").value.trim().toUpperCase();
+    const n = Number(document.getElementById("pf-n").value);
+    if (!rows.has(tk)) { document.getElementById("pf-msg").textContent = t("ui.notFound", { t: tk }); return; }
+    if (!(n > 0)) { document.getElementById("pf-msg").textContent = t("ui.pfNeedShares"); return; }
+    const cur = getPortfolio();
+    const ex = cur.find((h) => h.t === tk);
+    if (ex) ex.shares = +(ex.shares + n).toFixed(6); else cur.push({ t: tk, shares: n });
+    if (location.hash !== "#/portfolio") history.replaceState(null, "", "#/portfolio");
+    save(cur);
+  });
+  document.getElementById("pf-watch")?.addEventListener("click", () => {
+    const cur = getPortfolio();
+    for (const tk of getWatch()) if (rows.has(tk) && !cur.some((h) => h.t === tk)) cur.push({ t: tk, shares: 1 });
+    save(cur);
+  });
+  app.querySelectorAll(".pf-shares").forEach((inp) => inp.addEventListener("change", () => {
+    const n = Number(inp.value);
+    save(getPortfolio().map((h) => (h.t === inp.dataset.t ? { ...h, shares: n > 0 ? n : h.shares } : h)));
+  }));
+  app.querySelectorAll("[data-rm]").forEach((b) => b.addEventListener("click", () => save(getPortfolio().filter((h) => h.t !== b.dataset.rm))));
+}
+
+const dividendLevelOf = (score) => (score >= 75 ? "safe" : score >= 55 ? "moderate" : score >= 35 ? "risky" : "unsafe");
+
+// ---------- Printable report ----------
+
+const REPORT_ROWS = [["revenue", "money"], ["operatingIncome", "money"], ["netIncome", "money"], ["eps", "eps"], ["freeCashFlow", "money"], ["operatingMargin", "pct"], ["roic", "pct"], ["netDebtToEbitda", "xyears"]];
+
+async function renderReport(ticker) {
+  app.innerHTML = `<div class="skeleton"></div>`;
+  const [c, idx] = await Promise.all([loadCompany(ticker), loadIndex().catch(() => null)]);
+  if (!c) { app.innerHTML = `<div class="glass empty">${esc(t("ui.notFound", { t: ticker }))}</div>`; return; }
+  const a = await analyzeWith(c);
+  if (!a.ok) { app.innerHTML = `<div class="glass empty">${esc(t("ui.notEnough"))}</div>`; return; }
+  document.title = `${c.ticker} – ${t("ui.reportTitle")} | TeraStockX`;
+  const cur = c.currency || "USD";
+  const d = dividendProfile(c, a);
+  const self = idx?.companies.find((x) => x.t === c.ticker);
+  const peers = self ? findPeers(idx.companies, self, 5) : [];
+  const g = (s, inv) => grade(s, inv);
+  const bar = (s, inv) => `<div class="rbar"><span class="tone-${g(s, inv).tone}" style="width:${isNum(s) ? s : 0}%"></span></div>`;
+  const years = a.series.slice(-5);
+  const flags = [...a.flags].sort((x, y) => ({ critical: 0, warning: 1, positive: 2 }[x.level] - { critical: 0, warning: 1, positive: 2 }[y.level]));
+  const tag = { critical: t("ui.critical"), warning: t("ui.warningTag"), positive: t("ui.strength") };
+  const cell = (v, kind) => (kind === "money" ? (isNum(v) ? money(v, cur) : "–") : kind === "eps" ? (isNum(v) ? num(v, 2) : "–") : isNum(v) || v === Infinity ? fmt(v, kind) : "–");
+
+  app.innerHTML = `
+    <div class="report-bar no-print">
+      <a class="back" href="#/c/${encodeURIComponent(c.ticker)}">‹ ${esc(t("ui.back"))}</a>
+      <button class="btn btn-primary" id="print" type="button">${esc(t("ui.printPdf"))}</button>
+      <span class="small muted">${esc(t("ui.printHint"))}</span>
+    </div>
+    <article class="report">
+      <header class="report-head">
+        <div class="report-brand"><img src="assets/img/logo.svg" alt="" width="26" height="26"><span>TeraStock<b>X</b></span></div>
+        <div class="small">${esc(t("ui.reportTitle"))} · ${esc(date(new Date().toISOString()))}</div>
+      </header>
+      <h1>${esc(c.name)} <span class="report-tk">${esc(c.ticker)}</span></h1>
+      <p class="report-sub">${[c.exchange, c.country, c.sector ? sectorName(c.sector) : null, c.industry, t("ui.lastFy", { y: a.latestYear })].filter(Boolean).map(esc).join(" · ")}
+        ${isNum(c.market?.price) ? `<br>${esc(t("ui.pfPrice"))}: ${fmt(c.market.price, "usd")} · ${esc(t("ui.marketCap"))}: ${money(a.metrics.marketCap)}` : ""}</p>
+
+      <section class="report-summary">
+        <div class="report-score"><div class="big">${a.scores.overall ?? "–"}<small>/100</small></div><div>TeraScore · ${esc(g(a.scores.overall).label)}</div></div>
+        <table class="report-table compact"><tbody>
+          <tr><td>${esc(t("ui.risk"))}</td><td>${a.scores.risk ?? "–"} · ${esc(g(a.scores.risk, true).label)}</td></tr>
+          <tr><td>${esc(t("ui.distress"))}</td><td>${esc(t(`distress.${a.distress.level}`))}</td></tr>
+          <tr><td>${esc(t("ui.trend"))}</td><td>${esc(t(`outlook.${a.outlook.level}`))}</td></tr>
+          <tr><td>${esc(t("ui.dividendSafety"))}</td><td>${d.payer ? `${d.score ?? "–"} · ${esc(t(`dividend.${d.level}`))}` : esc(t("ui.dividendNoneShort"))}</td></tr>
+          ${a.styles.length ? `<tr><td>${esc(t("ui.profile"))}</td><td>${a.styles.map((x) => esc(t(`styles.${x}`))).join(", ")}</td></tr>` : ""}
+        </tbody></table>
+      </section>
+      <p>${esc(t(`verdict.${gradeKey(a.scores.overall)}`))}</p>
+
+      <section><h2>${esc(t("ui.sectionScores"))}</h2>
+        <table class="report-table"><tbody>${DIMENSIONS.map((k) => `<tr><td>${esc(t(`dims.${k}.name`))}</td><td class="n">${a.scores[k] ?? "–"}</td><td class="w">${bar(a.scores[k], k === "risk")}</td><td>${esc(g(a.scores[k], k === "risk").label)}</td></tr>`).join("")}</tbody></table>
+      </section>
+
+      <section><h2>${esc(t("ui.sectionKey"))}</h2>
+        <table class="report-table two"><tbody>${KEY_METRICS.filter((k) => a.metrics[k] !== null && a.metrics[k] !== undefined).map((k) => `<tr><td>${esc(metricLabel(k))}</td><td class="n">${fm(a.metrics, k, cur)}</td></tr>`).join("")}</tbody></table>
+      </section>
+
+      <section><h2>${esc(t("ui.reportFinancials"))} <span class="small">(${esc(cur)})</span></h2>
+        <table class="report-table"><thead><tr><th></th>${years.map((y) => `<th class="n">${y.year}</th>`).join("")}</tr></thead>
+          <tbody>${REPORT_ROWS.map(([k, kind]) => `<tr><td>${esc(k === "eps" ? t("raw.epsDiluted") : k in (dict().raw || {}) ? t(`raw.${k}`) : metricLabel(k))}</td>${years.map((y) => `<td class="n">${cell(y[k], kind)}</td>`).join("")}</tr>`).join("")}</tbody></table>
+      </section>
+
+      ${peers.length ? `<section><h2>${esc(t("ui.peersTitle"))}</h2>
+        <table class="report-table"><thead><tr><th>${esc(t("ui.company"))}</th><th class="n">${esc(t("ui.marketCap"))}</th><th class="n">TeraScore</th><th class="n">${esc(t("ui.risk"))}</th><th class="n">${esc(t("ui.pe"))}</th><th class="n">${esc(t("ui.dividendYieldShort"))}</th></tr></thead>
+          <tbody>${[self, ...peers].map((r) => `<tr class="${r === self ? "self" : ""}"><td><b>${esc(r.t)}</b> ${esc(r.n)}</td><td class="n">${isNum(r.mc) ? money(r.mc) : "–"}</td><td class="n">${r.sc?.overall ?? "–"}</td><td class="n">${r.sc?.risk ?? "–"}</td><td class="n">${isNum(r.pe) ? `${num(r.pe, 1)}×` : "–"}</td><td class="n">${isNum(r.dy) ? fmt(r.dy, "pct") : "–"}</td></tr>`).join("")}</tbody></table>
+      </section>` : ""}
+
+      ${d.payer ? `<section><h2>${esc(t("ui.dividendTitle"))}</h2>
+        <table class="report-table two"><tbody>
+          <tr><td>${esc(t("ui.dividendSafety"))}</td><td class="n">${d.score ?? "–"} · ${esc(t(`dividend.${d.level}`))}</td></tr>
+          <tr><td>${esc(t("ui.dividendYield"))}</td><td class="n">${isNum(d.yield) ? fmt(d.yield, "pct") : "–"}</td></tr>
+          <tr><td>${esc(t("ui.dpsCagr"))}</td><td class="n">${isNum(d.dpsCagr) ? fmt(d.dpsCagr, "pct") : "–"}</td></tr>
+          <tr><td>${esc(t("ui.yearsRaised"))}</td><td class="n">${esc(t("ui.yearsN", { n: d.growthYears }))}</td></tr>
+          <tr><td>${esc(t("ui.earningsPayout"))}${d.basis === "ttm" ? ` (${esc(t("ui.ttm"))})` : ""}</td><td class="n">${payout(d.earningsPayout)}</td></tr>
+          <tr><td>${esc(t("ui.fcfPayout"))}${d.basis === "ttm" ? ` (${esc(t("ui.ttm"))})` : ""}</td><td class="n">${payout(d.fcfPayout)}</td></tr>
+        </tbody></table></section>` : ""}
+
+      <section><h2>${esc(t("ui.sectionFlags"))}</h2>
+        ${flags.length ? `<ul class="report-flags">${flags.map((f) => { const ft = flagText(f, cur); return `<li class="lv-${f.level}"><b>${esc(ft.title)}</b> <span class="small">(${esc(tag[f.level])})</span> – ${esc(ft.text)}</li>`; }).join("")}</ul>` : `<p>${esc(t("ui.noFlags"))}</p>`}
+      </section>
+
+      <footer class="report-foot">${esc(t("ui.footer"))}<br>${esc(t("ui.engine", { v: ENGINE_VERSION }))}${c.source?.retrieved ? ` · ${esc(t("ui.retrieved", { d: date(c.source.retrieved) }))}` : ""} · m1ksaaa.github.io/Banana</footer>
+    </article>`;
+  document.getElementById("print").addEventListener("click", () => window.print());
 }
 
 // ---------- Methodology ----------
@@ -886,7 +1209,12 @@ function renderMethod() {
     <h2>TeraScore Trend</h2><p>${esc(t("method.historyText"))}</p>
     <h2>${esc(t("method.relativeTitle"))}</h2><p>${esc(t("method.relativeText"))}</p>
     <h2>${esc(t("method.eventsTitle"))}</h2><p>${esc(t("method.eventsText"))}</p>
-    <h2>${esc(t("method.insiderTitle"))}</h2><p>${esc(t("method.insiderText"))}</p>
+    <h2>${esc(t("ui.insiderTitle"))}</h2><p>${esc(t("method.insiderText"))}</p>
+    <h2>${esc(t("ui.peersTitle"))}</h2><p>${esc(t("method.peersText"))}</p>
+    <h2>${esc(t("ui.dividendSafety"))}</h2><p>${esc(t("method.dividendText"))}</p>
+    <div class="glass method-card"><table class="method-table"><tbody>${Object.entries(DIVIDEND_WEIGHTS).map(([k, w]) => `<tr><td><b>${esc(t(`dividend.parts.${k}`))}</b><br><span class="small">${esc(t(`dividend.partsText.${k}`))}</span></td><td class="n">${Math.round(w * 100)}%</td></tr>`).join("")}</tbody></table></div>
+    <h2>${esc(t("ui.navPortfolio"))}</h2><p>${esc(t("method.portfolioText", { p: fmt(PORTFOLIO_LIMITS.position, "pct0"), s: fmt(PORTFOLIO_LIMITS.sector, "pct0"), n: PORTFOLIO_LIMITS.minHoldings }))}</p>
+    <h2>${esc(t("ui.periodQuarterly"))}</h2><p>${esc(t("method.quarterlyText"))}</p>
     <h2>${esc(t("method.currencyTitle"))}</h2><p>${esc(t("method.currencyText"))}</p>
     <h2>${esc(t("method.sectorTitle"))}</h2><p>${esc(t("method.sectorText"))}</p>
     <h2>${esc(t("method.limitsTitle"))}</h2><p>${esc(t("method.limitsText"))}</p>

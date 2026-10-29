@@ -732,3 +732,101 @@ export const METRIC_FORMAT = {
   evToEbitda: "mult", fcfYield: "pct", pfcfRatio: "mult", pegRatio: "num", dividendYield: "pct", shareholderYield: "pct",
   priceReturn1y: "spct", priceCagr5y: "spct", volatility: "pct", maxDrawdown: "pct",
 };
+
+// ---------- Dividend safety ----------
+
+// Dividend per share is derived from cash dividends paid / diluted shares (the statements do not
+// always tag a per-share amount), so one-off special dividends show up as a jump.
+const DIV_GROWTH_MIN = 0.005; // a rise of at least 0.5% counts as an increase
+const DIV_CUT = -0.10;        // a fall of more than 10% counts as a cut
+
+export const DIVIDEND_WEIGHTS = { fcfPayout: 0.30, earningsPayout: 0.20, leverage: 0.20, trackRecord: 0.20, stability: 0.10 };
+
+export function dividendProfile(company, a = null) {
+  const years = [...(company.annual || [])].filter((y) => isNum(y.year)).sort((x, y) => x.year - y.year);
+  if (!years.length) return { payer: false, reason: "noData" };
+  const series = a?.series || years.map((y, i) => yearMetrics(y, years[i - 1] || null));
+  const hist = years.map((y, i) => {
+    const paid = isNum(y.dividendsPaid) ? Math.abs(y.dividendsPaid) : null;
+    const sh = series[i]?.shares;
+    return { year: y.year, paid, dps: isNum(paid) && isNum(sh) && sh > 0 ? paid / sh : null, netIncome: y.netIncome ?? null, fcf: series[i]?.freeCashFlow ?? null };
+  });
+  const L = hist[hist.length - 1];
+  if (!(L.paid > 0)) return { payer: false, history: hist, reason: isNum(L.paid) ? "noDividend" : "noData" };
+
+  // Payout ratios on the latest twelve months when the quarterly filings allow it.
+  const ttm = company.ttm && isNum(company.ttm.dividendsPaid) && company.ttm.dividendsPaid !== 0 ? company.ttm : null;
+  const paid = ttm ? Math.abs(ttm.dividendsPaid) : L.paid;
+  const ni = ttm ? ttm.netIncome : L.netIncome;
+  const fcf = ttm ? freeCashFlow(ttm) : L.fcf;
+  const earningsPayout = isNum(ni) ? (ni > 0 ? paid / ni : Infinity) : null;
+  const fcfPayout = isNum(fcf) ? (fcf > 0 ? paid / fcf : Infinity) : null;
+
+  let paidYears = 0;
+  for (let i = hist.length - 1; i >= 0 && hist[i].paid > 0; i--) paidYears++;
+  let growthYears = 0;
+  for (let i = hist.length - 1; i > 0; i--) {
+    const g = growthOf(hist[i].dps, hist[i - 1].dps);
+    if (isNum(g) && g >= DIV_GROWTH_MIN) growthYears++; else break;
+  }
+  const last10 = hist.slice(-10);
+  const cuts = last10.slice(1).map((h, i) => growthOf(h.dps, last10[i].dps)).filter((g) => isNum(g) && g <= DIV_CUT).length
+    + last10.slice(1).filter((h, i) => last10[i].paid > 0 && h.paid === 0).length;
+  const w = hist.slice(-6).filter((h) => isNum(h.dps));
+  const dpsCagr = w.length >= 3 ? cagr(w[0].dps, w[w.length - 1].dps, w[w.length - 1].year - w[0].year) : null;
+  const profitable = hist.slice(-5).filter((h) => isNum(h.netIncome));
+  const profitableRatio = profitable.length ? profitable.filter((h) => h.netIncome > 0).length / profitable.length : null;
+
+  const profile = company.profile || "general";
+  const netDebtToEbitda = a?.metrics?.netDebtToEbitda ?? series[series.length - 1]?.netDebtToEbitda ?? null;
+  // REITs distribute most of their cash flow by law and banks are not measured on EBITDA,
+  // so their payout thresholds are wider and leverage is not scored here.
+  const fcfBand = profile === "realEstate" ? [1.3, 0.8] : [1.2, 0.4];
+  const parts = {
+    fcfPayout: fcfPayout === Infinity ? 0 : scale(fcfPayout, ...fcfBand),
+    earningsPayout: profile === "realEstate" ? null : earningsPayout === Infinity ? 0 : scale(earningsPayout, 1.5, 0.5),
+    leverage: profile === "general" ? (netDebtToEbitda === Infinity ? 0 : scale(netDebtToEbitda, 5, 1)) : null,
+    trackRecord: Math.max(0, Math.min(100, Math.round(scale(paidYears, 1, 10) * 0.6 + scale(growthYears, 0, 10) * 0.4) - cuts * 35)),
+    stability: isNum(profitableRatio) ? Math.round(profitableRatio * 100) : null,
+  };
+  const used = Object.entries(DIVIDEND_WEIGHTS).filter(([k]) => isNum(parts[k]));
+  const wsum = used.reduce((s, [, x]) => s + x, 0);
+  const score = wsum >= 0.5 ? Math.round(used.reduce((s, [k, x]) => s + parts[k] * x, 0) / wsum) : null;
+  return {
+    payer: true, score, level: dividendLevel(score), parts,
+    yield: a?.metrics?.dividendYield ?? null,
+    dps: L.dps, dpsCagr, paidYears, growthYears, cuts, earningsPayout, fcfPayout, netDebtToEbitda,
+    basis: ttm ? "ttm" : "annual", history: hist,
+  };
+}
+
+function growthOf(cur, prev) { return isNum(cur) && isNum(prev) && prev > 0 ? cur / prev - 1 : null; }
+
+export function dividendLevel(score) {
+  if (!isNum(score)) return "na";
+  return score >= 75 ? "safe" : score >= 55 ? "moderate" : score >= 35 ? "risky" : "unsafe";
+}
+export const DIVIDEND_TONE = { safe: "good", moderate: "warning", risky: "serious", unsafe: "critical", na: "none" };
+
+// ---------- Similar companies ----------
+
+// The closest peers within the sector: distance is the difference in log market cap, plus a penalty
+// (about a 4.5× size gap) for a different industry. So a company is matched with similar-sized
+// companies of its own industry first, and a mega-cap with the largest companies of its sector
+// rather than with much smaller ones that happen to share its industry code.
+export const PEER_INDUSTRY_PENALTY = 1.5;
+export function findPeers(rows, self, n = 5) {
+  const size = (r) => (isNum(r.mc) && r.mc > 0 ? Math.log(r.mc) : null);
+  const s0 = size(self);
+  return rows
+    .filter((r) => r.t !== self.t && r.s && r.s === self.s && isNum(r.sc?.overall) && (!self.n || r.n !== self.n))
+    .map((r) => {
+      const s1 = size(r);
+      const d = (s0 !== null && s1 !== null ? Math.abs(s1 - s0) : 10) + (self.i && r.i === self.i ? 0 : PEER_INDUSTRY_PENALTY);
+      return { r, d };
+    })
+    .sort((a, b) => a.d - b.d || (b.r.mc ?? 0) - (a.r.mc ?? 0))
+    .map((x) => x.r)
+    .filter((r, i, arr) => arr.findIndex((x) => x.n === r.n) === i) // one share class per company (GOOG / GOOGL)
+    .slice(0, n);
+}

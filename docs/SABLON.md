@@ -27,6 +27,8 @@ Nasdaq, ECB (árfolyam, deviza) ┘    data/companies/   assets/js/scoring.js
 | `annual[]` | Üzleti évenkénti adatok (legfeljebb 10 év) – lásd lent. |
 | `ttm` | Utolsó 12 hónap (TTM) eredmény- és cash flow-adatai. |
 | `latestBalance` | Mérleg a legutóbbi negyedév végén. |
+| `quarterly[]` | Az utolsó 12 negyedév: háromhavi eredmény- és cash flow-adatok, mérleg a negyedév végén (`periodEnd`) – lásd 10. rész. |
+| `foreignPrivateIssuer` | `true`, ha a vállalat 20-F / 40-F jelentést ad be (mentes a Form 4 bejelentés alól). |
 | `source`, `demo` | Adatforrás és letöltés ideje; `demo: true` = közelítő mintaadat. |
 
 Minden összeg a **beszámolási pénznemben** (`currency`, többnyire USD), egész egységben; a piaci kapitalizáció mindig USD. A hiányzó adat `null`.
@@ -386,6 +388,32 @@ A TeraScore Trend minden vállalatot minden üzleti év végére pontoz, kizár�
 
 Mezők: `scoreHistory.weekly` a vállalat adatfájljában (`{ date, overall }`, legfeljebb 110 hét); az indexben `ch` / `chy` (változás az előző üzleti évhez képest és annak éve), `c4` / `c13` (4 és 13 hetes változás).
 
-## 9. Korlátok
+## 9. Hasonló vállalatok
+
+A hasonló vállalatok ugyanabból a szektorból kerülnek ki. Egy jelölt távolsága a piaci kapitalizáció logaritmusának különbsége, plusz egy 4,5-szeres méretkülönbségnek megfelelő büntetés, ha más iparágba tartozik. Így előbb az azonos iparágú, hasonló méretű vállalatok jönnek, a legnagyobbak pedig a szektoruk legnagyobbjaival kerülnek össze. Csak értékelt vállalatok szerepelnek, vállalatonként egy részvényosztállyal.
+
+## 10. Negyedéves adatok
+
+A negyedéves adatok az utolsó 12 negyedévet fedik le a 10-Q és 10-K jelentésekből. Az időszaki tételek háromhavi összegek: közvetlenül jelentve, vagy az évközi halmozott adatokból számolva; a negyedik negyedév az éves összeg és az első kilenc hónap különbsége. Az egy részvényre jutó adatok és a részvényszám csak háromhavi jelentés esetén szerepel, a későbbi részvényfelaprózásokkal korrigálva. A mérlegtételek a negyedév végére vonatkoznak.
+
+## 11. Osztalékbiztonság
+
+Az osztalékbiztonság 0–100 között azt méri, mennyire valószínű a jelenlegi osztalék fenntartása: 75 felett biztonságos, 55–74 közepes, 35–54 kockázatos, 35 alatt nem biztonságos. Az adat nélküli összetevők kimaradnak, a többi súlya arányosan nő.
+
+| Összetevő | Súly | Számítás |
+|---|---|---|
+| Szabad cash flow fedezet | 30% | Kifizetett osztalék / szabad cash flow: 40% vagy kevesebb (REIT: 80%) 100 pont, 120% vagy több (REIT: 130%) vagy negatív szabad cash flow 0 pont. |
+| Eredményfedezet | 20% | Kifizetett osztalék / nettó eredmény: 50% vagy kevesebb 100 pont, 150% vagy több vagy veszteség 0 pont. REIT-eknél nem pontozzuk. |
+| Eladósodottság | 20% | Nettó adósság / EBITDA: 1× vagy kevesebb 100 pont, 5× vagy több 0 pont. Bankoknál, biztosítóknál és REIT-eknél nem pontozzuk. |
+| Kifizetési múlt | 20% | Megszakítás nélkül fizetett évek (60%) és egymást követő emelések (40%), legfeljebb 10 évig; az elmúlt 10 év minden 10%-nál nagyobb csökkentése −35 pont. |
+| Eredménystabilitás | 10% | A nyereséges évek aránya az elmúlt ötben. |
+
+## 12. Portfólió
+
+A portfólió TeraScore-ja, kockázata és osztalékhozama a pozíciók értékével súlyozott átlag; a P/E a teljes érték osztva a tételekre jutó eredménnyel (veszteséges cégek nélkül). Figyelmeztetések: 25% feletti egyedi pozíció, 40% feletti szektor, 5-nél kevesebb tétel, kritikus figyelmeztetés, magas csődkockázat és gyenge TeraScore. A portfólió csak a böngészőben tárolódik (`localStorage`), a szerverre nem kerül.
+
+Index-mezők: `px` (árfolyam, USD), `ds` (osztalékbiztonság, 0–100).
+
+## 13. Korlátok
 
 A pontszámok kizárólag a közzétett pénzügyi adatokon és a piaci árfolyamokon alapulnak. Nem veszik figyelembe a menedzsment minőségét, a versenyhelyzetet, a híreket és a vállalati előrejelzéseket. Nem befektetési tanács.

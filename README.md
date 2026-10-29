@@ -17,7 +17,7 @@ Az amerikai tőzsdék (Nasdaq, NYSE, NYSE American, Cboe) összes vállalatának
 | Értékeltség | P/E, EV/EBIT, FCF-hozam, P/S, PEG (TTM-adatokon) |
 | Kockázat | fundamentális + piaci (volatilitás, max. visszaesés) + jelzések |
 
-Emellett: szektorhoz viszonyított pontozás (szektormediánnal), szűrő és rangsor, TeraScore Trend (a pontszám változása üzleti évenként és hetente), figyelőlista-riasztások, bennfentes ügyletek (SEC Form 4), külföldi cégek saját pénznemben (20-F / IFRS), csődkockázat, hosszú távú trend, befektetési profil (minőségi, növekedési, érték, osztalék, spekulatív), szektoron belüli rangsor, 34-féle figyelmeztetés és erősség, vállalat-összehasonlítás, figyelőlista, nyers pénzügyi kimutatások CSV/JSON letöltéssel. Bankokra, biztosítókra és REIT-ekre külön mérce vonatkozik.
+Emellett: hasonló vállalatok összevetése a cégoldalon, osztalékbiztonság, portfólió-elemzés, negyedéves adatok, nyomtatható PDF-jelentés, szektorhoz viszonyított pontozás (szektormediánnal), szűrő és rangsor, TeraScore Trend (a pontszám változása üzleti évenként és hetente), figyelőlista-riasztások, bennfentes ügyletek (SEC Form 4), külföldi cégek saját pénznemben (20-F / IFRS), csődkockázat, hosszú távú trend, befektetési profil (minőségi, növekedési, érték, osztalék, spekulatív), szektoron belüli rangsor, 34-féle figyelmeztetés és erősség, vállalat-összehasonlítás, figyelőlista, nyers pénzügyi kimutatások CSV/JSON letöltéssel. Bankokra, biztosítókra és REIT-ekre külön mérce vonatkozik.
 
 A teljes adatsablon és a pontozás minden küszöbértéke: **[`docs/SABLON.md`](docs/SABLON.md)** (a kódból generálva).
 
@@ -29,6 +29,7 @@ assets/css/style.css          üveghatású, kékes-fekete dizájn (mobil, table
 assets/img/                   logó és illusztráció
 assets/js/app.js              felület: lista, cégoldal, trend, hírek, nyers adatok, összehasonlítás, módszertan
 assets/js/scoring.js          elemzőmotor (böngészőben és Node-ban is fut)
+assets/js/portfolio.js        portfólió-elemzés
 assets/js/charts.js           grafikonok
 assets/js/i18n/               nyelvi fájlok: en (alapértelmezett), hu, de, fr, es
 data/                         adatok – a data ágon tárolva (mindig csak a legfrissebb állapot):
@@ -40,6 +41,7 @@ scripts/market.mjs            árfolyam, piaci kapitalizáció, devizaárfolyamo
 scripts/listings.mjs          tőzsdelisták (Nasdaq, NYSE, NYSE American, Cboe)
 scripts/insider.mjs           bennfentes ügyletek (SEC Form 4 negyedéves adatbázis)
 scripts/events.mjs            jelentős 8-K események
+scripts/xbrl-instance.mjs     a companyfactsből hiányzó jelentések kiolvasása az XBRL-fájlból
 scripts/gen-docs.mjs          docs/SABLON.md generálása
 tests/                        tesztek (npm test)
 ```
