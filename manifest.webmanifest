@@ -1,0 +1,17 @@
+{
+  "name": "TeraStockX",
+  "short_name": "TeraStockX",
+  "description": "Fundamental analysis of US-listed companies: TeraScore, risk, dividends, peers and financial statements.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#050912",
+  "theme_color": "#050912",
+  "categories": ["finance", "business"],
+  "icons": [
+    { "src": "assets/img/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/img/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/img/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -172,7 +172,7 @@ const links = (short) => `
       ${Object.entries(LANGS).map(([code, d]) => `<option value="${code}" ${code === lang() ? "selected" : ""}>${d.meta.short}</option>`).join("")}
     </select>`;
   document.getElementById("lang").addEventListener("change", (e) => { setLang(e.target.value); renderChrome(); route(false); });
-  document.getElementById("footer-text").innerHTML = `${esc(t("ui.footer"))} <a href="#/methodology">${esc(t("ui.navMethod"))} ›</a>`;
+  document.getElementById("footer-text").innerHTML = `${esc(t("ui.footer"))} <a href="#/methodology">${esc(t("ui.navMethod"))} ›</a> · <a href="#/install">${esc(t("ui.installFooter"))} ›</a>`;
   markNav();
 }
 
@@ -195,6 +195,7 @@ async function route(scroll = true) {
   try {
     if (page === "c" && arg) await renderCompany(decodeURIComponent(arg).toUpperCase());
     else if (page === "compare") await renderCompare(arg ? decodeURIComponent(arg).toUpperCase().split(",").filter(Boolean).slice(0, MAX_COMPARE) : []);
+    else if (page === "install") renderInstall();
     else if (page === "portfolio") await renderPortfolio(arg ? decodeURIComponent(arg).toUpperCase() : "");
     else if (page === "report" && arg) await renderReport(decodeURIComponent(arg).toUpperCase());
     else if (page === "methodology") renderMethod();
@@ -247,6 +248,7 @@ async function renderList() {
       <img class="hero-art" src="assets/img/hero.svg" alt="" width="560" height="360">
     </section>
     <div id="alerts"></div>
+    ${installBanner()}
     <div class="controls">
       <label class="search">
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M11 18a7 7 0 1 0 0-14 7 7 0 0 0 0 14zM20 20l-4-4"/></svg>
@@ -407,6 +409,7 @@ async function renderList() {
   };
   draw();
   drawAlerts();
+  document.getElementById("install-x")?.addEventListener("click", () => { try { localStorage.setItem("tsx-install-hide", "1"); } catch {} document.getElementById("install-banner")?.remove(); });
   loadNews().then((n) => {
     const top = (n.events || []).filter(isTopEvent).slice(0, 4);
     const el = document.getElementById("home-news");
@@ -1180,6 +1183,69 @@ async function renderReport(ticker) {
       <footer class="report-foot">${esc(t("ui.footer"))}<br>${esc(t("ui.engine", { v: ENGINE_VERSION }))}${c.source?.retrieved ? ` · ${esc(t("ui.retrieved", { d: date(c.source.retrieved) }))}` : ""} · m1ksaaa.github.io/Banana</footer>
     </article>`;
   document.getElementById("print").addEventListener("click", () => window.print());
+}
+
+// ---------- Install as an app ----------
+
+// Chrome, Edge and Android offer an install prompt; Safari (iPhone, iPad, Mac) installs via "Add to Home Screen".
+let installPrompt = null;
+addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); installPrompt = e; document.querySelectorAll("[data-install-now]").forEach((b) => b.classList.remove("hidden")); });
+addEventListener("appinstalled", () => { installPrompt = null; if (location.hash.startsWith("#/install")) renderInstall(); });
+
+const isStandalone = () => matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+function devicePlatform() {
+  const ua = navigator.userAgent;
+  if (/iPhone|iPod/.test(ua)) return "iphone";
+  if (/iPad/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return "ipad";
+  if (/Android/.test(ua)) return "android";
+  return "desktop";
+}
+
+function installBanner() {
+  let hidden = false;
+  try { hidden = localStorage.getItem("tsx-install-hide") === "1"; } catch {}
+  if (hidden || isStandalone()) return "";
+  return `<div class="glass install-banner" id="install-banner">
+    <img src="assets/img/icons/icon-192.png" alt="" width="40" height="40">
+    <span>${esc(t("ui.installBanner"))}</span>
+    <a class="btn btn-primary" href="#/install">${esc(t("ui.installHow"))}</a>
+    <button class="icon-btn" id="install-x" type="button" aria-label="${esc(t("ui.close"))}">×</button>
+  </div>`;
+}
+
+function renderInstall() {
+  document.title = `${t("ui.installTitle")} | TeraStockX`;
+  const dev = devicePlatform();
+  const steps = (k) => `<ol class="install-steps">${[1, 2, 3, 4].map((i) => t(`install.${k}${i}`)).filter((x) => x && !x.startsWith("install.")).map((x) => `<li>${esc(x)}</li>`).join("")}</ol>`;
+  const card = (k, title, icon) => `<div class="glass pad install-card ${dev === k || (k === "iphone" && dev === "ipad") ? "current" : ""}">
+    <div class="install-card-head"><span class="install-icon" aria-hidden="true">${icon}</span><h2>${esc(title)}</h2>
+      ${dev === k || (k === "iphone" && dev === "ipad") ? `<span class="badge">${esc(t("ui.installYourDevice"))}</span>` : ""}</div>
+    ${steps(k)}</div>`;
+  const cards = { iphone: card("iphone", t("ui.installIos"), "📱"), android: card("android", t("ui.installAndroid"), "🤖"), desktop: card("desktop", t("ui.installDesktop"), "💻") };
+  const order = dev === "android" ? ["android", "iphone", "desktop"] : dev === "desktop" ? ["desktop", "iphone", "android"] : ["iphone", "android", "desktop"];
+  app.innerHTML = `
+    <div class="prose" style="max-width:none;margin-top:8px">
+      <h1>${esc(t("ui.installTitle"))}</h1>
+      <p style="max-width:820px">${esc(t("ui.installIntro"))}</p>
+    </div>
+    ${isStandalone() ? `<div class="notice"><span>✓</span><span>${esc(t("ui.installDone"))}</span></div>` : `
+    <div class="install-now">
+      <button class="btn btn-primary ${installPrompt ? "" : "hidden"}" type="button" data-install-now>${esc(t("ui.installNow"))}</button>
+    </div>`}
+    <ul class="install-benefits">${[1, 2, 3, 4].map((i) => `<li>${esc(t(`install.benefit${i}`))}</li>`).join("")}</ul>
+    <div class="install-grid">${order.map((k) => cards[k]).join("")}</div>
+    <p class="small muted" style="margin-top:16px">${esc(t("ui.installNote"))}</p>`;
+  app.querySelector("[data-install-now]")?.addEventListener("click", async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    await installPrompt.userChoice.catch(() => null);
+    installPrompt = null;
+    renderInstall();
+  });
+}
+
+if ("serviceWorker" in navigator && location.protocol !== "file:") {
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
 }
 
 // ---------- Methodology ----------
