@@ -455,3 +455,4 @@ table.pf-table a { color: inherit; text-decoration: none; }
 }
 table.cmp thead th .small { display: block; white-space: normal; max-width: 150px; margin-left: auto; line-height: 1.3; }
 .footer a { color: var(--text-2); }
+.sticky-label { position: sticky; left: 14px; }

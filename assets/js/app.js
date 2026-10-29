@@ -851,9 +851,9 @@ function quarterTable(c) {
   if (!qs.length) return `<div class="glass empty small">${esc(t(c.foreignPrivateIssuer ? "ui.quarterlyForeign" : "ui.quarterlyNone"))}</div>`;
   const n = qs.length + 1;
   const head = `<tr><th>${esc(t("ui.quarterEnd"))}</th>${qs.map((q) => `<th>${esc(date(q.periodEnd))}</th>`).join("")}</tr>`;
-  let body = RAW_GROUPS.map(([g, keys]) => `<tr class="group"><td colspan="${n}">${esc(t(`raw.${g}`))}</td></tr>` +
+  let body = RAW_GROUPS.map(([g, keys]) => `<tr class="group"><td colspan="${n}"><span class="sticky-label">${esc(t(`raw.${g}`))}</span></td></tr>` +
     keys.map((k) => `<tr><td>${esc(t(`raw.${k}`))}</td>${qs.map((q) => rawCell(rawValue(q, k), k, "", cur)).join("")}</tr>`).join("")).join("");
-  body += `<tr class="group"><td colspan="${n}">${esc(t("ui.computedRatios"))}</td></tr>` + QUARTER_RATIOS.map(([k, f]) =>
+  body += `<tr class="group"><td colspan="${n}"><span class="sticky-label">${esc(t("ui.computedRatios"))}</span></td></tr>` + QUARTER_RATIOS.map(([k, f]) =>
     `<tr><td>${esc(metricLabel(k))}</td>${qs.map((q) => { const v = isNum(f(q)) && isNum(q.revenue) && q.revenue > 0 ? f(q) / q.revenue : null; return isNum(v) ? `<td>${fmt(v, "pct")}</td>` : `<td class="na">–</td>`; }).join("")}</tr>`).join("");
   return `<p class="small muted" style="margin:0 0 10px">${esc(t("ui.quarterlyNote"))}</p>
     <div class="glass table-wrap"><table class="raw"><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
@@ -866,11 +866,11 @@ function rawView(c, a, onDataPage = false) {
   const ttm = c.ttm ? { ...c.ttm, ...(c.latestBalance || {}) } : null;
   const head = `<tr><th>${esc(t("ui.fiscalYear"))}</th>${years.map((y) => `<th>${y.year}${y.periodEnd ? `<br><span class="small">${esc(y.periodEnd)}</span>` : ""}</th>`).join("")}${ttm ? `<th class="ttm">${esc(t("ui.ttm"))}<br><span class="small">${esc(ttm.periodEnd)}</span></th>` : ""}</tr>`;
   const n = years.length + 1 + (ttm ? 1 : 0);
-  let body = RAW_GROUPS.map(([g, keys]) => `<tr class="group"><td colspan="${n}">${esc(t(`raw.${g}`))}</td></tr>` +
+  let body = RAW_GROUPS.map(([g, keys]) => `<tr class="group"><td colspan="${n}"><span class="sticky-label">${esc(t(`raw.${g}`))}</span></td></tr>` +
     keys.map((k) => `<tr><td>${esc(t(`raw.${k}`))}</td>${years.map((y) => rawCell(rawValue(y, k), k, "", cur)).join("")}${ttm ? rawCell(rawValue(ttm, k), k, "ttm", cur) : ""}</tr>`).join("")).join("");
   if (a.ok) {
     const byYear = new Map(a.series.map((s) => [s.year, s]));
-    body += `<tr class="group"><td colspan="${n}">${esc(t("ui.computedRatios"))}</td></tr>` + SERIES_ROWS.map((k) =>
+    body += `<tr class="group"><td colspan="${n}"><span class="sticky-label">${esc(t("ui.computedRatios"))}</span></td></tr>` + SERIES_ROWS.map((k) =>
       `<tr><td>${esc(metricLabel(k))}</td>${years.map((y) => { const v = byYear.get(y.year)?.[k]; return isNum(v) || v === Infinity ? `<td>${fmt(v, METRIC_FORMAT[k], cur)}</td>` : `<td class="na">–</td>`; }).join("")}${ttm ? `<td class="ttm na"></td>` : ""}</tr>`).join("");
   }
   const src = c.source ? `${esc(t("ui.source"))}: ${c.source.url ? `<a href="${esc(c.source.url)}" target="_blank" rel="noopener">${esc(c.source.name)}</a>` : esc(c.source.name)}${c.source.retrieved ? ` · ${esc(t("ui.retrieved", { d: date(c.source.retrieved) }))}` : ""}` : "";
@@ -897,7 +897,12 @@ function wireRaw(root, c) {
     period = b.dataset.period;
     root.querySelectorAll(".seg [data-period]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
     root.querySelectorAll("[data-pane]").forEach((x) => x.classList.toggle("hidden", x.dataset.pane !== period));
+    showLatest();
   }));
+  // The newest periods are on the right: start scrolled there when the table is wider than the screen.
+  const showLatest = () => root.querySelectorAll("[data-pane]:not(.hidden) .table-wrap").forEach((w) => { w.scrollLeft = w.scrollWidth; });
+  root.querySelectorAll(".tabs .tab").forEach((b) => b.addEventListener("click", () => requestAnimationFrame(showLatest)));
+  requestAnimationFrame(showLatest);
   root.querySelector("#csv")?.addEventListener("click", () => downloadCsv(c, period));
 }
 
